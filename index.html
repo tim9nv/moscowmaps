@@ -110,6 +110,9 @@ a{color:var(--accent)}
 #dm{cursor:grab}
 .rd{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .rv{fill:none;stroke:var(--water);stroke-linecap:round;pointer-events:none}
+.nbp{fill:var(--soft);stroke:var(--line);stroke-width:1;cursor:pointer;transition:fill .15s}
+.nbp:hover,.nbp:focus-visible{fill:var(--line);outline:none}
+.lbl.nbl{font-size:11px;fill:var(--muted);font-weight:500;letter-spacing:.02em}
 .lbl.okr{font-family:var(--display);font-size:15px;font-weight:700;fill:var(--fg);stroke:var(--surface);opacity:.75}
 .lbl.road{fill:var(--rlbl);stroke:var(--rhalo);stroke-width:3.2px;font-size:10.5px;font-weight:500;letter-spacing:.01em}
 .lbl.road.major{font-size:12px;font-weight:600}
@@ -135,7 +138,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611021809"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611021809" aria-current="page">Районы</a><a href="ecology.html?v=202611021809">Экология</a><a href="social.html?v=202611021809">Соцобъекты</a><a href="climate.html?v=202611021809">Рельеф и климат</a><a href="new-moscow.html?v=202611021809">Новая Москва</a></nav></div></header>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611021843"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611021843" aria-current="page">Районы</a><a href="ecology.html?v=202611021843">Экология</a><a href="social.html?v=202611021843">Соцобъекты</a><a href="climate.html?v=202611021843">Рельеф и климат</a><a href="new-moscow.html?v=202611021843">Новая Москва</a></nav></div></header>
 
 
 
@@ -315,36 +318,39 @@ function district(f){
   const inBox=c=>c.some(q=>q[0]>lon0&&q[0]<lon1&&q[1]>lat0&&q[1]<lat1);
   // 1. neighbours
   geo.append("g").selectAll("path").data(F.filter(d=>d!==f)).join("path").attr("d",path)
-    .attr("style","fill:var(--soft);stroke:var(--line);stroke-width:1;cursor:pointer").attr("vector-effect","non-scaling-stroke")
+    .attr("class","nbp").attr("tabindex",0).attr("role","link").attr("aria-label",d=>"Перейти: "+d.properties.n).attr("vector-effect","non-scaling-stroke").on("keydown",(e,d)=>{if(e.key==="Enter")location.hash=d.properties.slug})
     .on("click",(e,d)=>location.hash=d.properties.slug).append("title").text(d=>d.properties.n);
   // 2. district fill
-  geo.append("path").attr("d",path(f)).attr("style",`fill:${ecol(p.i)};fill-opacity:.22;stroke:none`);
+  geo.append("path").attr("d",path(f)).attr("style",`fill:${ecol(p.i)};fill-opacity:.22;stroke:none;pointer-events:none`);
   const ring=d3.geoPath(proj)(f);
   geo.append("path").attr("d",`M${-5*W},${-5*H}H${6*W}V${6*H}H${-5*W}Z`+ring).attr("fill-rule","evenodd").style("fill","var(--surface)").style("fill-opacity",.5).style("pointer-events","none");
   // 3. influence zones (3 km) of nearby sources
-  const zones=geo.append("g");
+  const zones=geo.append("g").style("pointer-events","none");
   near.forEach(s=>{const [x,y]=proj([s.lon,s.lat]);const c=(TYPES[s.t]||TYPES.waste)[1];
     zones.append("circle").attr("cx",x).attr("cy",y).attr("r",3*kmPx).attr("vector-effect","non-scaling-stroke")
       .style("fill",c).style("fill-opacity",.06).style("stroke",c).style("stroke-opacity",.55).style("stroke-dasharray","4 4").style("stroke-width",1)});
   // 4. roads with hierarchy (casing + line)
   const rs=LAY.roads.filter(r=>inBox(r[2])).sort((a,b)=>b[0]-a[0]);
   const rw={1:6.5,2:4.6,3:3.0,4:1.6}, rc={1:2.4,2:2.0,3:1.6,4:1.2};
-  const rG=geo.append("g");
+  const rG=geo.append("g").style("pointer-events","none");
   [4,3,2,1].forEach(c=>{const sub=rs.filter(r=>r[0]===c);
     rG.append("g").selectAll("path").data(sub).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
       .style("stroke",`var(--r${c}c)`).attr("stroke-width",rw[c]+rc[c]);
     rG.append("g").selectAll("path").data(sub).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
       .style("stroke",`var(--r${c}f)`).attr("stroke-width",rw[c]);});
   // 5. mask outside the district + outline
-  geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--surface)").style("stroke-width",6);
-  geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--fg)").style("stroke-width",2.4);
+  geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--surface)").style("stroke-width",6).style("pointer-events","none");
+  geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--fg)").style("stroke-width",2.4).style("pointer-events","none");
   // 6. street names along the line, collision-checked
   const boxes=[], fits=(x,y,w,h)=>{for(const b of boxes)if(Math.abs(x-b[0])<(w+b[2])/2&&Math.abs(y-b[1])<(h+b[3])/2)return false;boxes.push([x,y,w,h]);return true};
   const cands={};
   rs.forEach(r=>{if(!r[1]||r[0]>4)return;const pp=r[2].map(c=>proj(c)).filter(q=>q[0]>8&&q[0]<W-8&&q[1]>8&&q[1]<H-8);if(pp.length<2)return;
     let L=0;for(let k=1;k<pp.length;k++)L+=Math.hypot(pp[k][0]-pp[k-1][0],pp[k][1]-pp[k-1][1]);
     const key=r[1];if(!cands[key]||cands[key].L<L)cands[key]={L,pp,c:r[0]}});
-  const lblG=geo.append("g"); let li=0;
+  const lblG=geo.append("g").style("pointer-events","none"); let li=0;
+  F.filter(d=>d!==f).forEach(d=>{const c=proj(d3.geoCentroid(d));if(!c||c[0]<30||c[0]>W-30||c[1]<20||c[1]>H-20)return;if(d3.geoContains(f,proj.invert(c)))return;
+    const t=short(d.properties.n),w=t.length*6.4;if(!fits(c[0],c[1],w,15))return;
+    lblG.append("text").attr("class","lbl nbl").attr("x",c[0]).attr("y",c[1]).attr("text-anchor","middle").attr("dy","0.35em").text(t)});
   Object.entries(cands).sort((a,b)=>a[1].c-b[1].c||b[1].L-a[1].L).forEach(([n,o])=>{
     const fs=o.c<=2?12:10.5, w=n.length*fs*0.58; if(o.L<w+20||li>26)return;
     let pp=o.pp; if(pp[0][0]>pp[pp.length-1][0])pp=pp.slice().reverse();
