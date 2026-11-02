@@ -73,6 +73,13 @@ a{color:var(--accent)}
 .dlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:0 18px}
 .dlist a{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);color:var(--fg);text-decoration:none;font-size:15px;min-width:0}
 .dlist a:hover .nm{color:var(--accent)}
+.sortbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 12px;font-size:14px;color:var(--muted)}
+.seg button .ar{display:inline-block;margin-left:4px;font-size:12px}
+.dlist.flat{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.dlist.flat a{grid-template-columns:2em 1fr auto auto}
+.dlist .rk2{color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
+.dlist .ok2{color:var(--muted);font-size:12px;margin-left:6px}
+.dlist .pill.on{outline:2px solid var(--fg);outline-offset:1px}
 .pill{font-size:12px;font-variant-numeric:tabular-nums;border-radius:6px;padding:1px 7px;font-weight:600;min-width:2.6em;text-align:center}
 .back{font-size:14px;text-decoration:none}
 .eyebrow{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -128,7 +135,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611021538"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611021538" aria-current="page">Районы</a><a href="ecology.html?v=202611021538">Экология</a><a href="social.html?v=202611021538">Соцобъекты</a><a href="climate.html?v=202611021538">Рельеф и климат</a><a href="new-moscow.html?v=202611021538">Новая Москва</a></nav></div></header>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611021809"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611021809" aria-current="page">Районы</a><a href="ecology.html?v=202611021809">Экология</a><a href="social.html?v=202611021809">Соцобъекты</a><a href="climate.html?v=202611021809">Рельеф и климат</a><a href="new-moscow.html?v=202611021809">Новая Москва</a></nav></div></header>
 
 
 
@@ -216,6 +223,7 @@ function home(){
   <section class="map"><svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы"></svg><div class="legend" id="lg"></div></section>
   <section><h2>Все районы</h2>
   <p class="small" style="margin:0 0 10px">У каждого района две цифры: <span class="pill" style="background:var(--e3);color:#1c1e1b">5,2</span> экологический балл (1 чисто, 10 грязно) и <span class="pill" style="background:var(--s4);color:#1c1e1b">6,8</span> балл соцобъектов (1 школ, садов и поликлиник не хватает, 10 хватает).</p>
+  <div class="sortbar"><span>Сортировка:</span><div class="seg" role="group" aria-label="Сортировка списка"><button type="button" data-s="okr" aria-pressed="true">По округам</button><button type="button" data-s="eco" aria-pressed="false">Экология<span class="ar"></span></button><button type="button" data-s="soc" aria-pressed="false">Соцобъекты<span class="ar"></span></button></div><span id="sorthint"></span></div>
   <input class="search" id="q" type="search" placeholder="Марьино" aria-label="Найти район"><div id="dl"></div></section>
   <section class="method"><h2>Откуда данные</h2>
   <p>Экология: рейтинг EcoStandard 2026, данные Мосэкомониторинга и сообщения о превышениях ПДК, загрязнение Москвы-реки, 30 предприятий и объектов с координатами, самые загрязнённые магистрали и западный перенос воздуха. Соцобъекты: школы, детские сады, поликлиники и больницы по OpenStreetMap и население Росстата 2025 года через real-stats.ru. Границы районов — OpenStreetMap. Подробная методика есть в отдельных картах «Экологическая карта районов Москвы» и «Социальная инфраструктура Москвы».</p></section>`;
@@ -237,10 +245,24 @@ function home(){
   const order=["ЦАО","САО","СВАО","ВАО","ЮВАО","ЮАО","ЮЗАО","ЗАО","СЗАО","ЗелАО","НАО","ТАО"];
   const pill=(v,c)=>`<span class="pill" style="background:${c(v)};color:${v==null?"var(--muted)":"#1c1e1b"}">${fmt(v)}</span>`;
   let fOk=()=>true, lastQ="";
+  let sortBy="okr", best=true;
   const renderList=q=>{q=(q||"").trim().toLowerCase().replace("ё","е");lastQ=q;
+    if(sortBy!=="okr"){
+      const key=sortBy==="eco"?(f=>f.properties.i):(f=>f.properties.score);
+      const dir=(sortBy==="eco")===best?1:-1; // eco: lower is better; soc: higher is better
+      const all=F.filter(f=>key(f)!=null).sort((a,b)=>dir*(key(a)-key(b))||a.properties.n.localeCompare(b.properties.n,"ru"));
+      const rank=new Map(all.map((f,k)=>[f,k+1]));
+      const items=all.filter(f=>fOk(f)&&f.properties.n.toLowerCase().replace("ё","е").includes(q));
+      const nod=F.filter(f=>key(f)==null&&fOk(f)&&f.properties.n.toLowerCase().replace("ё","е").includes(q));
+      document.getElementById("dl").innerHTML=items.length||nod.length?`<div class="dlist flat">${items.concat(nod).map(f=>`<a href="#${f.properties.slug}"><span class="rk2">${rank.get(f)||"—"}</span><span class="nm">${short(f.properties.n)}<span class="ok2">${f.properties.o}</span></span>${pill(f.properties.i,ecol).replace('class="pill"',sortBy==="eco"?'class="pill on"':'class="pill"')}${pill(f.properties.score,scol).replace('class="pill"',sortBy==="soc"?'class="pill on"':'class="pill"')}</a>`).join("")}</div>`:`<p class="small">${lastQ?"Такого района нет. Проверьте написание.":"Под выбранный фильтр районов нет. Снимите часть условий."}</p>`;
+      return}
     document.getElementById("dl").innerHTML=order.map(o=>{const items=F.filter(f=>f.properties.o===o&&fOk(f)&&f.properties.n.toLowerCase().replace("ё","е").includes(q)).sort((a,b)=>a.properties.n.localeCompare(b.properties.n,"ru"));
       return items.length?`<div class="okr"><h3>${o}</h3><div class="dlist">${items.map(f=>`<a href="#${f.properties.slug}"><span class="nm">${short(f.properties.n)}</span>${pill(f.properties.i,ecol)}${pill(f.properties.score,scol)}</a>`).join("")}</div></div>`:""}).join("")||`<p class="small">${lastQ?"Такого района нет. Проверьте написание.":"Под выбранный фильтр районов нет. Снимите часть условий."}</p>`};
   renderList(""); document.getElementById("q").addEventListener("input",e=>renderList(e.target.value));
+  const sb=[...document.querySelectorAll(".sortbar button")];
+  const paintSort=()=>{sb.forEach(b=>{const on=b.dataset.s===sortBy;b.setAttribute("aria-pressed",on);const ar=b.querySelector(".ar");if(ar)ar.textContent=on?(best?"↑":"↓"):""});
+    document.getElementById("sorthint").textContent=sortBy==="okr"?"":best?"сверху лучшие, нажмите ещё раз, чтобы перевернуть":"сверху худшие, нажмите ещё раз, чтобы перевернуть";};
+  sb.forEach(b=>b.onclick=()=>{const v=b.dataset.s;if(v===sortBy&&v!=="okr")best=!best;else{sortBy=v;best=true}paintSort();renderList(lastQ)});
   const EBINS=[[0,3,"1–3 чисто","var(--e1)"],[3,4.5,"3–4,5","var(--e2)"],[4.5,6,"4,5–6","var(--e3)"],[6,7.5,"6–7,5","var(--e4)"],[7.5,11,"7,5–10 грязно","var(--e5)"]];
   const SBINS=[[0,3,"1–3 не хватает","var(--s1)"],[3,4.5,"3–4,5","var(--s2)"],[4.5,6,"4,5–6","var(--s3)"],[6,7.5,"6–7,5","var(--s4)"],[7.5,11,"7,5–10 хватает","var(--s5)"]];
   makeFilter(document.getElementById("flt"),[
