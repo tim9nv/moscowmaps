@@ -13,7 +13,7 @@
   --accent:#1f5f8b; --warn:#a8322a;
   --e1:#dcebd3; --e2:#a9cf8e; --e3:#ecc96a; --e4:#df8642; --e5:#a8322a;
   --s1:#a8322a; --s2:#df8642; --s3:#ecc96a; --s4:#8fbf9a; --s5:#2f7d6b;
-  --nodata:#d9d7d0; --edge:#ffffff; --road:#3c3d38; --roadmin:#6f6f68; --water:#3d86c6;
+  --nodata:#d9d7d0; --edge:#ffffff; --road:#3c3d38; --roadmin:#6f6f68; --water:#3d86c6; --r1f:#f0a058; --r1c:#a8561c; --r2f:#f7d77a; --r2c:#b48f2c; --r3f:#ffffff; --r3c:#b3ada0; --r4f:#ffffff; --r4c:#cdc8bc; --rlbl:#33342f; --rhalo:#ffffff;
   --display:"Unbounded","Golos Text",system-ui,sans-serif;
   --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
@@ -22,13 +22,13 @@
   --accent:#7fb6dd; --warn:#e2735f;
   --e1:#33503a; --e2:#5f8f45; --e3:#c9a43e; --e4:#d0702f; --e5:#c2392e;
   --s1:#c2392e; --s2:#d0702f; --s3:#c9a43e; --s4:#5e9a72; --s5:#2c8a73;
-  --nodata:#3a3d3b; --edge:#151714; --road:#e8e6dd; --roadmin:#a7a69c; --water:#5ea6e0; color-scheme:dark}}
+  --nodata:#3a3d3b; --edge:#151714; --road:#e8e6dd; --roadmin:#a7a69c; --water:#5ea6e0; --r1f:#d9893f; --r1c:#7a3c10; --r2f:#c8a645; --r2c:#6e5714; --r3f:#6c6f68; --r3c:#2a2c28; --r4f:#4f524c; --r4c:#262824; --rlbl:#ecebe5; --rhalo:#151714; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#151714; --surface:#1e211d; --fg:#ecebe5; --muted:#a3a59c; --line:#353831; --soft:#262a25;
   --accent:#7fb6dd; --warn:#e2735f;
   --e1:#33503a; --e2:#5f8f45; --e3:#c9a43e; --e4:#d0702f; --e5:#c2392e;
   --s1:#c2392e; --s2:#d0702f; --s3:#c9a43e; --s4:#5e9a72; --s5:#2c8a73;
-  --nodata:#3a3d3b; --edge:#151714; --road:#e8e6dd; --roadmin:#a7a69c; --water:#5ea6e0; color-scheme:dark}
+  --nodata:#3a3d3b; --edge:#151714; --road:#e8e6dd; --roadmin:#a7a69c; --water:#5ea6e0; --r1f:#d9893f; --r1c:#7a3c10; --r2f:#c8a645; --r2c:#6e5714; --r3f:#6c6f68; --r3c:#2a2c28; --r4f:#4f524c; --r4c:#262824; --rlbl:#ecebe5; --rhalo:#151714; color-scheme:dark}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
 .wrap{max-width:860px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(24px,6vw,36px);line-height:1.15;margin:0;text-wrap:balance}
@@ -47,6 +47,9 @@ a{color:var(--accent)}
 .legend span{display:flex;align-items:center;gap:6px}
 .legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
 .legend svg{width:14px;height:14px;flex:none;display:inline-block}
+.legend svg.ic{width:18px;height:18px}
+.mk{cursor:default}
+.legend svg.sw{width:26px}
 .search{width:100%;box-sizing:border-box;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
 .okr{margin-top:14px}
 .okr h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;font-weight:600}
@@ -83,7 +86,8 @@ a{color:var(--accent)}
 #dm{cursor:grab}
 .rd{fill:none;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 .rv{fill:none;stroke:var(--water);stroke-linecap:round;pointer-events:none}
-.lbl.road{fill:var(--fg);font-size:10px;font-style:italic}
+.lbl.road{fill:var(--rlbl);stroke:var(--rhalo);stroke-width:3.2px;font-size:10.5px;font-weight:500;letter-spacing:.01em}
+.lbl.road.major{font-size:12px;font-weight:600}
 .lbl.water{fill:var(--water);font-size:11px;font-style:italic}
 .small{font-size:13px;color:var(--muted)}
 .method p{margin:0 0 10px;max-width:68ch}
@@ -113,7 +117,6 @@ const EB=[3,4.5,6,7.5,99], SB=[3,4.5,6,7.5,99];
 const band=(v,b)=>{for(let k=0;k<b.length;k++) if(v<b[k]) return k+1; return 5};
 const ecol=v=>v==null?"var(--nodata)":`var(--e${band(v,EB)})`;
 const scol=v=>v==null?"var(--nodata)":`var(--s${band(v,SB)})`;
-const TYPES={npz:["НПЗ","var(--fg)","M0,-7L7,6L-7,6Z"],msz:["Мусоросжигательный завод","#6b2fa3","M-5,-5H5V5H-5Z"],abz:["Асфальтобетонный завод","var(--muted)","M0,-6L6,0L0,6L-6,0Z"],tec:["ТЭЦ","#1d5fa8",null],ochist:["Очистные","#0f7a6b",null],rad:["Радиационно опасный объект","#d4a017","M0,-7L6,3.5L-6,3.5Z"],waste:["Свалка, мусоросортировка","#8a5a2b","M-5,-5H5V5H-5Z"],air:["Аэропорт","#5b6b7a","M-6,-2H6V2H-6Z"]};
 const TR={а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",ж:"zh",з:"z",и:"i",й:"y",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"h",ц:"ts",ч:"ch",ш:"sh",щ:"sch",ъ:"",ы:"y",ь:"",э:"e",ю:"yu",я:"ya"};
 const slug=n=>n.toLowerCase().split("").map(c=>TR[c]??(/[a-z0-9]/.test(c)?c:"-")).join("").replace(/-+/g,"-").replace(/^-|-$/g,"");
 F.forEach(f=>f.properties.slug=slug(f.properties.n.replace(" административный округ","")));
@@ -122,10 +125,26 @@ const short=n=>n.replace(" административный округ"," АО")
 const ecoRank=[...F].sort((a,b)=>a.properties.i-b.properties.i);
 const socF=F.filter(f=>f.properties.score!=null);
 const socRank=[...socF].sort((a,b)=>b.properties.score-a.properties.score);
+const GLYPH={
+ factory:"M2 21V11l5 3v-3l5 3V3h3v11h1.5V6h3v15Z M2 21h20",
+ bolt:"M13.5 2 4.5 13.5h6.5L9.5 22l9-12h-6.5l1.5-8Z",
+ drop:"M12 2.5S5.5 10 5.5 14.5a6.5 6.5 0 0 0 13 0C18.5 10 12 2.5 12 2.5Z",
+ rad:(()=>{const b=(a)=>{const r1=3.2,r2=9.5,w=30*Math.PI/180,t=a*Math.PI/180,P=(r,x)=>[12+r*Math.cos(x),12+r*Math.sin(x)];const[a1,a2,a3,a4]=[P(r1,t-w),P(r2,t-w),P(r2,t+w),P(r1,t+w)];return `M${a1}L${a2}A${r2},${r2} 0 0 1 ${a3}L${a4}A${r1},${r1} 0 0 0 ${a1}Z`};return b(-90)+b(30)+b(150)+"M12 10.2a1.8 1.8 0 1 1 0 3.6a1.8 1.8 0 1 1 0-3.6Z"})(),
+ bin:"M5 7h14l-1.3 14.5H6.3Z M3.5 4.5h17V6.5h-17Z M9 2.5h6v2H9Z",
+ plane:"M21.5 15.5v-2l-8-4.8V3.8a1.5 1.5 0 0 0-3 0v4.9l-8 4.8v2l8-2.4v4.6l-2 1.5v1.5l3.5-1 3.5 1v-1.5l-2-1.5v-4.6Z"
+};
+const TYPES={npz:["НПЗ","#1f1f1f","factory"],msz:["Мусоросжигательный завод","#6b2fa3","factory"],abz:["Асфальтобетонный завод","#6d6a62","factory"],tec:["ТЭЦ","#1d5fa8","bolt"],ochist:["Очистные сооружения","#0f7a6b","drop"],rad:["Радиационно опасный объект","#c98a00","rad"],waste:["Свалка, мусоросортировка","#8a5a2b","bin"],air:["Аэропорт","#4f6272","plane"]};
+function marker(g,s,x,y,r){r=r||11;const ty=TYPES[s.t]||TYPES.waste;const m=g.append("g").attr("transform",`translate(${x},${y})`).attr("class","mk");
+  m.append("circle").attr("r",r).style("fill",ty[1]).style("stroke","var(--surface)").style("stroke-width",r>8?2:1.5);
+  m.append("path").attr("d",GLYPH[ty[2]]).attr("transform",`translate(${-r*0.62},${-r*0.62}) scale(${r*1.24/24})`).style("fill",ty[2]==="factory"?"none":"#fff").style("stroke",ty[2]==="factory"?"#fff":"none").style("stroke-width",ty[2]==="factory"?2.2:0).style("stroke-linejoin","round");
+  if(ty[2]==="factory")m.select("path").style("fill","#fff").style("stroke","none");
+  m.append("title").text(s.n+" — "+s.d);return m}
+function iconSvg(t,size){size=size||18;const ty=TYPES[t];return `<svg class="ic" width="${size}" height="${size}" viewBox="-12 -12 24 24"><circle r="11" style="fill:${ty[1]}"/><path d="${GLYPH[ty[2]]}" transform="translate(-7.4,-7.4) scale(.62)" style="fill:#fff"/></svg>`}
+const SOC_ICON={school:"M12 4 1.5 9 12 14l8.5-4v6h2V9Z M5.5 12.6v3.9c0 1.6 3 3 6.5 3s6.5-1.4 6.5-3v-3.9L12 15.7Z",kinder:"M3 13h8v8H3Z M13 13h8v8h-8Z M8 3h8v8H8Z",clinic:"M9 3h6v6h6v6h-6v6H9v-6H3V9h6Z"};
+function socIcon(k,c){return `<svg class="ic" width="18" height="18" viewBox="0 0 24 24" style="vertical-align:-3px;margin-right:6px"><path d="${SOC_ICON[k]}" style="fill:${c}"/></svg>`}
 const app=document.getElementById("app");
 let mode="eco";
 
-function marker(g,s,x,y){const ty=TYPES[s.t]||TYPES.waste;const el=ty[2]?g.append("path").attr("d",ty[2]).attr("transform",`translate(${x},${y})`):g.append("circle").attr("cx",x).attr("cy",y).attr("r",s.t==="tec"?4:5);el.attr("class","src-pt").style("fill",ty[1]);el.append("title").text(s.n+" — "+s.d);return el}
 
 function mainPart(f){const g=f.geometry;if(g.type!=="MultiPolygon")return f;
   const ps=g.coordinates.map(p=>({p,a:Math.abs(d3.geoArea({type:"Polygon",coordinates:p})),c:d3.geoCentroid({type:"Polygon",coordinates:p})}));
@@ -140,7 +159,8 @@ function drawBase(g,path,detail){
     .style("stroke",r=>r[0]===1?"var(--road)":"var(--roadmin)")
     .attr("stroke-width",r=>detail?(r[0]===1?3:r[0]===2?1.8:0.9):(r[0]===1?1.3:0.5)).attr("opacity",r=>detail?(r[0]===3?.55:.8):(r[0]===1?.75:.45));
 }
-function roadLegend(detail){return `<span><svg width="22" height="14" viewBox="0 0 22 14"><path d="M1 7H21" style="stroke:var(--road);stroke-width:3"/></svg>Магистрали, МКАД</span><span><svg width="22" height="14" viewBox="0 0 22 14"><path d="M1 7H21" style="stroke:var(--roadmin);stroke-width:1.6"/></svg>${detail?"Крупные и районные улицы":"Крупные улицы"}</span>`}
+function sw(c,w,cw){return `<svg class="sw" width="26" height="14" viewBox="0 0 26 14"><path d="M2 7H24" style="stroke:var(--r${c}c);stroke-width:${w+cw};stroke-linecap:round"/><path d="M2 7H24" style="stroke:var(--r${c}f);stroke-width:${w};stroke-linecap:round"/></svg>`}
+function roadLegend(detail){return detail?`<span>${sw(1,6,2.4)}Магистрали, МКАД, хорды</span><span>${sw(2,4.5,2)}Крупные улицы</span><span>${sw(3,3,1.6)}Районные улицы</span><span>${sw(4,1.8,1.2)}Местные улицы</span>`:`<span><svg width="22" height="14" viewBox="0 0 22 14"><path d="M1 7H21" style="stroke:var(--road);stroke-width:3"/></svg>Магистрали, МКАД</span><span><svg width="22" height="14" viewBox="0 0 22 14"><path d="M1 7H21" style="stroke:var(--roadmin);stroke-width:1.6"/></svg>Крупные улицы</span>`}
 function home(){
   document.title="Районы Москвы";
   app.innerHTML=`
@@ -160,11 +180,11 @@ function home(){
     .on("keydown",(e,d)=>{if(e.key==="Enter"){location.hash=d.properties.slug}});
   sel.append("title").text(d=>`${d.properties.n}: экология ${fmt(d.properties.i)}, соцобъекты ${fmt(d.properties.score)}`);
   const ov=svg.append("g").attr("clip-path","url(#hc)").style("pointer-events","none"); drawBase(ov,path,false);
-  const srcG=ov.append("g"); SRC.forEach(s=>{const [x,y]=proj([s.lon,s.lat]);if(x>0&&x<600&&y>0&&y<620)marker(srcG,s,x,y)});
+  const srcG=ov.append("g"); SRC.forEach(s=>{const [x,y]=proj([s.lon,s.lat]);if(x>0&&x<600&&y>0&&y<620)marker(srcG,s,x,y,7)});
   {const segs=LAY.river.map(c=>c.map(q=>proj(q)).filter(q=>q[0]>80&&q[0]<520&&q[1]>60&&q[1]<560)).sort((a,b)=>b.length-a.length);
    if(segs[0]&&segs[0].length>3){const m=segs[0][Math.floor(segs[0].length/2)];ov.append("text").attr("class","lbl water").attr("x",m[0]+6).attr("y",m[1]-6).text("Москва-река")}}
   const paint=()=>{sel.attr("style",d=>`fill:${mode==="eco"?ecol(d.properties.i):scol(d.properties.score)}`);
-    document.getElementById("lg").innerHTML=(mode==="eco"?["1–3 чисто","3–4,5","4,5–6","6–7,5","7,5–10 грязно"].map((t,k)=>`<span><i style="background:var(--e${k+1})"></i>${t}</span>`):["1–3 высокая нагрузка","3–4,5","4,5–6","6–7,5","7,5–10 низкая нагрузка"].map((t,k)=>`<span><i style="background:var(--s${k+1})"></i>${t}</span>`).concat([`<span><i style="background:var(--nodata)"></i>нет данных</span>`])).join("")+roadLegend(false)+(mode==="eco"?`<span>Значки — источники загрязнения, подробнее на странице района</span>`:"");
+    document.getElementById("lg").innerHTML=(mode==="eco"?["1–3 чисто","3–4,5","4,5–6","6–7,5","7,5–10 грязно"].map((t,k)=>`<span><i style="background:var(--e${k+1})"></i>${t}</span>`):["1–3 высокая нагрузка","3–4,5","4,5–6","6–7,5","7,5–10 низкая нагрузка"].map((t,k)=>`<span><i style="background:var(--s${k+1})"></i>${t}</span>`).concat([`<span><i style="background:var(--nodata)"></i>нет данных</span>`])).join("")+roadLegend(false)+(mode==="eco"?Object.keys(TYPES).map(t=>`<span>${iconSvg(t,16)}${TYPES[t][0]}</span>`).join(""):"");
     document.getElementById("m-eco").setAttribute("aria-pressed",mode==="eco");document.getElementById("m-soc").setAttribute("aria-pressed",mode==="soc");};
   paint();
   document.getElementById("m-eco").onclick=()=>{mode="eco";paint()};
@@ -197,7 +217,7 @@ function district(f){
   </section>
   <section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Схема района ${p.n} и объектов вокруг"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>
   <section><h2>Из чего складывается экологический балл</h2><div class="facts">${factors.join("")}</div>${p.t?`<p class="small" style="margin-top:10px">${p.t}</p>`:""}</section>
-  ${p.score!=null?`<section><h2>Образование и здравоохранение</h2><div class="stats">${stat("Школы (здания)",p.school,p.school_per,p.school_10k)}${stat("Детские сады",p.kinder,p.kinder_per,p.kinder_10k)}${stat("Поликлиники и больницы",p.clinic,p.clinic_per,p.clinic_10k)}</div><p class="small" style="margin-top:10px">Образование ${fmt(p.edu)} из 10 · здравоохранение ${fmt(p.med)} из 10. Школа считается по зданиям: у одной школы-комплекса их бывает несколько.</p></section>`:""}
+  ${p.score!=null?`<section><h2>Образование и здравоохранение</h2><div class="stats">${stat(socIcon("school","#1f5f8b")+"Школы (здания)",p.school,p.school_per,p.school_10k)}${stat(socIcon("kinder","#c97a1a")+"Детские сады",p.kinder,p.kinder_per,p.kinder_10k)}${stat(socIcon("clinic","#c0392b")+"Поликлиники и больницы",p.clinic,p.clinic_per,p.clinic_10k)}</div><p class="small" style="margin-top:10px">Образование ${fmt(p.edu)} из 10 · здравоохранение ${fmt(p.med)} из 10. Школа считается по зданиям: у одной школы-комплекса их бывает несколько.</p></section>`:""}
   ${nb.length?`<section><h2>Соседние районы</h2><div class="chips">${nb.map(n=>`<a href="#${n.properties.slug}">${short(n.properties.n)} · ${fmt(n.properties.i)} / ${fmt(n.properties.score)}</a>`).join("")}</div><p class="small" style="margin-top:8px">Экология / соцобъекты</p></section>`:""}`;
   // district map: district fills the view, everything else muted; zoomable
   const el0=document.getElementById("dm"), W=Math.max(320,Math.round(el0.getBoundingClientRect().width)||600), H=Math.round(Math.min(Math.max(W*0.95,360),620));
@@ -218,7 +238,9 @@ function district(f){
     .attr("style","fill:var(--soft);stroke:var(--line);stroke-width:1;cursor:pointer").attr("vector-effect","non-scaling-stroke")
     .on("click",(e,d)=>location.hash=d.properties.slug).append("title").text(d=>d.properties.n);
   // 2. district fill
-  geo.append("path").attr("d",path(f)).attr("style",`fill:${ecol(p.i)};fill-opacity:.38;stroke:none`);
+  geo.append("path").attr("d",path(f)).attr("style",`fill:${ecol(p.i)};fill-opacity:.22;stroke:none`);
+  const ring=d3.geoPath(proj)(f);
+  geo.append("path").attr("d",`M${-5*W},${-5*H}H${6*W}V${6*H}H${-5*W}Z`+ring).attr("fill-rule","evenodd").style("fill","var(--surface)").style("fill-opacity",.5).style("pointer-events","none");
   // 3. influence zones (3 km) of nearby sources
   const zones=geo.append("g");
   near.forEach(s=>{const [x,y]=proj([s.lon,s.lat]);const c=(TYPES[s.t]||TYPES.waste)[1];
@@ -226,15 +248,14 @@ function district(f){
       .style("fill",c).style("fill-opacity",.06).style("stroke",c).style("stroke-opacity",.55).style("stroke-dasharray","4 4").style("stroke-width",1)});
   // 4. roads with hierarchy (casing + line)
   const rs=LAY.roads.filter(r=>inBox(r[2])).sort((a,b)=>b[0]-a[0]);
-  const rw={1:3.4,2:2.2,3:1.4,4:0.8};
+  const rw={1:6.5,2:4.6,3:3.0,4:1.6}, rc={1:2.4,2:2.0,3:1.6,4:1.2};
   const rG=geo.append("g");
-  rG.selectAll("path.cas").data(rs.filter(r=>r[0]<=2)).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
-    .style("stroke","var(--surface)").attr("stroke-width",r=>rw[r[0]]+2.2);
-  rG.selectAll("path.ln").data(rs).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
-    .style("stroke",r=>r[0]===1?"var(--road)":"var(--roadmin)").attr("stroke-width",r=>rw[r[0]]).attr("opacity",r=>r[0]>=3?.6:.9);
+  [4,3,2,1].forEach(c=>{const sub=rs.filter(r=>r[0]===c);
+    rG.append("g").selectAll("path").data(sub).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
+      .style("stroke",`var(--r${c}c)`).attr("stroke-width",rw[c]+rc[c]);
+    rG.append("g").selectAll("path").data(sub).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
+      .style("stroke",`var(--r${c}f)`).attr("stroke-width",rw[c]);});
   // 5. mask outside the district + outline
-  const ring=d3.geoPath(proj)(f);
-  geo.append("path").attr("d",`M${-5*W},${-5*H}H${6*W}V${6*H}H${-5*W}Z`+ring).attr("fill-rule","evenodd").style("fill","var(--surface)").style("fill-opacity",.45).style("pointer-events","none");
   geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--surface)").style("stroke-width",6);
   geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--fg)").style("stroke-width",2.4);
   // 6. street names along the line, collision-checked
@@ -245,11 +266,11 @@ function district(f){
     const key=r[1];if(!cands[key]||cands[key].L<L)cands[key]={L,pp,c:r[0]}});
   const lblG=geo.append("g"); let li=0;
   Object.entries(cands).sort((a,b)=>a[1].c-b[1].c||b[1].L-a[1].L).forEach(([n,o])=>{
-    const fs=o.c<=2?11:10, w=n.length*fs*0.56; if(o.L<w+16||li>22)return;
+    const fs=o.c<=2?12:10.5, w=n.length*fs*0.58; if(o.L<w+20||li>26)return;
     let pp=o.pp; if(pp[0][0]>pp[pp.length-1][0])pp=pp.slice().reverse();
     const m=pp[Math.floor(pp.length/2)]; if(!fits(m[0],m[1],Math.min(w,90),fs+4))return;
     const id=`rp${li++}`; lblG.append("path").attr("id",id).attr("d",d3.line()(pp)).style("fill","none").style("stroke","none");
-    lblG.append("text").attr("class","lbl road").style("font-size",fs+"px").attr("dy",-2).append("textPath").attr("href",`#${id}`).attr("startOffset","50%").attr("text-anchor","middle").text(n)});
+    lblG.append("text").attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset","50%").attr("text-anchor","middle").text(n)});
   // 7. overlay: neighbour names, sources, district name (kept upright and unscaled on zoom)
   const pts=[];
   const cc=proj(d3.geoCentroid(mp)); let nameY=cc[1];
@@ -260,7 +281,7 @@ function district(f){
   const used=new Set();
   SRC.forEach(s=>{let [x,y]=proj([s.lon,s.lat]);const isNear=near.includes(s);const inside=x>6&&x<W-6&&y>6&&y<H-6;
     if(!inside&&!isNear)return; used.add(s.t);
-    if(inside){add(x,y,g=>{marker(g,s,0,0);const nm=s.n.replace(/\s*\(.*?\)/,"");const w=nm.length*6.2;if(isNear&&fits(x+8+w/2,y,w,13))g.append("text").attr("class","lbl src").attr("x",8).attr("y",4).text(nm);return g})}
+    if(inside){add(x,y,g=>{marker(g,s,0,0);const nm=s.n.replace(/\s*\(.*?\)/,"");const w=nm.length*6.2;if(isNear&&fits(x+14+w/2,y,w,13))g.append("text").attr("class","lbl src").attr("x",14).attr("y",4).text(nm);return g})}
     else{const cx=W/2,cy=H/2,dx=x-cx,dy=y-cy,k=Math.min((W/2-14)/Math.abs(dx||1e-6),(H/2-14)/Math.abs(dy||1e-6));const ex=cx+dx*k,ey=cy+dy*k;const dist=(p.s.find(q=>q[1]===s.n)||[])[2];
       const ang=Math.atan2(dy,dx)*180/Math.PI;const right=ex>W/2;
       add(ex,ey,g=>{g.append("path").attr("d","M-6,-5L6,0L-6,5Z").attr("transform",`rotate(${ang})`).style("fill",(TYPES[s.t]||TYPES.waste)[1]).attr("class","src-pt");
@@ -288,7 +309,7 @@ function district(f){
   zb.querySelector("[data-z='in']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
   zb.querySelector("[data-z='reset']").onclick=()=>svg.transition().duration(250).call(zoom.transform,d3.zoomIdentity);
-  document.getElementById("dlg").innerHTML=roadLegend(true)+[...used].map(t=>{const [n,c,pth]=TYPES[t];return `<span><svg width="14" height="14" viewBox="-8 -8 16 16"><${pth?`path d="${pth}"`:`circle r="5"`} style="fill:${c}"/></svg>${n}</span>`}).join("")+(near.length?`<span><svg width="14" height="14" viewBox="-8 -8 16 16"><circle r="6" style="fill:none;stroke:var(--muted);stroke-dasharray:3 2"/></svg>Зона 3 км вокруг источника</span>`:"")+(used.size?"":`<span>Крупных источников загрязнения рядом нет</span>`);
+  document.getElementById("dlg").innerHTML=roadLegend(true)+[...used].map(t=>`<span>${iconSvg(t)}${TYPES[t][0]}</span>`).join("")+(near.length?`<span><svg width="14" height="14" viewBox="-8 -8 16 16"><circle r="6" style="fill:none;stroke:var(--muted);stroke-dasharray:3 2"/></svg>Зона 3 км вокруг источника</span>`:"")+(used.size?"":`<span>Крупных источников загрязнения рядом нет</span>`);
   window.scrollTo(0,0);
 }
 
