@@ -161,7 +161,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071326"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071326" aria-current="page">Районы</a><a href="housing.html?v=202611071326">Цены на жильё</a><a href="transport.html?v=202611071326">Транспорт</a><a href="social.html?v=202611071326">Соцобъекты</a><a href="ecology.html?v=202611071326">Экология</a><a href="parks.html?v=202611071326">Парки</a><a href="climate.html?v=202611071326">Климат</a><a href="new-moscow.html?v=202611071326" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071330"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071330" aria-current="page">Районы</a><a href="housing.html?v=202611071330">Цены на жильё</a><a href="ecology.html?v=202611071330">Экология</a><a href="transport.html?v=202611071330">Транспорт</a><a href="social.html?v=202611071330">Соцобъекты</a><a href="parks.html?v=202611071330">Парки</a><a href="climate.html?v=202611071330">Климат</a><a href="new-moscow.html?v=202611071330" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -257,10 +257,10 @@ function home(){
   document.title="Районы Москвы";
   app.innerHTML=`
   <header><h1>Районы Москвы</h1>
-  <p class="lede">У каждого из 125 районов своя страница: цена квадратного метра, метро и время до центра, школы, детские сады и поликлиники на жителей, экология с разбором источников загрязнения, место среди всех районов. Выберите район на карте или в списке.</p></header>
+  <p class="lede">У каждого из 125 районов своя страница: цена квадратного метра, экология с разбором источников загрязнения, метро и время до центра, школы, детские сады и поликлиники на жителей, место среди всех районов. Выберите район на карте или в списке.</p></header>
 
   <section class="okrs"><div class="okhd"><h2>Округа</h2><div class="seg" role="group" aria-label="Как усреднять"><button type="button" data-w="pop" aria-pressed="true">По жителям</button><button type="button" data-w="area" aria-pressed="false">По площади</button></div></div>
-  <div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button><button type="button" data-m="eco" aria-pressed="false">Экология</button></div></div><p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
+  <div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="eco" aria-pressed="false">Экология</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button></div></div><p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
   <section class="filt" id="flt" aria-label="Фильтр районов"></section>
   <section class="map"><svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы"></svg><div class="legend" id="lg"></div></section>
   <section><h2>Все районы</h2>
@@ -347,9 +347,9 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   paintMap();
   makeFilter(document.getElementById("flt"),[
     {label:"Цена квадратного метра",hint:"вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
+    {label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i},
     {label:"Транспортный балл",hint:"метро, МЦК и МЦД рядом и время до центра: 1 далеко, 10 всё рядом",bins:TBINS,get:f=>f.properties.ts},
-    {label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score},
-    {label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i}],
+    {label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score}],
     (ok,any,setN)=>{fOk=any?ok:()=>true;sel.classed("dim",f=>any&&!ok(f));renderList(lastQ);setN(F.filter(ok).length)});
 }
 
@@ -369,9 +369,9 @@ function district(f){
   <h1>${p.n}</h1>${p.hist?`<p class="hist">${p.hist}</p>`:""}</header>
   <section class="scores">
     <div class="tile"><div class="eyebrow">Цена за м²</div><div class="big">${p.hp?Math.round(p.hp/1000)+'<span style="font-size:18px"> тыс. ₽</span>':"—"}</div><div class="rk">${p.hp?`${p.hrk}-е место из 125 · 1 — самый дорогой`:"нет данных"}</div><div class="bar"><i style="width:${p.hp?Math.min(100,p.hp/10000):0}%;background:${p.hp?hcolG(p.hp):"none"}"></i></div></div>
+    <div class="tile"><div class="eyebrow">Экология · 10 грязно</div><div class="big" style="color:${p.i>=6?"var(--warn)":"var(--fg)"}">${fmt(p.i)}</div><div class="rk">${er}-е место из ${F.length} по чистоте</div><div class="bar"><i style="width:${p.i*10}%;background:${ecol(p.i)}"></i></div></div>
     <div class="tile"><div class="eyebrow">Транспорт</div><div class="big">${p.tr?fmt(p.tr.score):"—"}</div><div class="rk">${p.tr?`${trRank.indexOf(f)+1}-е место из ${trF.length} · до центра ${p.tr.tmed} мин`:"нет данных"}</div><div class="bar"><i style="width:${p.tr?p.tr.score*10:0}%;background:${p.tr?scol(p.tr.score):"none"}"></i></div></div>
     <div class="tile"><div class="eyebrow">Соцобъекты</div><div class="big" style="color:${p.score!=null&&p.score<4.5?"var(--warn)":"var(--fg)"}">${fmt(p.score)}</div><div class="rk">${p.score!=null?`${sr}-е место из ${socF.length}`:"для Новой Москвы нет данных"}</div><div class="bar"><i style="width:${(p.score||0)*10}%;background:${scol(p.score)}"></i></div></div>
-    <div class="tile"><div class="eyebrow">Экология · 10 грязно</div><div class="big" style="color:${p.i>=6?"var(--warn)":"var(--fg)"}">${fmt(p.i)}</div><div class="rk">${er}-е место из ${F.length} по чистоте</div><div class="bar"><i style="width:${p.i*10}%;background:${ecol(p.i)}"></i></div></div>
   </section>
   ${p.hp||p.tr?`<section><h2>Жильё и транспорт</h2><div class="stats">
     ${p.hp?`<div class="stat"><div class="l">Двушка 54 м²</div><div class="v">≈ ${(p.hp*54/1e6).toFixed(1).replace(".",",")} млн ₽</div><div class="s">по средней цене метра на вторичке</div></div>`:""}
