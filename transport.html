@@ -115,11 +115,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070857"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070857">Районы</a><a href="ecology.html?v=202611070857">Экология</a><a href="social.html?v=202611070857">Соцобъекты</a><a href="housing.html?v=202611070857">Жильё</a><a href="transport.html?v=202611070857" aria-current="page">Транспорт</a><a href="climate.html?v=202611070857">Климат</a><a href="parks.html?v=202611070857">Парки</a><a href="new-moscow.html?v=202611070857" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
-
-
-
-
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071212"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071212">Районы</a><a href="ecology.html?v=202611071212">Экология</a><a href="social.html?v=202611071212">Соцобъекты</a><a href="housing.html?v=202611071212">Жильё</a><a href="transport.html?v=202611071212" aria-current="page">Транспорт</a><a href="climate.html?v=202611071212">Климат</a><a href="parks.html?v=202611071212">Парки</a><a href="new-moscow.html?v=202611071212" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -229,7 +225,7 @@ function card(p){
     return `<div class="stats">
       <div class="stat"><div class="l">Место по цене</div><div class="v">${p.rk} из 125</div><div class="s">1 — самый дорогой</div></div>
       <div class="stat"><div class="l">Двушка 54 м²</div><div class="v">≈ ${flat.toFixed(1).replace(".",",")} млн ₽</div><div class="s">по средней цене метра</div></div>
-      <div class="stat"><div class="l">За месяц</div><div class="v">${p.ch}</div><div class="s">сентябрь к августу 2026</div></div></div>
+      <div class="stat"><div class="l">Объявлений</div><div class="v">${num(p.cnt)}</div><div class="s">квартир на вторичке в районе на Циане</div></div></div>
       ${p.grp&&p.grp.length?`<div class="note">irn.ru считает этот район вместе с соседними (${p.grp.filter(x=>!x.endsWith(":")).join(", ")}), цена общая для группы.</div>`:""}`}
   const t=p.t;
   const sts=t.st.length?`<div class="stlist">${t.st.map(s=>`<span class="chipst"><i style="background:${CFG.lc[s[2][0]]||"#888"}"></i>${s[0]} <span class="csub">${s[1]==="metro"?s[2].join(", "):KC[s[1]]+(s[1]==="mcd"?" ("+s[2].join(", ").replace(/МЦД-/g,"D")+")":"")}</span></span>`).join("")}</div>`:`<div class="note">Внутри района нет станций метро, МЦК и МЦД.</div>`;
