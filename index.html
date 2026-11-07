@@ -269,7 +269,7 @@ function home(){
   <div class="sortbar"><span>Сортировка:</span><div class="seg" role="group" aria-label="Сортировка списка"><button type="button" data-s="okr" aria-pressed="true">По округам</button><button type="button" data-s="val" aria-pressed="false">По показателю<span class="ar"></span></button></div><span id="sorthint"></span></div>
   <input class="search" id="q" type="search" placeholder="Марьино" aria-label="Найти район"><div id="dl"></div></section>
   <section class="method"><h2>Откуда данные</h2>
-  <p>Экология: рейтинг EcoStandard за 2025 год, данные Мосэкомониторинга и сообщения о превышениях ПДК, загрязнение Москвы-реки, 36 предприятий, промзон и объектов с координатами, исследования МГУ и РУДН, самые загрязнённые магистрали и западный перенос воздуха. Соцобъекты: школы, детские сады, поликлиники и больницы по OpenStreetMap и население Росстата 2025 года через real-stats.ru. Цены: медиана цены метра в 84 самых свежих объявлениях о продаже квартир на вторичке на Циане по каждому району, ноябрь 2026. Транспорт: станции метро, МЦК и МЦД (включая Рублёво-Архангельскую линию) из справочника HeadHunter, расстояние до станций и модельное время поездки до центра. Границы районов — OpenStreetMap. Подробная методика — на страницах «Экология», «Соцобъекты», «Жильё» и «Транспорт».</p></section>`;
+  <p>Экология: рейтинг EcoStandard за 2025 год, данные Мосэкомониторинга и сообщения о превышениях ПДК, загрязнение Москвы-реки, 36 предприятий, промзон и объектов с координатами, исследования МГУ и РУДН, самые загрязнённые магистрали и западный перенос воздуха. Соцобъекты: школы, детские сады, поликлиники и больницы по OpenStreetMap и население Росстата 2025 года через real-stats.ru. Цены: медиана цены метра по выборке до 84 самых свежих объявлений о продаже квартир на вторичке на Циане по каждому району, ноябрь 2026. Транспорт: станции метро, МЦК и МЦД (включая Рублёво-Архангельскую линию) из справочника HeadHunter, расстояние до станций и модельное время поездки до центра. Границы районов — OpenStreetMap. Подробная методика — на страницах «Экология», «Соцобъекты», «Жильё» и «Транспорт».</p></section>`;
   const svg=d3.select("#hm"); const proj=d3.geoMercator().fitExtent([[10,10],[590,610]],inner); const path=d3.geoPath(proj);
   svg.append("clipPath").attr("id","hc").append("rect").attr("width",600).attr("height",620);
   const sel=svg.append("g").attr("clip-path","url(#hc)").selectAll("path").data(F).join("path").attr("class","d").attr("d",path)
@@ -379,7 +379,7 @@ function district(f){
     ${p.tr?`<div class="stat"><div class="l">До станции</div><div class="v">${p.tr.walk} мин</div><div class="s">пешком от типичной точки района · ${p.tr.cov} % территории в 1 км от станции</div></div>
     <div class="stat"><div class="l">До центра</div><div class="v">${p.tr.tmed} мин</div><div class="s">типичная поездка до станций у Кремля</div></div>`:""}</div>
     ${p.tr?`<p class="small" style="margin-top:10px">${p.tr.st.length?"Станции в районе: "+p.tr.st.map(s=>s[0]+" ("+(s[1]==="metro"?s[2].join(", "):s[1]==="mcc"?"МЦК":s[2].join(", "))+")").join("; ")+".":"Внутри района нет станций метро, МЦК и МЦД."}</p>`:""}
-    ${p.hp?`<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, ${num(p.hcnt)} объявлений в районе). Новостройки от застройщиков не входят.</p>`:""}</section>`:""}
+    ${p.hp?`<p class="small">Цена — медиана цены метра по выборке до 84 свежих объявлений о продаже квартир на вторичке на Циане (ноябрь 2026). Всего в выдаче по району — ${num(p.hcnt)} объявлений. Новостройки от застройщиков не входят.</p>`:""}</section>`:""}
 
   <section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Схема района ${p.n} и объектов вокруг"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>
   <section><h2>Из чего складывается экологический балл</h2><div class="facts">${factors.join("")}</div>${p.t?`<p class="small" style="margin-top:10px">${p.t}</p>`:""}</section>
@@ -527,7 +527,14 @@ function district(f){
 }
 
 let onHome=false,homeY=0;
-function route(){const h=decodeURIComponent(location.hash.slice(1));const f=BY[h];
+function route(){
+  let slug;
+  try {
+    slug=decodeURIComponent(location.hash.slice(1));
+  } catch {
+    slug="";
+  }
+  const f=Object.hasOwn(BY,slug)?BY[slug]:undefined;
   if(f){if(onHome)homeY=window.scrollY;onHome=false;district(f)}
   else{const back=!onHome&&homeY>0;home();onHome=true;if(back)requestAnimationFrame(()=>window.scrollTo(0,homeY))}}
 window.addEventListener("hashchange",route);
