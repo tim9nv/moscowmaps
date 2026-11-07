@@ -13,7 +13,7 @@
 .topbar .brand i:after{content:"";position:absolute;inset:5px;border:2px solid var(--nav-bg);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
 .topbar .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
 .topbar .tabs::-webkit-scrollbar{display:none}
-.topbar .tabs a{font:500 14px/1 "Golos Text",system-ui,sans-serif;color:var(--nav-muted);text-decoration:none;padding:9px 12px;border-radius:999px;white-space:nowrap;transition:background .15s,color .15s}
+.topbar .tabs a{font:500 14px/1 "Golos Text",system-ui,sans-serif;color:var(--nav-muted);text-decoration:none;padding:9px 11px;border-radius:999px;white-space:nowrap;transition:background .15s,color .15s}
 .topbar .tabs a:hover{background:var(--nav-hover);color:var(--nav-fg)}
 .topbar .tabs a[aria-current="page"]{background:var(--nav-fg);color:var(--nav-bg)}
 .topbar .tabs a:focus-visible{outline:2px solid var(--nav-accent);outline-offset:1px}
@@ -22,6 +22,9 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--nav-bg:#1a1d19;--nav-fg:#ecebe5;--nav-muted:#a3a59c;--nav-line:#2f332d;--nav-hover:#262a25;--nav-accent:#4fae96}}
 :root[data-theme="dark"]{--nav-bg:#1a1d19;--nav-fg:#ecebe5;--nav-muted:#a3a59c;--nav-line:#2f332d;--nav-hover:#262a25;--nav-accent:#4fae96}
 @media (prefers-reduced-motion:reduce){.topbar .tabs a{transition:none}}
+.topbar .tabs a.nm{margin-left:13px;position:relative;box-shadow:inset 0 0 0 1px var(--nav-line)}
+.topbar .tabs a.nm:before{content:"";position:absolute;left:-9px;top:6px;bottom:6px;width:1px;background:var(--nav-line)}
+@media (max-width:560px){.topbar .tabs{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);padding-right:24px}}
 </style>
 <style>
 /* Layout: one column; physical map with three layers (relief / heat / damp), district card, rankings, method */
@@ -113,7 +116,8 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070846"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070846">Районы</a><a href="ecology.html?v=202611070846">Экология</a><a href="social.html?v=202611070846">Соцобъекты</a><a href="climate.html?v=202611070846" aria-current="page">Рельеф и климат</a><a href="parks.html?v=202611070846">Парки</a><a href="new-moscow.html?v=202611070846">Новая Москва</a></nav></div></header>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070847"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070847">Районы</a><a href="ecology.html?v=202611070847">Экология</a><a href="social.html?v=202611070847">Соцобъекты</a><a href="climate.html?v=202611070847" aria-current="page">Климат</a><a href="parks.html?v=202611070847">Парки</a><a href="new-moscow.html?v=202611070847" class="nm">Новая Москва</a></nav></div></header>
+
 
 
 
