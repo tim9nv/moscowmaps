@@ -116,34 +116,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071330"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071330">Районы</a><a href="housing.html?v=202611071330">Цены на жильё</a><a href="ecology.html?v=202611071330">Экология</a><a href="transport.html?v=202611071330">Транспорт</a><a href="social.html?v=202611071330">Соцобъекты</a><a href="parks.html?v=202611071330" aria-current="page">Парки</a><a href="climate.html?v=202611071330">Климат</a><a href="new-moscow.html?v=202611071330" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071332"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071332">Районы</a><a href="housing.html?v=202611071332">Цены на жильё</a><a href="ecology.html?v=202611071332">Экология</a><a href="transport.html?v=202611071332">Транспорт</a><a href="social.html?v=202611071332">Соцобъекты</a><a href="parks.html?v=202611071332" aria-current="page">Парки</a><a href="climate.html?v=202611071332">Климат</a><a href="new-moscow.html?v=202611071332" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -235,8 +208,8 @@ const W=600,H=620,svg=d3.select("#gm");
 const proj=d3.geoMercator().fitExtent([[10,10],[W-10,H-10]],inner),path=d3.geoPath(proj);
 svg.append("clipPath").attr("id","gc").append("rect").attr("width",W).attr("height",H);
 const base=svg.append("g").attr("clip-path","url(#gc)");
-const scPct=d3.scaleSequential(t=>d3.interpolateYlGn(0.08+0.85*t)).domain([5,90]);
-const scPP=d3.scaleSequential(t=>d3.interpolateYlGn(0.08+0.85*t)).domain([0,4]); // log10 m2/person
+const scPct=d3.scaleSequential(t=>d3.interpolateOranges(0.78-0.72*t)).domain([5,90]);
+const scPP=d3.scaleSequential(t=>d3.interpolateOranges(0.78-0.72*t)).domain([0,4]); // log10 m2/person; low = saturated orange, parks stay green
 const M={
   pct:{k:"pct",v:p=>p.pct,sc:p=>scPct(p.pct),fmt:p=>fmt(p.pct)+" %",T:["Зеленее всего","Меньше всего зелени"],
        leg:()=>`<span>8 %<i style="width:150px;background:linear-gradient(90deg,${d3.range(0,1.01,.1).map(t=>scPct(5+85*t)).join(",")})"></i>90 %</span><span>доля территории под деревьями</span>`},
