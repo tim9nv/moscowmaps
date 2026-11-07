@@ -158,6 +158,46 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 .wtr .wl{fill:none;stroke:var(--wline,#3f8fd2);stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wtr{--wfill:#2f6fa8;--wline:#5aa6e6}}
 :root[data-theme="dark"] .wtr{--wfill:#2f6fa8;--wline:#5aa6e6}
+/* Homepage map */
+.atlas-intro{padding-top:10px}
+.atlas-eyebrow{margin:0 0 8px;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+.atlas-intro h1{font-size:clamp(30px,7vw,52px);letter-spacing:-.035em}
+.atlas-intro .lede{margin-top:12px}
+.atlas-map{border-radius:22px;box-shadow:0 12px 28px rgb(24 49 45 / 7%)}
+.atlas-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;padding:15px 18px;border-bottom:1px solid var(--line)}
+.atlas-head h2{margin:0;font-size:15px}
+.atlas-head .metbar{margin:0}
+.atlas-head .metbar>span{display:none}
+.atlas-head .seg{border:0;background:var(--soft);padding:3px;gap:2px;flex-wrap:wrap;overflow:visible}
+.atlas-head .seg button{border-radius:7px;padding:6px 10px;font-size:13px}
+.atlas-head .seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 4px rgb(24 49 45 / 14%)}
+.atlas-layout{display:grid;grid-template-columns:minmax(0,1fr) 198px}
+.atlas-canvas{min-width:0;padding:12px;background:radial-gradient(ellipse at 50% 45%,var(--surface) 25%,var(--soft) 135%)}
+.atlas-canvas svg{max-height:560px}
+.atlas-canvas path.d{stroke-width:.85;stroke-linejoin:round}
+.atlas-canvas path.d:hover,.atlas-canvas path.d:focus-visible{stroke:var(--fg);stroke-width:2.3;outline:none}
+.atlas-canvas .rd{opacity:.24}
+.atlas-canvas .lbl.okr{font-family:var(--body);font-size:13px;stroke-width:2.3px;opacity:.92}
+.atlas-map .legend{display:block;padding:22px 16px;border-top:0;border-left:1px solid var(--line)}
+.atlas-key-heading{font-weight:700;color:var(--fg);line-height:1.35;margin:0 0 13px}
+.atlas-key{display:grid;gap:9px;list-style:none;padding:0;margin:0}
+.atlas-key li{display:flex;align-items:center;gap:8px;line-height:1.3}
+.atlas-map .atlas-key i{width:15px;height:11px;border-radius:3px;flex:none;border:1px solid rgb(30 54 52 / 12%)}
+.atlas-tip{padding-top:12px;margin:15px 0 0;border-top:1px solid var(--line);line-height:1.4}
+@media(max-width:620px){
+  .atlas-map{border-radius:16px}
+  .atlas-head{padding:12px}
+  .atlas-head .metbar{width:100%}
+  .atlas-head .seg{display:grid;width:100%;box-sizing:border-box;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .atlas-head .seg button{min-height:34px}
+  .atlas-layout{grid-template-columns:minmax(0,1fr)}
+  .atlas-canvas{padding:6px}
+  .atlas-map .legend{padding:14px 12px;border-left:0;border-top:1px solid var(--line)}
+  .atlas-key{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 14px}
+  .atlas-tip{padding-top:9px;margin-top:11px}
+}
+
+
 </style>
 </head>
 <body>
@@ -257,13 +297,17 @@ function roadLegend(detail){return detail?`<span>${sw(1,6,2.4)}Магистра�
 function home(){
   document.title="Районы Москвы";
   app.innerHTML=`
-  <header><h1>Районы Москвы</h1>
-  <p class="lede">У каждого из 125 районов своя страница: цена квадратного метра, экология с разбором источников загрязнения, метро и время до центра, школы, детские сады и поликлиники на жителей, место среди всех районов. Выберите район на карте или в списке.</p></header>
+  <header class="atlas-intro"><p class="atlas-eyebrow">Городской атлас</p><h1>Районы Москвы</h1>
+  <p class="lede">Сравните 125 районов по ценам на жильё, экологии, транспорту и социальным объектам.</p></header>
 
+  <section class="map atlas-map" aria-label="Интерактивная карта Москвы">
+    <div class="atlas-head"><h2>Карта районов</h2><div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="eco" aria-pressed="false">Экология</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button></div></div></div>
+    <div class="atlas-layout"><div class="atlas-canvas"><svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы"></svg></div><div class="legend" id="lg"></div></div>
+  </section>
   <section class="okrs"><div class="okhd"><h2>Округа</h2><div class="seg" role="group" aria-label="Как усреднять"><button type="button" data-w="pop" aria-pressed="true">По жителям</button><button type="button" data-w="area" aria-pressed="false">По площади</button></div></div>
-  <div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="eco" aria-pressed="false">Экология</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button></div></div><p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
+  <p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
   <section class="filt" id="flt" aria-label="Фильтр районов"></section>
-  <section class="map"><svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы"></svg><div class="legend" id="lg"></div></section>
+
   <section><h2>Все районы</h2>
   <p class="small" id="lexp" style="margin:0 0 10px"></p>
   <div class="sortbar"><span>Сортировка:</span><div class="seg" role="group" aria-label="Сортировка списка"><button type="button" data-s="okr" aria-pressed="true">По округам</button><button type="button" data-s="val" aria-pressed="false">По показателю<span class="ar"></span></button></div><span id="sorthint"></span></div>
@@ -288,7 +332,7 @@ function home(){
   const order=["ЦАО","САО","СВАО","ВАО","ЮВАО","ЮАО","ЮЗАО","ЗАО","СЗАО","ЗелАО","НАО","ТАО"];
   const lum=c=>{const x=d3.color(c);if(!x)return 1;const t=x.rgb();const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(t.r)+.7152*f(t.g)+.0722*f(t.b)};
 const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${fmt(v)}</span>`};
-  const HBINS=[[0,370000,"до 370 тыс. ₽","#f3e7c9"],[370000,410000,"370–410 тыс. ₽","#e6c58c"],[410000,460000,"410–460 тыс. ₽","#d49a5d"],[460000,530000,"460–530 тыс. ₽","#b5693f"],[530000,1000000000,"от 530 тыс. ₽","#7c3a2a"]];
+  const HBINS=[[0,370000,"до 370 тыс. ₽","#d8efeb"],[370000,410000,"370–410 тыс. ₽","#9bd5cc"],[410000,460000,"410–460 тыс. ₽","#58afa9"],[460000,530000,"460–530 тыс. ₽","#287d83"],[530000,1000000000,"от 530 тыс. ₽","#184953"]];
   const TBINS=[[0,3,"1–3 метро далеко","var(--s1)"],[3,4.5,"3–4,5","var(--s2)"],[4.5,6,"4,5–6","var(--s3)"],[6,7.5,"6–7,5","var(--s4)"],[7.5,11,"7,5–10 метро рядом","var(--s5)"]];
   const binc=B=>v=>{if(v==null)return "var(--nodata)";for(const b of B)if(v<b[1])return b[3];return B[B.length-1][3]};
   const hcol=binc(HBINS),tcol=binc(TBINS);
@@ -344,7 +388,7 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   const MNAME={eco:"Экологический балл",soc:"Балл соцобъектов",hp:"Цена квадратного метра",tr:"Транспортный балл"};
   const paintMap=()=>{const B=MBINS[met];const c=met==="hp"?hcol:MET[met].c;
     sel.attr("style",null).transition().duration(350).style("fill",d=>{const v=c(mv(d));return v.startsWith("var(")?getComputedStyle(document.documentElement).getPropertyValue(v.slice(4,-1)).trim()||"#ccc":v});
-    document.getElementById("lg").innerHTML=`<span style="font-weight:600;color:var(--fg)">${MNAME[met]}:</span>`+B.map(b=>`<span><i style="display:inline-block;width:14px;height:10px;border-radius:3px;background:${b[3]};margin-right:5px"></i>${b[2]}</span>`).join("")+`<span><svg width="22" height="14" viewBox="0 0 22 14"><rect x="1" y="3" width="20" height="8" rx="3" style="fill:#8ec5ef;stroke:#3f8fd2"/></svg>Реки и пруды</span><span>Цвет меняется переключателем «Показатель» выше. Нажмите на район, чтобы открыть его страницу.</span>`};
+    document.getElementById("lg").innerHTML=`<p class="atlas-key-heading">${MNAME[met]}</p><ul class="atlas-key">${B.map(b=>`<li><i style="background:${b[3]}"></i>${b[2]}</li>`).join("")}<li><i style="background:var(--nodata)"></i>Нет данных</li></ul><p class="atlas-tip">Выберите район на карте, чтобы открыть его карточку.</p>`;};
   paintMap();
   makeFilter(document.getElementById("flt"),[
     {label:"Цена квадратного метра",hint:"вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
