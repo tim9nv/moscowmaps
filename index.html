@@ -154,11 +154,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070837"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070837" aria-current="page">Районы</a><a href="ecology.html?v=202611070837">Экология</a><a href="social.html?v=202611070837">Соцобъекты</a><a href="climate.html?v=202611070837">Рельеф и климат</a><a href="parks.html?v=202611070837">Парки</a><a href="new-moscow.html?v=202611070837">Новая Москва</a></nav></div></header>
-
-
-
-
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070846"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070846" aria-current="page">Районы</a><a href="ecology.html?v=202611070846">Экология</a><a href="social.html?v=202611070846">Соцобъекты</a><a href="climate.html?v=202611070846">Рельеф и климат</a><a href="parks.html?v=202611070846">Парки</a><a href="new-moscow.html?v=202611070846">Новая Москва</a></nav></div></header>
 
 
 
@@ -279,7 +275,8 @@ function home(){
     ov.append("text").attr("class","lbl okr").attr("x",c[0]).attr("y",c[1]).attr("text-anchor","middle").text(o)});
   document.getElementById("lg").innerHTML=`<span><svg width="22" height="14" viewBox="0 0 22 14"><rect x="1" y="3" width="20" height="8" rx="3" style="fill:#8ec5ef;stroke:#3f8fd2"/></svg>Реки и пруды</span>`+roadLegend(false)+`<span>Цвет — административный округ. Нажмите на район, чтобы открыть его страницу.</span>`;
   const order=["ЦАО","САО","СВАО","ВАО","ЮВАО","ЮАО","ЮЗАО","ЗАО","СЗАО","ЗелАО","НАО","ТАО"];
-  const pill=(v,c)=>`<span class="pill" style="background:${c(v)};color:${v==null?"var(--muted)":"#1c1e1b"}">${fmt(v)}</span>`;
+  const lum=c=>{const x=d3.color(c);if(!x)return 1;const t=x.rgb();const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(t.r)+.7152*f(t.g)+.0722*f(t.b)};
+const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${fmt(v)}</span>`};
   let fOk=()=>true, lastQ="", okW="pop", okSel=null;
   let sortBy="okr", best=true;
   const renderList=q=>{q=(q||"").trim().toLowerCase().replace("ё","е");lastQ=q;
@@ -474,7 +471,10 @@ function district(f){
   window.scrollTo(0,0);
 }
 
-function route(){const h=decodeURIComponent(location.hash.slice(1));const f=BY[h];if(f)district(f);else home()}
+let onHome=false,homeY=0;
+function route(){const h=decodeURIComponent(location.hash.slice(1));const f=BY[h];
+  if(f){if(onHome)homeY=window.scrollY;onHome=false;district(f)}
+  else{const back=!onHome&&homeY>0;home();onHome=true;if(back)requestAnimationFrame(()=>window.scrollTo(0,homeY))}}
 window.addEventListener("hashchange",route);
 route();
 </script>

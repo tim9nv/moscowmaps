@@ -113,11 +113,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070837"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070837">Районы</a><a href="ecology.html?v=202611070837">Экология</a><a href="social.html?v=202611070837">Соцобъекты</a><a href="climate.html?v=202611070837" aria-current="page">Рельеф и климат</a><a href="parks.html?v=202611070837">Парки</a><a href="new-moscow.html?v=202611070837">Новая Москва</a></nav></div></header>
-
-
-
-
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070846"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070846">Районы</a><a href="ecology.html?v=202611070846">Экология</a><a href="social.html?v=202611070846">Соцобъекты</a><a href="climate.html?v=202611070846" aria-current="page">Рельеф и климат</a><a href="parks.html?v=202611070846">Парки</a><a href="new-moscow.html?v=202611070846">Новая Москва</a></nav></div></header>
 
 
 
@@ -278,9 +274,10 @@ function buildFilter(){
   const vals=F.map(f=>ST[f.properties.n]).filter(s=>s&&s[m.k]!=null).map(s=>s[m.k]).sort((a,b)=>a-b);
   const q=[0,.2,.4,.6,.8,1].map(t=>d3.quantileSorted(vals,t));
   const r=v=>+(+v).toFixed(dg);
-  const bins=[0,1,2,3,4].map(i=>{const lo=r(q[i]),hi=r(q[i+1]);const c=mode==="relief"?elev((lo+hi)/2):m.sc((lo+hi)/2);return [i?lo:-1e9,i<4?hi:1e9,`${fmt(lo,dg)}…${fmt(hi,dg)}${u}`,c]});
+  const e=[...new Set(q.map(r))],n=e.length-1;
+  const bins=e.slice(0,-1).map((lo,i)=>{const hi=e[i+1];const c=mode==="relief"?elev((lo+hi)/2):m.sc((lo+hi)/2);return [i?lo:-1e9,i<n-1?hi:1e9,`${fmt(lo,dg)}…${fmt(hi,dg)}${u}`,c]});
   fAny=false;fOk=()=>true;
-  makeFilter(document.getElementById("flt"),[{label:"Фильтр: "+document.querySelector(`.seg button[data-m="${mode}"]`).textContent.toLowerCase(),hint:"пять групп по 20 % районов, можно выбрать несколько",bins,get:f=>{const s=ST[f.properties.n];return s?s[m.k]:null}}],
+  makeFilter(document.getElementById("flt"),[{label:"Фильтр: "+document.querySelector(`.seg button[data-m="${mode}"]`).textContent.toLowerCase(),hint:"группы примерно по равному числу районов, можно выбрать несколько",bins,get:f=>{const s=ST[f.properties.n];return s?s[m.k]:null}}],
     (ok,any,setN)=>{fOk=ok;fAny=any;paint(true);setN(F.filter(ok).length)});
 }
 d3.selectAll(".seg button").on("click",function(){mode=this.dataset.m;buildFilter();paint()});
