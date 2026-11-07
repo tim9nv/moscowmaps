@@ -343,7 +343,7 @@ RATINGS = [
 ]
 def col_val(c, f, pre):
     p = P(f); g = GREEN.get(p['n']) or {}
-    if c == 'price': return ('Цена м²', f'{round(p["hp"]/1000)} тыс. ₽' if p.get('hp') else '—')
+    if c == 'price': return ('Цена м²', f'{round(p["hp"]/1000)}&nbsp;тыс.&nbsp;₽' if p.get('hp') else '—')
     if c == 'eco': return ('Экология', fmt(p['i']))
     if c == 'tr': return ('До центра', f'{p["tr"]["tmed"]} мин' if p.get('tr') else '—')
     if c == 'src': return ('Источники рядом', E(', '.join(x[1] for x in (p.get('s') or [])[:2])) or '—')

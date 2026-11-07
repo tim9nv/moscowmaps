@@ -232,7 +232,7 @@ function stat(label,count,per,per10){return `<div class="stat"><div class="l">${
 function show(name){
   const f=F.find(x=>x.properties.n===name); if(!f)return;
   const p=f.properties;
-  sel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();{const pn=sel.node()&&sel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}
+  sel.classed("sel",d=>d.properties.n===name);if(window._shownDist!==name){window._shownDist=name;sel.filter(d=>d.properties.n===name).raise();{const pn=sel.node()&&sel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}}
   const c=document.getElementById("card");
   if(p.score==null){c.innerHTML=`<div class="score">—</div><div class="cname">${p.n} <span class="csub">· ${p.o}</span></div><div class="csub">Для Новой Москвы в источнике нет данных по объектам</div>`;return}
   c.innerHTML=`<div class="score" style="color:${p.score<4.5?"var(--bad)":"var(--fg)"}">${fmt(p.score)}</div>

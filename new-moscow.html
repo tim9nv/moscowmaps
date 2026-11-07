@@ -260,7 +260,7 @@ function show(n){
    <p class="note">${relTxt} ${nearTxt}</p>`;
 }
 const order=[...ST].sort((a,b)=>(a.eco??99)-(b.eco??99)||a.n.localeCompare(b.n,"ru"));
-document.getElementById("tb").innerHTML=order.map(s=>`<tr data-n="${s.n}"><td>${s.n}</td><td>${s.o}</td><td><span class="pill" style="background:${ecol(s.eco)}">${s.eco??"—"}</span></td><td class="n">${s.h!=null?s.h+" м":"—"}</td></tr>`).join("");
+document.getElementById("tb").innerHTML=order.map(s=>`<tr data-n="${s.n}"><td>${s.n}</td><td>${s.o}</td><td><span class="pill" style="background:${ecol(s.eco)}${String(ecol(s.eco)).includes("e3")||String(ecol(s.eco)).toLowerCase()==="#c9a43e"?";color:#1c1e1b":""}">${s.eco??"—"}</span></td><td class="n">${s.h!=null?s.h+" м":"—"}</td></tr>`).join("");
 document.querySelectorAll("tr[data-n]").forEach(tr=>tr.onclick=()=>{show(tr.dataset.n);document.getElementById("nm").scrollIntoView({behavior:"smooth",block:"center"})});
 show("Сосенское");
 </script>

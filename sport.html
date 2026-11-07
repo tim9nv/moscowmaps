@@ -242,7 +242,7 @@ function stat(label,count,per,per10,sub){return `<div class="stat"><div class="l
 function show(name){
   const f=F.find(x=>x.properties.n===name); if(!f)return;
   const p=f.properties;
-  sel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();{const pn=sel.node()&&sel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}
+  sel.classed("sel",d=>d.properties.n===name);if(window._shownDist!==name){window._shownDist=name;sel.filter(d=>d.properties.n===name).raise();{const pn=sel.node()&&sel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}}
   const c=document.getElementById("card");
   const parts=[p.club&&`спорткомплексы ${p.club}`,p.fit&&`фитнес ${p.fit}`,p.ice&&`катки ${p.ice}`,p.stad&&`стадионы ${p.stad}`].filter(Boolean).join(" · ");
   c.innerHTML=`<div class="score" style="color:${p.score<BINS[0][1]?"var(--bad)":"var(--fg)"}">${fmt(p.score)}</div>

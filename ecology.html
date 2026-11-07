@@ -109,7 +109,7 @@ ol li .r{color:var(--muted);font-variant-numeric:tabular-nums}
 .fft:empty{display:none}
 .freset{font:inherit;font-size:13px;border:0;background:none;color:var(--fg);text-decoration:underline;cursor:pointer;padding:0}
 path.dim{fill-opacity:.12!important;opacity:.5}
-.golink{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:10px;background:var(--fg);color:var(--bg)!important;text-decoration:none;font-size:14px;font-weight:500}
+.golink{grid-column:2;justify-self:start;display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:10px;background:var(--fg);color:var(--bg)!important;text-decoration:none;font-size:14px;font-weight:500}
 .golink:hover{opacity:.88}
 .golink:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
 .wtr .wp{fill:var(--wfill,#8ec5ef);stroke:var(--wline,#3f8fd2);stroke-width:.5}
@@ -300,7 +300,7 @@ draw("whole",DATA,400,420,8,false);
 function show(name){
   const f=F.find(x=>x.properties.n===name); if(!f)return;
   const p=f.properties;
-  mainSel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();{const pn=mainSel.node()&&mainSel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}
+  mainSel.classed("sel",d=>d.properties.n===name);if(window._shownDist!==name){window._shownDist=name;mainSel.filter(d=>d.properties.n===name).raise();{const pn=mainSel.node()&&mainSel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}}
   const rv=p.w>=9?". Берег Москвы-реки ниже выпуска Курьяновских очистных.":p.w>=7?". Берег Москвы-реки ниже центра.":"";
   const note=(p.t?p.t:(p.b>=5?"Округ с частыми превышениями ПДК по данным Мосэкомониторинга":"Отдельных очагов по замерам не отмечено"))+rv;
   document.getElementById("card").innerHTML=
