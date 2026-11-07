@@ -115,7 +115,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 :root[data-theme="dark"] .wtr{--wfill:#2f6fa8;--wline:#5aa6e6}
 </style>
 <style>
-.section-tabs{display:flex;gap:8px;max-width:860px;margin:18px auto 0;padding:0 16px;box-sizing:border-box}
+.section-tabs{display:flex;gap:8px;max-width:860px;margin:18px auto 0;padding:0 max(16px,env(safe-area-inset-left,0px));box-sizing:content-box}
 .section-tabs a{padding:9px 16px;border:1px solid var(--line);border-radius:10px;color:var(--fg);text-decoration:none;background:var(--surface)}
 .section-tabs a[aria-current="page"]{background:var(--fg);color:var(--bg)}
 .section-tabs a:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
