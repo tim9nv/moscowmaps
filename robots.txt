@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Host: https://www.mskatlas.ru
+Sitemap: https://www.mskatlas.ru/sitemap.xml
