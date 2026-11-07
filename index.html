@@ -159,7 +159,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071221"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071221" aria-current="page">Районы</a><a href="ecology.html?v=202611071221">Экология</a><a href="social.html?v=202611071221">Соцобъекты</a><a href="housing.html?v=202611071221">Жильё</a><a href="transport.html?v=202611071221">Транспорт</a><a href="climate.html?v=202611071221">Климат</a><a href="parks.html?v=202611071221">Парки</a><a href="new-moscow.html?v=202611071221" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071224"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071224" aria-current="page">Районы</a><a href="housing.html?v=202611071224">Жильё</a><a href="transport.html?v=202611071224">Транспорт</a><a href="social.html?v=202611071224">Соцобъекты</a><a href="ecology.html?v=202611071224">Экология</a><a href="parks.html?v=202611071224">Парки</a><a href="climate.html?v=202611071224">Климат</a><a href="new-moscow.html?v=202611071224" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -252,10 +252,10 @@ function home(){
   document.title="Районы Москвы";
   app.innerHTML=`
   <header><h1>Районы Москвы</h1>
-  <p class="lede">У каждого из 125 районов своя страница: схема района с источниками загрязнения вокруг, экологический балл с разбором, школы, детские сады и поликлиники на жителей, цена метра и транспорт, место среди всех районов. Выберите район на карте или в списке.</p></header>
+  <p class="lede">У каждого из 125 районов своя страница: цена квадратного метра, метро и время до центра, школы, детские сады и поликлиники на жителей, экология с разбором источников загрязнения, место среди всех районов. Выберите район на карте или в списке.</p></header>
 
   <section class="okrs"><div class="okhd"><h2>Округа</h2><div class="seg" role="group" aria-label="Как усреднять"><button type="button" data-w="pop" aria-pressed="true">По жителям</button><button type="button" data-w="area" aria-pressed="false">По площади</button></div></div>
-  <div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="eco" aria-pressed="true">Экология</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button><button type="button" data-m="hp" aria-pressed="false">Цена</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button></div></div><p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
+  <div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button><button type="button" data-m="eco" aria-pressed="false">Экология</button></div></div><p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
   <section class="filt" id="flt" aria-label="Фильтр районов"></section>
   <section class="map"><svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы"></svg><div class="legend" id="lg"></div></section>
   <section><h2>Все районы</h2>
@@ -289,7 +289,7 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   F.forEach(f=>{f.properties.ts=f.properties.tr?f.properties.tr.score:null});
   const ppill=(v,on)=>{const b=hcol(v);return `<span class="pill${on?" on":""}" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${v==null?"—":Math.round(v/1000)}</span>`};
   const P4=(f,k)=>pill(f.properties.i,ecol).replace('class="pill"',k==="eco"?'class="pill on"':'class="pill"')+pill(f.properties.score,scol).replace('class="pill"',k==="soc"?'class="pill on"':'class="pill"')+ppill(f.properties.hp,k==="hp")+pill(f.properties.ts,tcol).replace('class="pill"',k==="tr"?'class="pill on"':'class="pill"');
-  let met="eco";
+  let met="hp";
   const MET={eco:{k:"i",c:ecol,low:true,t:"экологический балл: 1 чисто, 10 грязно",best:"от самого чистого"},
     soc:{k:"score",c:scol,low:false,t:"балл соцобъектов: школы, сады и поликлиники на жителя, 1 не хватает, 10 хватает",best:"от лучше всех обеспеченного"},
     hp:{k:"hp",c:hcol,low:true,t:"цена метра на вторичке в тысячах рублей (Циан, ноябрь 2026)",best:"от самого дешёвого"},
@@ -335,10 +335,10 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   const EBINS=[[0,3,"1–3 чисто","var(--e1)"],[3,4.5,"3–4,5","var(--e2)"],[4.5,6,"4,5–6","var(--e3)"],[6,7.5,"6–7,5","var(--e4)"],[7.5,11,"7,5–10 грязно","var(--e5)"]];
   const SBINS=[[0,3,"1–3 не хватает","var(--s1)"],[3,4.5,"3–4,5","var(--s2)"],[4.5,6,"4,5–6","var(--s3)"],[6,7.5,"6–7,5","var(--s4)"],[7.5,11,"7,5–10 хватает","var(--s5)"]];
   makeFilter(document.getElementById("flt"),[
-    {label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i},
-    {label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score},
     {label:"Цена метра",hint:"тыс. ₽ за м², вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
-    {label:"Транспортный балл",hint:"метро, МЦК и МЦД рядом и время до центра: 1 далеко, 10 всё рядом",bins:TBINS,get:f=>f.properties.ts}],
+    {label:"Транспортный балл",hint:"метро, МЦК и МЦД рядом и время до центра: 1 далеко, 10 всё рядом",bins:TBINS,get:f=>f.properties.ts},
+    {label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score},
+    {label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i}],
     (ok,any,setN)=>{fOk=any?ok:()=>true;sel.classed("dim",f=>any&&!ok(f));renderList(lastQ);setN(F.filter(ok).length)});
 }
 
@@ -356,19 +356,19 @@ function district(f){
   <a class="back" href="#">← Все районы</a>
   <header><div class="eyebrow">${p.o}${p.pop?` · ${num(p.pop)} жителей · ${num(p.dens)} чел/км² · ${String(p.area).replace(".",",")} км²`:""}</div>
   <h1>${p.n}</h1>${p.hist?`<p class="hist">${p.hist}</p>`:""}</header>
-  <section class="scores">
-    <div class="tile"><div class="eyebrow">Экологическая нагрузка</div><div class="big" style="color:${p.i>=6?"var(--warn)":"var(--fg)"}">${fmt(p.i)}</div><div class="rk">${er}-е место по чистоте из ${F.length}</div><div class="bar"><i style="width:${p.i*10}%;background:${ecol(p.i)}"></i></div></div>
-    <div class="tile"><div class="eyebrow">Обеспеченность соцобъектами</div><div class="big" style="color:${p.score!=null&&p.score<4.5?"var(--warn)":"var(--fg)"}">${fmt(p.score)}</div><div class="rk">${p.score!=null?`${sr}-е место из ${socF.length}`:"для Новой Москвы нет данных"}</div><div class="bar"><i style="width:${(p.score||0)*10}%;background:${scol(p.score)}"></i></div></div>
-  </section>
-  <section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Схема района ${p.n} и объектов вокруг"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>
-  <section><h2>Из чего складывается экологический балл</h2><div class="facts">${factors.join("")}</div>${p.t?`<p class="small" style="margin-top:10px">${p.t}</p>`:""}</section>
-  ${p.score!=null?`<section><h2>Образование и здравоохранение</h2><div class="stats">${stat(socIcon("school","#1f5f8b")+"Школы (здания)",p.school,p.school_per,p.school_10k)}${stat(socIcon("kinder","#c97a1a")+"Детские сады",p.kinder,p.kinder_per,p.kinder_10k)}${stat(socIcon("clinic","#c0392b")+"Поликлиники и больницы",p.clinic,p.clinic_per,p.clinic_10k)}</div><p class="small" style="margin-top:10px">Образование ${fmt(p.edu)} из 10 · здравоохранение ${fmt(p.med)} из 10. Школа считается по зданиям: у одной школы-комплекса их бывает несколько.</p></section>`:""}
   ${p.hp||p.tr?`<section><h2>Жильё и транспорт</h2><div class="stats">
     ${p.hp?`<div class="stat"><div class="l">Цена метра</div><div class="v">${Math.round(p.hp/1000)} тыс. ₽</div><div class="s">${p.hrk}-е место по цене из 125 · двушка 54 м² ≈ ${(p.hp*54/1e6).toFixed(1).replace(".",",")} млн ₽</div></div>`:""}
     ${p.tr?`<div class="stat"><div class="l">Транспортный балл</div><div class="v">${fmt(p.tr.score)}</div><div class="s">из 10 · рядом со станцией ${p.tr.cov} % территории</div></div>
     <div class="stat"><div class="l">До центра</div><div class="v">${p.tr.tmed} мин</div><div class="s">до станций у Кремля · до своей станции ${p.tr.walk} мин</div></div>`:""}</div>
     ${p.tr?`<p class="small" style="margin-top:10px">${p.tr.st.length?"Станции в районе: "+p.tr.st.map(s=>s[0]+" ("+(s[1]==="metro"?s[2].join(", "):s[1]==="mcc"?"МЦК":s[2].join(", "))+")").join("; ")+".":"Внутри района нет станций метро, МЦК и МЦД."}</p>`:""}
     ${p.hp?`<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, ${num(p.hcnt)} объявлений в районе). Новостройки от застройщиков не входят.</p>`:""}</section>`:""}
+  <section class="scores">
+    <div class="tile"><div class="eyebrow">Обеспеченность соцобъектами</div><div class="big" style="color:${p.score!=null&&p.score<4.5?"var(--warn)":"var(--fg)"}">${fmt(p.score)}</div><div class="rk">${p.score!=null?`${sr}-е место из ${socF.length}`:"для Новой Москвы нет данных"}</div><div class="bar"><i style="width:${(p.score||0)*10}%;background:${scol(p.score)}"></i></div></div>
+    <div class="tile"><div class="eyebrow">Экологическая нагрузка</div><div class="big" style="color:${p.i>=6?"var(--warn)":"var(--fg)"}">${fmt(p.i)}</div><div class="rk">${er}-е место по чистоте из ${F.length}</div><div class="bar"><i style="width:${p.i*10}%;background:${ecol(p.i)}"></i></div></div>
+  </section>
+  <section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Схема района ${p.n} и объектов вокруг"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>
+  <section><h2>Из чего складывается экологический балл</h2><div class="facts">${factors.join("")}</div>${p.t?`<p class="small" style="margin-top:10px">${p.t}</p>`:""}</section>
+  ${p.score!=null?`<section><h2>Образование и здравоохранение</h2><div class="stats">${stat(socIcon("school","#1f5f8b")+"Школы (здания)",p.school,p.school_per,p.school_10k)}${stat(socIcon("kinder","#c97a1a")+"Детские сады",p.kinder,p.kinder_per,p.kinder_10k)}${stat(socIcon("clinic","#c0392b")+"Поликлиники и больницы",p.clinic,p.clinic_per,p.clinic_10k)}</div><p class="small" style="margin-top:10px">Образование ${fmt(p.edu)} из 10 · здравоохранение ${fmt(p.med)} из 10. Школа считается по зданиям: у одной школы-комплекса их бывает несколько.</p></section>`:""}
   ${p.cl?`<section><h2>Рельеф и микроклимат</h2><div class="stats">
     <div class="stat"><div class="l">Средняя высота</div><div class="v">${Math.round(p.cl.h)} м</div><div class="s">${p.cl.rel>=0?"+":""}${Math.round(p.cl.rel)} м к середине города · перепад ${Math.round(p.cl.rng)} м</div></div>
     ${p.cl.uhi!=null?`<div class="stat"><div class="l">Теплее за год</div><div class="v">+${fmt(p.cl.uhi)} °C</div><div class="s">к Подмосковью · морозной ночью до +${fmt(p.cl.night)} °C</div></div>
