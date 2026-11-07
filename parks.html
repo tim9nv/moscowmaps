@@ -7,11 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&display=swap">
 <style>:root{padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}
 .topbar{position:sticky;top:0;z-index:20;background:var(--nav-bg);border-bottom:1px solid var(--nav-line);padding-top:env(safe-area-inset-top,0px)}
-.topbar .in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.topbar .in{max-width:860px;margin:0 auto;display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
 .topbar .brand{font:700 15px/1.1 "Unbounded","Golos Text",system-ui,sans-serif;color:var(--nav-fg);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px}
 .topbar .brand i{width:22px;height:22px;border-radius:6px;background:var(--nav-accent);display:inline-block;position:relative}
 .topbar .brand i:after{content:"";position:absolute;inset:5px;border:2px solid var(--nav-bg);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
-.topbar .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.topbar .tabs{display:flex;gap:2px;overflow-x:auto;margin-left:-11px;scrollbar-width:none;min-width:0;flex:1}
 .topbar .tabs::-webkit-scrollbar{display:none}
 .topbar .tabs a{font:500 14px/1 "Golos Text",system-ui,sans-serif;color:var(--nav-muted);text-decoration:none;padding:9px 11px;border-radius:999px;white-space:nowrap;transition:background .15s,color .15s}
 .topbar .tabs a:hover{background:var(--nav-hover);color:var(--nav-fg)}
@@ -116,7 +116,10 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070847"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070847">Районы</a><a href="ecology.html?v=202611070847">Экология</a><a href="social.html?v=202611070847">Соцобъекты</a><a href="climate.html?v=202611070847">Климат</a><a href="parks.html?v=202611070847" aria-current="page">Парки</a><a href="new-moscow.html?v=202611070847" class="nm">Новая Москва</a></nav></div></header>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611070854"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611070854">Районы</a><a href="ecology.html?v=202611070854">Экология</a><a href="social.html?v=202611070854">Соцобъекты</a><a href="housing.html?v=202611070854">Жильё</a><a href="transport.html?v=202611070854">Транспорт</a><a href="climate.html?v=202611070854">Климат</a><a href="parks.html?v=202611070854" aria-current="page">Парки</a><a href="new-moscow.html?v=202611070854" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
+
+
+
 
 
 
