@@ -333,7 +333,15 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
     const rows=OKS.map(o=>{const fs=F.filter(f=>f.properties.o===o);return {o,e:wavg(fs,"i",okW),s:wavg(fs,"score",okW),h:wavg(fs,"hp",okW),t:wavg(fs,"ts",okW),pop:d3.sum(fs,f=>f.properties.pop||0),area:d3.sum(fs,f=>f.properties.area||0),n:fs.length}}).filter(r=>r.n);
     rows.forEach(r=>r.v=wavg(F.filter(f=>f.properties.o===r.o),MET[met].k,okW));rows.sort((a,b)=>MET[met].low?a.v-b.v:b.v-a.v);
     document.getElementById("okg").innerHTML=rows.map(r=>`<button type="button" class="okc" data-o="${r.o}" aria-pressed="${okSel===r.o}"><b>${r.o}</b>${mpill(r.v)}<span class="m">${r.n} р-нов · ${num(r.pop/1000)} тыс. жит. · ${fmt(r.area)} км²</span></button>`).join("");
-    document.querySelectorAll(".okc").forEach(b=>b.onclick=()=>{okSel=okSel===b.dataset.o?null:b.dataset.o;renderOk();renderList(lastQ);document.getElementById("dl").scrollIntoView({behavior:"smooth",block:"start"})});
+    document.querySelectorAll(".okc").forEach(b=>b.onclick=()=>{
+      okSel=okSel===b.dataset.o?null:b.dataset.o;
+      renderOk();
+      renderList(lastQ);
+      const list=document.getElementById("dl");
+      const header=document.querySelector(".topbar");
+      list.style.scrollMarginTop=(header.getBoundingClientRect().height+8)+"px";
+      list.scrollIntoView({behavior:"smooth",block:"start"});
+    });
   };
   document.querySelectorAll(".okhd .seg button").forEach(b=>b.onclick=()=>{okW=b.dataset.w;renderOk()});
   renderOk();
