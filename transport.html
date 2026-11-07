@@ -115,15 +115,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071224"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071224">Районы</a><a href="housing.html?v=202611071224">Жильё</a><a href="transport.html?v=202611071224" aria-current="page">Транспорт</a><a href="social.html?v=202611071224">Соцобъекты</a><a href="ecology.html?v=202611071224">Экология</a><a href="parks.html?v=202611071224">Парки</a><a href="climate.html?v=202611071224">Климат</a><a href="new-moscow.html?v=202611071224" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
-
-
-
-
-
-
-
-
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071233"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071233">Районы</a><a href="housing.html?v=202611071233">Жильё</a><a href="transport.html?v=202611071233" aria-current="page">Транспорт</a><a href="social.html?v=202611071233">Соцобъекты</a><a href="ecology.html?v=202611071233">Экология</a><a href="parks.html?v=202611071233">Парки</a><a href="climate.html?v=202611071233">Климат</a><a href="new-moscow.html?v=202611071233" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -205,7 +197,7 @@ const val=f=>f.properties.v;
 const BINS=CFG.bins; // [lo,hi,label,color]
 const cls=v=>{for(let k=0;k<BINS.length;k++){if(v<BINS[k][1])return k}return BINS.length-1};
 const col=v=>v==null?"var(--nodata)":BINS[cls(v)][3];
-const fmt=CFG.fmt==="rub"?(v=>Math.round(v/1000).toLocaleString("ru-RU")+" тыс."):(v=>v.toFixed(1).replace(".",","));
+const fmt=CFG.fmt==="rub"?(v=>Math.round(v/1000).toLocaleString("ru-RU")+" тыс. ₽/м²"):(v=>v.toFixed(1).replace(".",","));
 const num=v=>v==null?"—":Math.round(v).toLocaleString("ru-RU");
 document.getElementById("legend").innerHTML=BINS.map(b=>`<span><i style="background:${b[3]}"></i>${b[2]}</span>`).join("")+`<span><i style="background:var(--nodata)"></i>нет данных</span>`+(CFG.kind==="tr"?`<span><svg width="22" height="10"><line x1="1" y1="5" x2="21" y2="5" stroke="#d6083b" stroke-width="2.2"/><circle cx="11" cy="5" r="3" fill="#d6083b" stroke="#fff"/></svg>линии и станции</span>`:"");
 const svg=d3.select("#main");

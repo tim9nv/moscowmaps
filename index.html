@@ -159,7 +159,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071224"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071224" aria-current="page">Районы</a><a href="housing.html?v=202611071224">Жильё</a><a href="transport.html?v=202611071224">Транспорт</a><a href="social.html?v=202611071224">Соцобъекты</a><a href="ecology.html?v=202611071224">Экология</a><a href="parks.html?v=202611071224">Парки</a><a href="climate.html?v=202611071224">Климат</a><a href="new-moscow.html?v=202611071224" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071233"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071233" aria-current="page">Районы</a><a href="housing.html?v=202611071233">Жильё</a><a href="transport.html?v=202611071233">Транспорт</a><a href="social.html?v=202611071233">Соцобъекты</a><a href="ecology.html?v=202611071233">Экология</a><a href="parks.html?v=202611071233">Парки</a><a href="climate.html?v=202611071233">Климат</a><a href="new-moscow.html?v=202611071233" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -282,17 +282,17 @@ function home(){
   const order=["ЦАО","САО","СВАО","ВАО","ЮВАО","ЮАО","ЮЗАО","ЗАО","СЗАО","ЗелАО","НАО","ТАО"];
   const lum=c=>{const x=d3.color(c);if(!x)return 1;const t=x.rgb();const f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(t.r)+.7152*f(t.g)+.0722*f(t.b)};
 const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${fmt(v)}</span>`};
-  const HBINS=[[0,380000,"до 380","#f3e7c9"],[380000,410000,"380–410","#e6c58c"],[410000,470000,"410–470","#d49a5d"],[470000,540000,"470–540","#b5693f"],[540000,1000000000,"от 540","#7c3a2a"]];
+  const HBINS=[[0,380000,"до 380 тыс. ₽","#f3e7c9"],[380000,410000,"380–410 тыс. ₽","#e6c58c"],[410000,470000,"410–470 тыс. ₽","#d49a5d"],[470000,540000,"470–540 тыс. ₽","#b5693f"],[540000,1000000000,"от 540 тыс. ₽","#7c3a2a"]];
   const TBINS=[[0,3,"1–3 далеко","var(--s1)"],[3,4.5,"3–4,5","var(--s2)"],[4.5,6,"4,5–6","var(--s3)"],[6,7.5,"6–7,5","var(--s4)"],[7.5,11,"7,5–10 рядом","var(--s5)"]];
   const binc=B=>v=>{if(v==null)return "var(--nodata)";for(const b of B)if(v<b[1])return b[3];return B[B.length-1][3]};
   const hcol=binc(HBINS),tcol=binc(TBINS);
   F.forEach(f=>{f.properties.ts=f.properties.tr?f.properties.tr.score:null});
-  const ppill=(v,on)=>{const b=hcol(v);return `<span class="pill${on?" on":""}" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${v==null?"—":Math.round(v/1000)}</span>`};
+  const ppill=(v,on)=>{const b=hcol(v);return `<span class="pill${on?" on":""}" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${v==null?"—":Math.round(v/1000)+" тыс. ₽/м²"}</span>`};
   const P4=(f,k)=>pill(f.properties.i,ecol).replace('class="pill"',k==="eco"?'class="pill on"':'class="pill"')+pill(f.properties.score,scol).replace('class="pill"',k==="soc"?'class="pill on"':'class="pill"')+ppill(f.properties.hp,k==="hp")+pill(f.properties.ts,tcol).replace('class="pill"',k==="tr"?'class="pill on"':'class="pill"');
   let met="hp";
   const MET={eco:{k:"i",c:ecol,low:true,t:"экологический балл: 1 чисто, 10 грязно",best:"от самого чистого"},
     soc:{k:"score",c:scol,low:false,t:"балл соцобъектов: школы, сады и поликлиники на жителя, 1 не хватает, 10 хватает",best:"от лучше всех обеспеченного"},
-    hp:{k:"hp",c:hcol,low:true,t:"цена метра на вторичке в тысячах рублей (Циан, ноябрь 2026)",best:"от самого дешёвого"},
+    hp:{k:"hp",c:hcol,low:true,t:"средняя цена квадратного метра квартиры на вторичке (Циан, ноябрь 2026)",best:"от самого дешёвого"},
     tr:{k:"ts",c:tcol,low:false,t:"транспортный балл: 1 метро далеко, 10 станции рядом и центр близко",best:"от самого удобного"}};
   const mv=f=>f.properties[MET[met].k];
   const mpill=(v,on)=>met==="hp"?ppill(v,on):pill(v,MET[met].c).replace('class="pill"',on?'class="pill on"':'class="pill"');
@@ -335,7 +335,7 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   const EBINS=[[0,3,"1–3 чисто","var(--e1)"],[3,4.5,"3–4,5","var(--e2)"],[4.5,6,"4,5–6","var(--e3)"],[6,7.5,"6–7,5","var(--e4)"],[7.5,11,"7,5–10 грязно","var(--e5)"]];
   const SBINS=[[0,3,"1–3 не хватает","var(--s1)"],[3,4.5,"3–4,5","var(--s2)"],[4.5,6,"4,5–6","var(--s3)"],[6,7.5,"6–7,5","var(--s4)"],[7.5,11,"7,5–10 хватает","var(--s5)"]];
   makeFilter(document.getElementById("flt"),[
-    {label:"Цена метра",hint:"тыс. ₽ за м², вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
+    {label:"Цена квадратного метра",hint:"вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
     {label:"Транспортный балл",hint:"метро, МЦК и МЦД рядом и время до центра: 1 далеко, 10 всё рядом",bins:TBINS,get:f=>f.properties.ts},
     {label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score},
     {label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i}],
