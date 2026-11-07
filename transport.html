@@ -254,7 +254,7 @@ function card(p){
 function show(name){
   const f=F.find(x=>x.properties.n===name); if(!f)return;
   const p=f.properties;
-  sel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();
+  sel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();{const pn=sel.node()&&sel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}
   const c=document.getElementById("card");
   if(p.v==null){c.innerHTML=`<div class="score">—</div><div class="cname">${p.n} <span class="csub">· ${p.o}</span></div><div class="csub">${CFG.nodata}</div>`;return}
   c.innerHTML=`<div class="score" style="font-size:${CFG.kind==="hs"?"34px":"44px"}">${fmt(p.v)}</div>

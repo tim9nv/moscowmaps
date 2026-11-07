@@ -306,7 +306,7 @@ draw("whole",DATA,400,420,8,false);
 function show(name){
   const f=F.find(x=>x.properties.n===name); if(!f)return;
   const p=f.properties;
-  mainSel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();
+  mainSel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();{const pn=mainSel.node()&&mainSel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}
   const rv=p.w>=9?". Берег Москвы-реки ниже выпуска Курьяновских очистных.":p.w>=7?". Берег Москвы-реки ниже центра.":"";
   const note=(p.t?p.t:(p.b>=5?"Округ с частыми превышениями ПДК по данным Мосэкомониторинга":"Отдельных очагов по замерам не отмечено"))+rv;
   document.getElementById("card").innerHTML=

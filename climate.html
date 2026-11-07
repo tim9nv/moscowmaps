@@ -338,7 +338,7 @@ function describe(s){
 const fxRow=(t,v)=>{const w=Math.min(50,Math.abs(v)/2*50);return `<div class="row"><span>${t}</span><span class="bar"><i style="${v>=0?`left:50%;width:${w}%;background:#e0623a`:`right:50%;width:${w}%;background:#4b8fc4`}"></i></span><b>${v>=0?"+":"−"}${fmt(Math.abs(v))}</b></div>`};
 function show(name){
   const f=F.find(x=>x.properties.n===name);const s=ST[name];
-  dsel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();
+  dsel.classed("sel",d=>d.properties.n===name).filter(d=>d.properties.n===name).raise();{const pn=dsel.node()&&dsel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}
   const c=document.getElementById("card");
   if(!s){c.innerHTML=`<div class="hd"><div class="cname">${short(name)}</div><div class="small">По этому району мало точек высот, данных нет.</div></div>`;return}
   const cl=s.uhi!=null;
