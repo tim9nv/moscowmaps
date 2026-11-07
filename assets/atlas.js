@@ -92,7 +92,7 @@ function home(){
     <div class="atlas-head"><h2>Карта районов</h2><div class="metbar"><span>Показатель:</span><div class="seg" role="group" aria-label="Показатель"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="eco" aria-pressed="false">Экология</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button></div></div></div>
     <div class="atlas-layout"><div class="atlas-canvas"><svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы"></svg></div><div class="legend" id="lg"></div></div>
   </section>
-  <section class="okrs"><div class="okhd"><h2>Округа</h2><div class="seg" role="group" aria-label="Как усреднять"><button type="button" data-w="pop" aria-pressed="true">По жителям</button><button type="button" data-w="area" aria-pressed="false">По площади</button></div></div>
+  <section class="okrs"><div class="okhd"><h2>Округа</h2></div>
   <p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
   <section class="filt" id="flt" aria-label="Фильтр районов"></section>
 
@@ -159,15 +159,13 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   const OKS=["ЦАО","САО","СВАО","ВАО","ЮВАО","ЮАО","ЮЗАО","ЗАО","СЗАО","ЗелАО"];
   const wavg=(fs,key,w)=>{let s=0,t=0;fs.forEach(f=>{const v=f.properties[key],x=w==="pop"?f.properties.pop:f.properties.area;if(v!=null&&x){s+=v*x;t+=x}});return t?s/t:null};
   const renderOk=()=>{
-    document.querySelectorAll(".okhd .seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.w===okW));
-    document.getElementById("okexp").textContent=(okW==="pop"?"Среднее по районам округа, взвешенное по числу жителей: что в среднем достаётся жителю. ":"Среднее по районам округа, взвешенное по площади. ")+"Сейчас на карточках — "+MET[met].t+". Округа идут "+MET[met].best+". Нажмите на округ, чтобы показать в списке только его районы.";
+    document.getElementById("okexp").textContent="Среднее по районам округа с учётом числа жителей: что в среднем достаётся жителю. "+"Сейчас на карточках — "+MET[met].t+". Округа идут "+MET[met].best+". Нажмите на округ, чтобы показать в списке только его районы.";
     document.querySelectorAll(".metbar button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===met));
     const rows=OKS.map(o=>{const fs=F.filter(f=>f.properties.o===o);return {o,e:wavg(fs,"i",okW),s:wavg(fs,"score",okW),h:wavg(fs,"hp",okW),t:wavg(fs,"ts",okW),pop:d3.sum(fs,f=>f.properties.pop||0),area:d3.sum(fs,f=>f.properties.area||0),n:fs.length}}).filter(r=>r.n);
     rows.forEach(r=>r.v=wavg(F.filter(f=>f.properties.o===r.o),MET[met].k,okW));rows.sort((a,b)=>MET[met].low?a.v-b.v:b.v-a.v);
     document.getElementById("okg").innerHTML=rows.map(r=>`<button type="button" class="okc" data-o="${r.o}" aria-pressed="${okSel===r.o}"><b>${r.o}</b>${mpill(r.v)}<span class="m">${r.n} р-нов · ${num(r.pop/1000)} тыс. жит. · ${fmt(r.area)} км²</span></button>`).join("");
     document.querySelectorAll(".okc").forEach(b=>b.onclick=()=>{okSel=okSel===b.dataset.o?null:b.dataset.o;renderOk();renderList(lastQ);document.getElementById("dl").scrollIntoView({behavior:"smooth",block:"start"})});
   };
-  document.querySelectorAll(".okhd .seg button").forEach(b=>b.onclick=()=>{okW=b.dataset.w;renderOk()});
   renderOk();
   document.querySelectorAll(".metbar button").forEach(b=>b.onclick=()=>{met=b.dataset.m;renderOk();paintSort();renderList(lastQ);paintMap()});
   const EBINS=[[0,3,"1–3 чисто","var(--e1)"],[3,4.5,"3–4,5","var(--e2)"],[4.5,6,"4,5–6","var(--e3)"],[6,7.5,"6–7,5","var(--e4)"],[7.5,11,"7,5–10 грязно","var(--e5)"]];
