@@ -1,0 +1,750 @@
+{
+"bogorodskoe": {
+"q": "Q2367564",
+"desc": "район в Восточном административном округе Москвы",
+"t": "Богородское (район Москвы)",
+"file": "Coat of Arms of Bogorodskoye (municipality in Moscow, 2021).png"
+},
+"veshnyaki": {
+"q": "Q1019199",
+"desc": "муниципальный округ города Москвы России",
+"t": "Вешняки (район Москвы)",
+"file": "Coat of Arms of Veshnyaki (municipality in Moscow).png"
+},
+"vostochnoe-izmaylovo": {
+"q": "Q944276",
+"desc": "муниципальный округ города Москвы России",
+"t": "Восточное Измайлово (район Москвы)",
+"file": "Coat of Arms of Vostochnoye Izmailovo (municipality in Moscow).png"
+},
+"vostochnyy": {
+"q": "Q2626858",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Восточный (район Москвы)",
+"file": "Coat of Arms of Vostochnoe (municipality in Moscow).png"
+},
+"golyanovo": {
+"q": "Q2365753",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Гольяново (район Москвы)",
+"file": "Coat of Arms of Goliyanovo (municipality in Moscow).png"
+},
+"ivanovskoe": {
+"q": "Q2367484",
+"desc": "муниципальный округ Москвы",
+"t": "Ивановское (район Москвы)",
+"file": "Coat of Arms of Ivanovskoye (municipality in Moscow).png"
+},
+"izmaylovo": {
+"q": "Q635860",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Измайлово (район Москвы)",
+"file": "Coat of Arms of Izmaylovo (municipality in Moscow).png"
+},
+"kosino-uhtomskiy": {
+"q": "Q2367534",
+"desc": "муниципальный округ города Москвы России",
+"t": "Косино-Ухтомский (район Москвы)",
+"file": "Coat of Arms of Kosino-Ukhtomsky (municipality in Moscow).png"
+},
+"novogireevo": {
+"q": "Q2366899",
+"desc": "муниципальный округ города Москвы России",
+"t": "Новогиреево (район Москвы)",
+"file": "Coat of Arms of Novogireevo (municipality in Moscow).png"
+},
+"novokosino": {
+"q": "Q2366748",
+"desc": "муниципальный округ города Москвы России",
+"t": "Новокосино (район Москвы)",
+"file": "Coat of Arms of Novokosino (municipality in Moscow).png"
+},
+"metrogorodok": {
+"q": "Q2626887",
+"desc": "муниципальный округ города Москвы России",
+"t": "Метрогородок (район Москвы)",
+"file": "Coat of Arms of Metrogorodok (municipality in Moscow).png"
+},
+"perovo": {
+"q": "Q2364993",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Перово (район Москвы)",
+"file": "Coat of Arms of Perovo (municipality in Moscow, 2020).png"
+},
+"severnoe-izmaylovo": {
+"q": "Q2366853",
+"desc": "муниципальный округ города Москвы России",
+"t": "Северное Измайлово (район Москвы)",
+"file": null
+},
+"sokolinaya-gora": {
+"q": "Q2364971",
+"desc": "муниципальный округ города Москвы России",
+"t": "Соколиная гора (район Москвы)",
+"file": "Coat of Arms of Sokolinaya Gora (municipality in Moscow).png"
+},
+"sokolniki": {
+"q": "Q1935566",
+"desc": "район в Восточном административном округе города Москвы",
+"t": "Сокольники (район Москвы)",
+"file": "Coat of Arms of Sokolniki (municipality in Moscow).png"
+},
+"preobrazhenskoe": {
+"q": "Q842239",
+"desc": "район Москвы",
+"t": "Преображенское (район Москвы)",
+"file": "Coat of Arms of Preobrazhenskoye (municipality in Moscow).png"
+},
+"vnukovo": {
+"q": "Q861805",
+"desc": "район и муниципальный округ города Москвы (Россия)",
+"t": "Внуково (район Москвы)",
+"file": "Coat of Arms of Vnukovo (municipality in Moscow).jpg"
+},
+"dorogomilovo": {
+"q": "Q2358875",
+"desc": "район города Москвы, расположенный в Западном административном округе",
+"t": "Дорогомилово (район Москвы)",
+"file": "Coat of Arms of Dorogomilovo (municipality in Moscow).png"
+},
+"krylatskoe": {
+"q": "Q474850",
+"desc": "муниципальный округ города Москвы России",
+"t": "Крылатское (район Москвы)",
+"file": "Coat of Arms of Krylatskoye (municipality in Moscow).png"
+},
+"kuntsevo": {
+"q": "Q155102",
+"desc": "муниципальный округ города Москвы России",
+"t": "Кунцево (район Москвы)",
+"file": "Shield of Kuntsevo District, Moscow.svg"
+},
+"mozhayskiy": {
+"q": "Q1963027",
+"desc": "муниципальный округ города Москвы России",
+"t": "Можайский (район Москвы)",
+"file": "Coat of Arms of Mozhaiskoe (municipality in Moscow).png"
+},
+"novo-peredelkino": {
+"q": "Q2364381",
+"desc": "муниципальный округ города Москвы России",
+"t": "Ново-Переделкино (район Москвы)",
+"file": "Coat of Arms of Novo-Peredelkino (municipality in Moscow) (1998).png"
+},
+"ochakovo-matveevskoe": {
+"q": "Q1963371",
+"desc": "муниципальный округ города Москвы России",
+"t": "Очаково-Матвеевское (район Москвы)",
+"file": "Coat of Arms of Ochakovo-Matveevskoye (municipality in Moscow).png"
+},
+"prospekt-vernadskogo": {
+"q": "Q1962831",
+"desc": "район Москвы",
+"t": "Проспект Вернадского (район Москвы)",
+"file": "Coat of Arms of Prospekt Vernadskogo (municipality in Moscow).png"
+},
+"ramenki": {
+"q": "Q2359096",
+"desc": "район в Москве, расположенный в Западном административном округе",
+"t": "Раменки (район Москвы)",
+"file": "Coat of Arms of Ramenki (municipality in Moscow).png"
+},
+"solntsevo": {
+"q": "Q486720",
+"desc": "муниципальный округ города Москвы России",
+"t": "Солнцево (район Москвы)",
+"file": "Coat of Arms of Solntsevo (municipality in Moscow).png"
+},
+"troparevo-nikulino": {
+"q": "Q1963109",
+"desc": "муниципальный округ города Москвы России",
+"t": "Тропарево-Никулино (район Москвы)",
+"file": "Coat of Arms of Troparevo-Nikulino (municipality in Moscow).svg"
+},
+"filevskiy-park": {
+"q": "Q998027",
+"file": "Coat of Arms of Filyovsky park (municipality in Moscow).png"
+},
+"fili-davydkovo": {
+"q": "Q1963181",
+"desc": "муниципальный округ в Москве",
+"t": "Фили-Давыдково (район Москвы)",
+"file": "Coat of Arms of Fili-Davydkovo (municipality in Moscow).png"
+},
+"kryukovo": {
+"q": "Q587055",
+"desc": "район москвы в России, Москва, Зеленоград",
+"t": "Крюково (район Москвы)",
+"file": "Coat of Arms of Zelenograd-Kryukovo (municipality in Moscow).png"
+},
+"matushkino": {
+"q": "Q3831503",
+"desc": "муниципальный округ города Москвы России",
+"t": "Матушкино (район Москвы)",
+"file": "Coat of Arms of Zelenograd-Matushkino (municipality in Moscow).png"
+},
+"silino": {
+"q": "Q3960539",
+"desc": "муниципальный округ города Москвы России",
+"t": "Силино (район Москвы)",
+"file": "Coat of Arms of Zelenograd-Silino (municipality in Moscow).png"
+},
+"aeroport": {
+"q": "Q2367414",
+"desc": "район Москвы",
+"t": "Аэропорт (район Москвы)",
+"file": "Coat of Arms of Aeroport (municipality in Moscow).png"
+},
+"begovoy": {
+"q": "Q2626875",
+"desc": "муниципальный округ города Москвы России",
+"t": "Беговой (район Москвы)",
+"file": "Coat of Arms of Begovoy (municipality in Moscow).png"
+},
+"beskudnikovskiy": {
+"q": "Q425824",
+"desc": "муниципальный округ города Москвы России",
+"t": "Бескудниковский (район Москвы)",
+"file": "Coat of Arms of Beskudnikovskoe (municipality in Moscow).png"
+},
+"voykovskiy": {
+"q": "Q2367430",
+"desc": "муниципальный округ города Москвы России",
+"t": "Войковский (район Москвы)",
+"file": "Coat of Arms of Voikovsky (municipality in Moscow).png"
+},
+"vostochnoe-degunino": {
+"q": "Q2366730",
+"desc": "муниципальный округ города Москвы России",
+"t": "Восточное Дегунино (район Москвы)",
+"file": "Coat of Arms of Vostochnoye Degunino (municipality in Moscow).png"
+},
+"golovinskiy": {
+"q": "Q1017756",
+"desc": "муниципальный округ города Москвы России",
+"t": "Головинский (район Москвы)",
+"file": "Coat of Arms of Golovinskoe (municipality in Moscow).png"
+},
+"dmitrovskiy": {
+"q": "Q2367500",
+"desc": "муниципальный округ города Москвы России",
+"t": "Дмитровский (район Москвы)",
+"file": null
+},
+"zapadnoe-degunino": {
+"q": "Q2626861",
+"desc": "муниципальный округ города Москвы России",
+"t": "Западное Дегунино (район Москвы)",
+"file": "Coat of Arms of Zapadnoye Degunino (municipality in Moscow).png"
+},
+"koptevo": {
+"q": "Q2366877",
+"desc": "район Москвы",
+"t": "Коптево (район Москвы)",
+"file": "Coat of Arms of Koptevo (municipality in Moscow).png"
+},
+"levoberezhnyy": {
+"q": "Q2366787",
+"desc": "муниципальный округ города Москвы России",
+"t": "Левобережный (район Москвы)",
+"file": "Coat of Arms of Levoberezhny (municipality in Moscow).png"
+},
+"molzhaninovskiy": {
+"q": "Q2361002",
+"desc": "муниципальный округ города Москвы России",
+"t": "Молжаниновский (район Москвы)",
+"file": "Coat of Arms of Molzhaninovskoe (municipality in Moscow).png"
+},
+"savelovskiy": {
+"q": "Q2366807",
+"desc": "район г. Москвы и одноимённое муниципальное образование на его территории",
+"t": "Савеловский (район Москвы)",
+"file": "Coat of Arms of Savelovsky (municipality in Moscow).png"
+},
+"sokol": {
+"q": "Q2704327",
+"desc": "район в Москве",
+"t": "Сокол (район Москвы)",
+"file": "Coat of Arms of Sokol (municipality in Moscow).png"
+},
+"timiryazevskiy": {
+"q": "Q2365771",
+"desc": "муниципальный округ города Москвы России",
+"t": "Тимирязевский (район Москвы)",
+"file": "Coat of Arms of Timiryazevsky (municipality in Moscow).png"
+},
+"hovrino": {
+"q": "Q2626866",
+"desc": "муниципальный округ города Москвы России",
+"t": "Ховрино (район Москвы)",
+"file": "Coat of Arms of Khovrino (municipality in Moscow, 2023).png"
+},
+"horoshevskiy": {
+"q": "Q2366712",
+"desc": "муниципальный округ города Москвы России",
+"t": "Хорошевский (район Москвы)",
+"file": "Coat of Arms of Khoroshevskoe (municipality in Moscow).png"
+},
+"alekseevskiy": {
+"q": "Q2367598",
+"desc": "муниципальный округ города Москвы России",
+"t": "Алексеевский (район Москвы)",
+"file": "Coat of Arms of Alekseevskoe (municipality in Moscow).png"
+},
+"altufevskiy": {
+"q": "Q2366768",
+"desc": "муниципальный округ города Москвы России",
+"t": "Алтуфьевский (район Москвы)",
+"file": "Coat of Arms of Altufievsky (municipality in Moscow).png"
+},
+"babushkinskiy": {
+"q": "Q2367552",
+"desc": "муниципальный округ города Москвы России",
+"t": "Бабушкинский (район Москвы)",
+"file": "Coat of Arms of Babushkinskoe (municipality in Moscow).png"
+},
+"bibirevo": {
+"q": "Q2367665",
+"desc": "муниципальный округ города на северо-востоке Москвы России",
+"t": "Бибирево (район Москвы)",
+"file": "Coat of Arms of Bibirevo (municipality in Moscow).png"
+},
+"butyrskiy": {
+"q": "Q2362908",
+"desc": "муниципальный округ города Москвы России",
+"t": "Бутырский (район Москвы)",
+"file": "Coat of Arms of Butyrsky (municipality in Moscow, 2019).png"
+},
+"lianozovo": {
+"q": "Q2367455",
+"desc": "район в Северо-Восточном административном округе города Москвы",
+"t": "Лианозово (район Москвы)",
+"file": "Coat of Arms of Lianozovo (municipality in Moscow).svg"
+},
+"losinoostrovskiy": {
+"q": "Q2367516",
+"desc": "муниципальный округ города Москвы России",
+"t": "Лосиноостровский (район Москвы)",
+"file": "Coat of Arms of Losinoostrovsky District (Moscow).svg"
+},
+"marfino": {
+"q": "Q2367627",
+"desc": "муниципальный округ города Москвы России",
+"t": "Марфино (район Москвы)",
+"file": "Coat of Arms of Marfino (municipality in Moscow).png"
+},
+"marina-roscha": {
+"q": "Q2622887",
+"desc": "муниципальный округ города Москвы России",
+"t": "Марьина роща (район Москвы)",
+"file": "Coat of Arms of Maryina Roshcha (municipality in Moscow).svg"
+},
+"ostankinskiy": {
+"q": "Q2704188",
+"desc": "муниципальный округ города Москва, Россия",
+"t": "Останкинский (район Москвы)",
+"file": "Coat of Arms of Ostankinsky (municipality in Moscow, 2018).png"
+},
+"otradnoe": {
+"q": "Q2360436",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Отрадное (район Москвы)",
+"file": "Coat of Arms of Otradnoye (municipality in Moscow).svg"
+},
+"rostokino": {
+"q": "Q2366666",
+"desc": "муниципальный округ города Москвы России",
+"t": "Ростокино (район Москвы)",
+"file": "Coat of Arms of Rostokino (municipality in Moscow).png"
+},
+"sviblovo": {
+"q": "Q2365359",
+"desc": "муниципальный округ города Москвы России",
+"t": "Свиблово (район Москвы)",
+"file": "Coat of Arms of Sviblovo (municipality in Moscow).png"
+},
+"severnoe-medvedkovo": {
+"q": "Q2367583",
+"desc": "муниципальный округ города Москвы",
+"t": "Северное Медведково",
+"file": "Coat of Arms of Severnoye Medvedkovo District (Moscow).svg"
+},
+"severnyy": {
+"q": "Q780455",
+"desc": "муниципальный округ города Москва, Россия",
+"t": "Северный (район Москвы)",
+"file": "Coat of Arms of Severny District (Moscow).svg"
+},
+"yuzhnoe-medvedkovo": {
+"q": "Q2366143",
+"desc": "муниципальный округ города Москвы России",
+"t": "Южное Медведково",
+"file": "Coat of Arms of South Medvedkovo (municipality in Moscow).png"
+},
+"yaroslavskiy": {
+"q": "Q2367611",
+"desc": "муниципальный округ города Москвы России",
+"t": "Ярославский (район Москвы)",
+"file": "Coat of Arms of Yaroslavsky (municipality in Moscow).png"
+},
+"kurkino": {
+"q": "Q669235",
+"desc": "муниципальный округ города Москвы",
+"t": "Куркино (район Москвы)",
+"file": "Coat of Arms of Kurkino (municipality in Moscow).png"
+},
+"mitino": {
+"q": "Q2625558",
+"desc": "район Москвы в России, Москва, Северо-Западный административный округ",
+"t": "Митино (район Москвы)",
+"file": "Coat of Arms of Mitino (municipality in Moscow).png"
+},
+"pokrovskoe-streshnevo": {
+"q": "Q2367649",
+"desc": "район Москвы",
+"t": "Покровское-Стрешнево (район Москвы)",
+"file": "Coat of Arms of Pokrovskoye-Streshnevo (municipality in Moscow).png"
+},
+"severnoe-tushino": {
+"q": "Q2367469",
+"desc": "муниципальный округ города Москвы России",
+"t": "Северное Тушино (район Москвы)",
+"file": "Coat of Arms of North Tushino (municipality in Moscow) (1997).png"
+},
+"strogino": {
+"q": "Q2625675",
+"desc": "муниципальный округ города Москвы России",
+"t": "Строгино (район Москвы)",
+"file": "Coat of Arms of Strogino (municipality in Moscow).png"
+},
+"horoshevo-mnevniki": {
+"q": "Q630277",
+"desc": "район Москвы",
+"t": "Хорошево-Мневники (район Москвы)",
+"file": "Coat of Arms of Khoroshevo-Mnevniki (municipality in Moscow).svg"
+},
+"schukino": {
+"q": "Q598088",
+"desc": "муниципальный округ города Москвы России",
+"t": "Щукино (район Москвы)",
+"file": null
+},
+"yuzhnoe-tushino": {
+"q": "Q2366829",
+"desc": "муниципальный округ города Москвы",
+"t": "Южное Тушино (район Москвы)",
+"file": "Coat of Arms of South Tushino (municipality in Moscow).png"
+},
+"arbat": {
+"q": "Q626920",
+"desc": "муниципальный округ города Москвы России",
+"t": "Арбат (район Москвы)",
+"file": "Coat of Arms of Arbat (municipality in Moscow).png"
+},
+"basmannyy": {
+"q": "Q1669860",
+"desc": "муниципальный округ города Москвы России",
+"t": "Басманный (район Москвы)",
+"file": "Coat of Arms of Basmannoe (municipality in Moscow).png"
+},
+"zamoskvoreche": {
+"q": "Q862107",
+"desc": "муниципальный округ города Москвы России",
+"t": "Замоскворечье (район Москвы)",
+"file": "Coat of Arms of Zamoskvorechye (municipality in Moscow).png"
+},
+"savelki": {
+"q": "Q3831532",
+"desc": "муниципальный округ города Москвы России",
+"t": "Савелки (район Москвы)",
+"file": "Coat of Arms of Zelenograd-Savelki (municipality in Moscow).png"
+},
+"krasnoselskiy": {
+"q": "Q2626343",
+"desc": "Район города Москвы, Россия",
+"t": "Красносельский (район Москвы)",
+"file": "Coat of Arms of Krasnoselsky (municipality in Moscow).svg"
+},
+"meschanskiy": {
+"q": "Q2626320",
+"desc": "муниципальный округ города Москвы России",
+"t": "Мещанский (район Москвы)",
+"file": "Coat of Arms of Meshchansky (municipality in Moscow).png"
+},
+"presnenskiy": {
+"q": "Q2320761",
+"desc": "муниципальный округ города Москвы России",
+"t": "Пресненский (район Москвы)",
+"file": "Coat of Arms of Presnensky (municipality in Moscow).png"
+},
+"taganskiy": {
+"q": "Q942798",
+"desc": "муниципальный округ города Москвы России",
+"t": "Таганский (район Москвы)",
+"file": "Coat of Arms of Taganskoe (municipality in Moscow).png"
+},
+"tverskoy": {
+"q": "Q2710104",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Тверской (район Москвы)",
+"file": "Coat of Arms of Tverskoy (municipality in Moscow).png"
+},
+"hamovniki": {
+"q": "Q862100",
+"desc": "район города Москвы, расположенный в Центральном административном округе",
+"t": "Хамовники (район Москвы)",
+"file": "Coat of Arms of Khamovniki (municipality in Moscow).png"
+},
+"yakimanka": {
+"q": "Q2704875",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Якиманка (район Москвы)",
+"file": "Coat of Arms of Yakimanka (municipality in Moscow).png"
+},
+"vyhino-zhulebino": {
+"q": "Q533860",
+"desc": "муниципальный округ города Москвы России",
+"t": "Выхино-Жулебино (район Москвы)",
+"file": "Coat of Arms of Vykhino-Zhulebino (municipality in Moscow).png"
+},
+"kapotnya": {
+"q": "Q1963403",
+"desc": "муниципальный округ города Москвы России",
+"t": "Капотня (район Москвы)",
+"file": "Coat of Arms of Kapotnya (municipality in Moscow).svg"
+},
+"kuzminki": {
+"q": "Q2360885",
+"desc": "муниципальный округ города Москвы России",
+"t": "Кузьминки (район Москвы)",
+"file": null
+},
+"lefortovo": {
+"q": "Q1382617",
+"desc": "муниципальный округ города Москвы России",
+"t": "Лефортово (район Москвы)",
+"file": "Coat of Arms of Lefortovo (municipality in Moscow).png"
+},
+"lyublino": {
+"q": "Q1963431",
+"desc": "муниципальный округ города Москвы России",
+"t": "Люблино (район Москвы)",
+"file": "Coat of Arms of Lyublino (municipality in Moscow).png"
+},
+"marino": {
+"q": "Q1958176",
+"desc": "муниципальный округ города Москвы.",
+"t": "Марьино (район Москвы)",
+"file": "Coat of Arms of Marino (municipality in Moscow, 2020).png"
+},
+"nekrasovka": {
+"q": "Q2364279",
+"desc": "муниципальный округ города Москвы России",
+"t": "Некрасовка (район Москвы)",
+"file": "Coat of arms of Nekrasovka.svg"
+},
+"nizhegorodskiy": {
+"q": "Q2008435",
+"desc": "муниципальный округ города Москвы России",
+"t": "Нижегородский (район Москвы)",
+"file": "Coat of Arms of Nizhegorodskoe (municipality in Moscow).png"
+},
+"pechatniki": {
+"q": "Q2367394",
+"desc": "муниципальный округ города Москвы России",
+"t": "Печатники (район Москвы)",
+"file": "Coat of Arms of Pechatniki (municipality in Moscow).png"
+},
+"ryazanskiy": {
+"q": "Q1963165",
+"desc": "муниципальный округ города Москвы России",
+"t": "Рязанский (район Москвы)",
+"file": "Coat of Arms of Ryazanskoe (municipality in Moscow).png"
+},
+"tekstilschiki": {
+"q": "Q1963126",
+"desc": "район Москвы",
+"t": "Текстильщики (район Москвы)",
+"file": "Coat of Arms of Tekstilshchiki (municipality in Moscow).png"
+},
+"yuzhnoportovyy": {
+"q": "Q1963417",
+"desc": "муниципальный округ города Москвы России",
+"t": "Южнопортовый (район Москвы)",
+"file": "Coat of Arms of Yuzhnoportovoe (municipality in Moscow).png"
+},
+"akademicheskiy": {
+"q": "Q2366010",
+"desc": "район (муниципальный округ) города Москвы России",
+"t": "Академический (район Москвы)",
+"file": "Coat of Arms of Akademichesky (municipality in Moscow).png"
+},
+"gagarinskiy": {
+"q": "Q1962788",
+"desc": "муниципальный округ города Москвы России",
+"t": "Гагаринский (район Москвы)",
+"file": "Coat of Arms of Gagarinsky (municipality in Moscow).png"
+},
+"zyuzino": {
+"q": "Q2008454",
+"desc": "район Москвы",
+"t": "Зюзино (район Москвы)",
+"file": "Coat of Arms of Zyuzino (municipality in Moscow).png"
+},
+"konkovo": {
+"q": "Q122788",
+"desc": "муниципальный округ города Москвы России",
+"t": "Коньково (район Москвы)",
+"file": "Coat of Arms of Konkovo (municipality in Moscow).png"
+},
+"kotlovka": {
+"q": "Q1963145",
+"desc": "муниципальный округ города Москвы России",
+"t": "Котловка (район Москвы)",
+"file": "Coat of Arms of Kotlovka (municipality in Moscow).png"
+},
+"lomonosovskiy": {
+"q": "Q2059063",
+"desc": "муниципальный округ города Москвы России",
+"t": "Ломоносовский (район Москвы)",
+"file": "Coat of arms of Lomonosovsky District, Moscow.png"
+},
+"obruchevskiy": {
+"q": "Q1962988",
+"desc": "муниципальный округ города Москвы России",
+"t": "Обручевский (район Москвы)",
+"file": "Coat of Arms of Obruchevskoe (municipality in Moscow).png"
+},
+"severnoe-butovo": {
+"q": "Q1963171",
+"desc": "муниципальный округ города Москвы, Россия",
+"t": "Северное Бутово (район Москвы)",
+"file": "Coat of Arms of Butovo North (municipality in Moscow).png"
+},
+"teplyy-stan": {
+"q": "Q1963160",
+"desc": "муниципальный округ города Москвы России",
+"t": "Теплый Стан (район Москвы)",
+"file": "Coat of Arms of Tyoply Stan (municipality in Moscow).png"
+},
+"cheremushki": {
+"q": "Q1112926",
+"desc": "муниципальный округ города Москвы России",
+"t": "Черемушки (район Москвы)",
+"file": "Coat of Arms of Cheryomushki (municipality in Moscow).png"
+},
+"yuzhnoe-butovo": {
+"q": "Q1963119",
+"desc": "муниципальный округ города Москвы России",
+"t": "Южное Бутово (район Москвы)",
+"file": "Coat of Arms of Butovo South (municipality in Moscow).png"
+},
+"yasenevo": {
+"q": "Q2360561",
+"desc": "район Москвы",
+"t": "Ясенево (район Москвы)",
+"file": "Coat of Arms of Yasenevo (municipality in Moscow).png"
+},
+"biryulevo-vostochnoe": {
+"q": "Q1963176",
+"desc": "муниципальный округ города Москвы России",
+"t": "Бирюлево Восточное",
+"file": "Coat of Arms of Biryulyovo Vostochnoye (municipality in Moscow).png"
+},
+"biryulevo-zapadnoe": {
+"q": "Q1963002",
+"desc": "муниципальный округ города Москвы",
+"t": "Бирюлево Западное",
+"file": "Coat of Arms of Biryulyovo Zapadnoye (municipality in Moscow).png"
+},
+"brateevo": {
+"q": "Q1963015",
+"desc": "муниципальный округ города Москвы России",
+"t": "Братеево (район Москвы)",
+"file": "Coat of Arms of Brateyevo (municipality in Moscow, 2021).png"
+},
+"danilovskiy": {
+"q": "Q1963381",
+"desc": "муниципальный округ города Москвы России",
+"t": "Даниловский (район Москвы)",
+"file": "Coat of Arms of Danilovsky (municipality in Moscow).png"
+},
+"donskoy": {
+"q": "Q2216653",
+"desc": "муниципальный округ города Москва, России",
+"t": "Донской (район Москвы)",
+"file": "Coat of Arms of Donskoy (municipality in Moscow).svg"
+},
+"zyablikovo": {
+"q": "Q1963114",
+"desc": "муниципальный округ города Москвы России",
+"t": "Зябликово (район Москвы)",
+"file": "Coat of Arms of Zyablikovo (municipality in Moscow, 2018).png"
+},
+"moskvoreche-saburovo": {
+"q": "Q1963190",
+"desc": "муниципальный округ города Москвы России",
+"t": "Москворечье-Сабурово (район Москвы)",
+"file": "Coat of Arms of Moskvorechye-Saburovo (municipality in Moscow).png"
+},
+"nagatino-sadovniki": {
+"q": "Q1963039",
+"desc": "муниципальный округ Москвы, Россия",
+"t": "Нагатино-Садовники (район Москвы)",
+"file": "Coat of Arms of Nagatino-Sadovniki (municipality in Moscow).png"
+},
+"nagatinskiy-zaton": {
+"q": "Q1963453",
+"desc": "муниципальный округ города Москвы России",
+"t": "Нагатинский затон (район Москвы)",
+"file": null
+},
+"nagornyy": {
+"q": "Q1963134",
+"desc": "район в Москве",
+"t": "Нагорный (район Москвы)",
+"file": "Coat of Arms of Nagornoe (municipality in Moscow).png"
+},
+"orehovo-borisovo-severnoe": {
+"q": "Q1962775",
+"desc": "муниципальный округ города Москвы России",
+"t": "Орехово-Борисово Северное",
+"file": "Coat of Arms of Orekhovo-Borisovo Severnoye District.png"
+},
+"orehovo-borisovo-yuzhnoe": {
+"q": "Q2058744",
+"desc": "муниципальный округ города Москвы России",
+"t": "Орехово-Борисово Южное",
+"file": "Coat of Arms of South Orekhovo-Borisovo (municipality in Moscow).png"
+},
+"tsaritsyno": {
+"q": "Q508433",
+"desc": "муниципальный округ города Москвы России",
+"t": "Царицыно (район Москвы)",
+"file": null
+},
+"chertanovo-severnoe": {
+"q": "Q1962799",
+"desc": "муниципальный округ города Москвы России",
+"t": "Чертаново Северное (район Москвы)",
+"file": "Coat of Arms of Chertanovo North (municipality in Moscow).png"
+},
+"chertanovo-tsentralnoe": {
+"q": "Q1962823",
+"desc": "муниципальный округ города Москвы России",
+"t": "Чертаново Центральное (район Москвы)",
+"file": "Coat of Arms of Chertanovo Center (municipality in Moscow) (2001).png"
+},
+"chertanovo-yuzhnoe": {
+"q": "Q1963154",
+"desc": "муниципальный округ города Москвы России",
+"t": "Чертаново Южное (район Москвы)",
+"file": "Coat of Arms of Chertanovo South (municipality in Moscow).png"
+},
+"staroe-kryukovo": {
+"q": "Q3831538",
+"desc": "муниципальный округ города Москвы России",
+"t": "Старое Крюково",
+"file": "Coat of Arms of Zelenograd-Old Kryukovo (municipality in Moscow).png"
+}
+}
