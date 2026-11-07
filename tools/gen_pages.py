@@ -42,6 +42,7 @@ sp_rank = sorted(sp_F, key=lambda f: -P(f)['sp']['s'])
 N = len(F)
 import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import proscons
+zhit = proscons.zhit
 GREEN = proscons.load_green(REPO)
 green_F = [f for f in F if (GREEN.get(P(f)['n']) or {}).get('pct') is not None]
 green_rank = sorted(green_F, key=lambda f: -GREEN[P(f)['n']]['pct'])
@@ -159,7 +160,7 @@ def page(f):
     nbs = [BY[x] for x in (p.get('nb') or []) if x in BY]
     er = eco_rank.index(f) + 1
     title = f'Район {n} ({o}): экология, цены на жильё, транспорт, школы — Атлас районов Москвы'
-    bits = [f'{n} — район {o} Москвы' + (f', {num(p["pop"])} жителей' if p.get('pop') else '')]
+    bits = [f'{n} — район {o} Москвы' + (f', {num(p["pop"])} {zhit(p["pop"])}' if p.get('pop') else '')]
     if p.get('hp'): bits.append(f'метр жилья на вторичке около {round(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
     bits.append(f'экология {fmt(p["i"])} из 10, {er}-е место по чистоте')
     if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} минут')
@@ -197,7 +198,7 @@ def page(f):
     if p.get('tb'): fac.append(f'<div><span>Загруженные магистрали<span class="note">{E(", ".join(p["r"]))}</span></span><b>+{fmt(p["tb"])}</b></div>')
     if p.get('wb'): fac.append(f'<div><span>Подветренная сторона города</span><b>+{fmt(p["wb"])}</b></div>')
     sec.append(f'<section><h2>Экология района {E(n)}</h2><div class="facts">{"".join(fac)}</div>' + (f'<p class="small" style="margin-top:10px">{E(p["t"])}</p>' if p.get('t') else '') +
-               f'<p class="small" style="margin-top:10px">Итоговый балл {fmt(p["i"])} из 10, чем меньше, тем чище. <a href="../../ecology.html">Карта экологии всех районов</a>.</p></section>')
+               f'<p class="small" style="margin-top:10px">Итоговый балл {fmt(p["i"])} из 10, чем меньше, тем чище.' + (f' Сумма составляющих {fmt(p["raw"])} приведена к шкале 1–10.' if p.get("raw") and abs(p["raw"]-p["i"])>0.15 else '') + f' <a href="../../ecology.html">Карта экологии всех районов</a>.</p></section>')
     if p.get('score') is not None:
         sec.append(f'<section><h2>Школы, детские сады и поликлиники</h2><div class="stats">{stat("Школы (здания)",p["school"],p["school_per"],p["school_10k"])}{stat("Детские сады",p["kinder"],p["kinder_per"],p["kinder_10k"])}{stat("Поликлиники и больницы",p["clinic"],p["clinic_per"],p["clinic_10k"])}</div>'
                    f'<p class="small" style="margin-top:10px">Образование {fmt(p["edu"])} из 10 · здравоохранение {fmt(p["med"])} из 10. Школа считается по зданиям: у одной школы-комплекса их бывает несколько.</p></section>')
@@ -236,7 +237,7 @@ def page(f):
     body = (f'<body>\n{fix_links(topbar,2)}\n<main class="wrap">\n'
             f'<nav class="crumbs" aria-label="Навигация"><a href="../">Все районы</a><span>›</span><a href="../#{slug(o)}">{OKR.get(o,o)} округ</a><span>›</span><span>{E(n)}</span></nav>\n'
             f'<header><div class="dhead">' + (f'<img class="arms" src="{arms_src(sl,"../")}" alt="Герб района {E(n)}" width="76" height="90" onerror="this.remove()">' if arms(sl) else '') + '<div>'
-            f'<div class="eyebrow">{E(okr_full(o))}' + (f' · {num(p["pop"])} жителей · {num(p["dens"])} чел/км² · {fmt(p["area"])} км²' if p.get('pop') else '') + '</div>'
+            f'<div class="eyebrow">{E(okr_full(o))}' + (f' · {num(p["pop"])} {zhit(p["pop"])} · {num(p["dens"])} чел/км² · {fmt(p["area"])} км²' if p.get('pop') else '') + '</div>'
             f'<h1>Район {E(n)}</h1></div></div><p class="lead">{E(lead)}</p>' + (f'<p class="hist">{E(p["hist"])}</p>' if p.get('hist') else '') + '</header>\n'
             f'<section class="scores">{"".join(tiles)}</section>\n' + pc + '\n'
             f'<section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Карта района {E(n)}: улицы, станции, рельеф и источники загрязнения рядом"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>\n'
