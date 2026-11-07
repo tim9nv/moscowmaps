@@ -105,7 +105,9 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 .wtr .wl{fill:none;stroke:var(--wline,#3f8fd2);stroke-linecap:round;stroke-linejoin:round}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .wtr{--wfill:#2f6fa8;--wline:#5aa6e6}}
 :root[data-theme="dark"] .wtr{--wfill:#2f6fa8;--wline:#5aa6e6}
-.stl{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:2.2;opacity:.9}
+.stl{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.5;opacity:.55}
+body.tr .ov-r1,body.tr .ov-r2{display:none}
+.stg{display:none}.showst .stg{display:inline}
 .stn{stroke:var(--surface);stroke-width:1}
 .chipst{display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:3px 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface);margin:0 6px 6px 0}
 .chipst i{width:9px;height:9px;border-radius:50%;display:inline-block}
@@ -115,7 +117,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071233"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071233">Районы</a><a href="housing.html?v=202611071233" aria-current="page">Жильё</a><a href="transport.html?v=202611071233">Транспорт</a><a href="social.html?v=202611071233">Соцобъекты</a><a href="ecology.html?v=202611071233">Экология</a><a href="parks.html?v=202611071233">Парки</a><a href="climate.html?v=202611071233">Климат</a><a href="new-moscow.html?v=202611071233" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
+<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071237"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071237">Районы</a><a href="housing.html?v=202611071237" aria-current="page">Жильё</a><a href="transport.html?v=202611071237">Транспорт</a><a href="social.html?v=202611071237">Соцобъекты</a><a href="ecology.html?v=202611071237">Экология</a><a href="parks.html?v=202611071237">Парки</a><a href="climate.html?v=202611071237">Климат</a><a href="new-moscow.html?v=202611071237" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -199,7 +201,7 @@ const cls=v=>{for(let k=0;k<BINS.length;k++){if(v<BINS[k][1])return k}return BIN
 const col=v=>v==null?"var(--nodata)":BINS[cls(v)][3];
 const fmt=CFG.fmt==="rub"?(v=>Math.round(v/1000).toLocaleString("ru-RU")+" тыс. ₽/м²"):(v=>v.toFixed(1).replace(".",","));
 const num=v=>v==null?"—":Math.round(v).toLocaleString("ru-RU");
-document.getElementById("legend").innerHTML=BINS.map(b=>`<span><i style="background:${b[3]}"></i>${b[2]}</span>`).join("")+`<span><i style="background:var(--nodata)"></i>нет данных</span>`+(CFG.kind==="tr"?`<span><svg width="22" height="10"><line x1="1" y1="5" x2="21" y2="5" stroke="#d6083b" stroke-width="2.2"/><circle cx="11" cy="5" r="3" fill="#d6083b" stroke="#fff"/></svg>линии и станции</span>`:"");
+document.getElementById("legend").innerHTML=BINS.map(b=>`<span><i style="background:${b[3]}"></i>${b[2]}</span>`).join("")+`<span><i style="background:var(--nodata)"></i>нет данных</span>`+(CFG.kind==="tr"?`<span style="white-space:nowrap"><svg width="22" height="10"><line x1="1" y1="5" x2="21" y2="5" stroke="#d6083b" stroke-width="1.6" opacity=".6"/></svg>линии метро, МЦК, МЦД</span><label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="stt">показать станции</label>`:"");
 const svg=d3.select("#main");
 const proj=d3.geoMercator().fitExtent([[10,10],[590,610]],inner);
 const path=d3.geoPath(proj);
@@ -214,11 +216,13 @@ const sel=root.append("g").selectAll("path").data(F).join("path")
 sel.append("title").text(d=>val(d)!=null?`${d.properties.n}: ${fmt(val(d))}${CFG.unit}`:`${d.properties.n}: нет данных`);
 cityOverlay(root,proj,F);
 if(CFG.kind==="tr"){
-  const S=CFG.st,lg=root.append("g").style("pointer-events","none");
+  document.body.classList.add("tr");
+  const S=CFG.st,lg=root.append("g").style("pointer-events","none"),sg=root.append("g").attr("class","stg").style("pointer-events","none");
   CFG.e.forEach(([i,j])=>{const a=proj([S[i].x,S[i].y]),b=proj([S[j].x,S[j].y]);lg.append("line").attr("class","stl").attr("x1",a[0]).attr("y1",a[1]).attr("x2",b[0]).attr("y2",b[1]).style("stroke",S[i].c).style("stroke-dasharray",S[i].k==="mcd"?"4 2.5":null)});
-  S.forEach(s=>{const p=proj([s.x,s.y]);lg.append("circle").attr("class","stn").attr("cx",p[0]).attr("cy",p[1]).attr("r",s.k==="metro"?2.4:2).style("fill",s.c)});
+  S.forEach(s=>{const p=proj([s.x,s.y]);sg.append("circle").attr("class","stn").attr("cx",p[0]).attr("cy",p[1]).attr("r",s.k==="metro"?2.4:2).style("fill",s.c)});
 }
 const KC={metro:"метро",mcc:"МЦК",mcd:"МЦД"};
+{const c=document.getElementById("stt");if(c)c.onchange=()=>document.getElementById("main").classList.toggle("showst",c.checked)}
 function card(p){
   if(CFG.kind==="hs"){
     const flat=p.v*54/1e6;
