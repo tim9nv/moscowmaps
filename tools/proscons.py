@@ -1,5 +1,8 @@
 # helper module: pros/cons and FAQ for a district
 import json
+def zhit(n):
+    n=int(n); return "жителя" if n%10 in (2,3,4) and n%100 not in (12,13,14) else ("житель" if n%10==1 and n%100!=11 else "жителей")
+
 def load_green(repo):
     s=open(f'{repo}/parks.html',encoding='utf-8').read()
     i=s.index('const DATA'); i+=s[i:].index('=')+1
@@ -22,7 +25,7 @@ def build(p, ranks, green, N):
     # ecology
     er=ranks['er']
     src=[x[1] for x in (p.get('s') or [])][:3]
-    if er<=30: pros.append(f'Чистый по московским меркам воздух: экологический балл {fmt(p["i"])} из 10, {er}-е место из {N} по чистоте.')
+    if er<=30: pros.append(f'Экология лучше, чем в большинстве районов Москвы: балл {fmt(p["i"])} из 10, {er}-е место из {N} по чистоте.')
     elif er>=N-30: cons.append(f'Слабая экология: балл {fmt(p["i"])} из 10, {er}-е место из {N} по чистоте' + (f'; рядом {", ".join(src)}.' if src else '.'))
     elif src: cons.append(f'Рядом источники загрязнения: {", ".join(src)}.')
     # green
@@ -41,12 +44,12 @@ def build(p, ranks, green, N):
             weak=[]
             if p.get('edu') is not None and p['edu']<4.5: weak.append('школ и детских садов')
             if p.get('med') is not None and p['med']<4.5: weak.append('поликлиник')
-            cons.append(f'Не хватает {" и ".join(weak) if weak else "соцобъектов"} на число жителей: балл {fmt(p["score"])} из 10.')
+            cons.append(f'Не хватает {("школ, детских садов и поликлиник" if len(weak)==2 else weak[0]) if weak else "соцобъектов"} на число жителей: балл {fmt(p["score"])} из 10.')
     # sport
     sp=p.get('sp')
     if sp and sp.get('s') is not None:
-        if sp['s']>=7.5: pros.append(f'Много мест для спорта: бассейнов — {sp["pool"]}, спортзалов и клубов — {sp["halls"]}, площадок и воркаутов — {sp["grounds"]}.')
-        elif sp['s']<3.5: cons.append('Для спорта мало мест: ' + ('бассейнов нет, ' if not sp['pool'] else '') + f'спортзалов и клубов — {sp["halls"]} на {num(p["pop"])} жителей.')
+        if sp['s']>=7.5: pros.append(f'Много мест для спорта: ' + (f'бассейнов — {sp["pool"]}, ' if sp['pool'] else '') + f'спортзалов и клубов — {sp["halls"]}, площадок и воркаутов — {sp["grounds"]}.')
+        elif sp['s']<3.5: cons.append('Для спорта мало мест: ' + ('бассейнов нет, ' if not sp['pool'] else '') + f'спортзалов и клубов — {sp["halls"]} на {num(p["pop"])} {zhit(p["pop"])}.')
     # liveliness
     lv=p.get('lv')
     if lv:
