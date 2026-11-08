@@ -22,7 +22,7 @@ function makeFilter(el,rows,onChange){
   const ok=f=>rows.every((r,i)=>{if(!sel[i].size)return true;const v=r.get(f);if(v==null)return false;return [...sel[i]].some(k=>v>=r.bins[k][0]&&v<r.bins[k][1])});
   el.innerHTML=rows.map((r,i)=>`<div class="frow"><div class="fhd"><b>${r.label}</b><span>${r.hint||""}</span></div><div class="chips" role="group" aria-label="${r.label}">${r.bins.map((b,k)=>`<button type="button" class="chip" data-r="${i}" data-k="${k}" aria-pressed="false"><i style="background:${b[3]}"></i>${b[2]}</button>`).join("")}</div></div>`).join("")+`<div class="fft"><span class="fcount" aria-live="polite"></span><button type="button" class="freset" hidden>Сбросить фильтр</button></div>`;
   const cnt=el.querySelector(".fcount"), rs=el.querySelector(".freset");
-  const fire=()=>{const any=sel.some(s=>s.size);rs.hidden=!any;onChange(ok,any,n=>{cnt.textContent=any?`Подходит районов: ${n}`:""})};
+  const fire=()=>{const any=sel.some(s=>s.size);rs.hidden=!any;onChange(ok,any,n=>{cnt.textContent=any?`Подходит районов: ${n}`:""},rows.filter((r,i)=>sel[i].size).map(r=>r.metric))};
   el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const s=sel[+b.dataset.r],k=+b.dataset.k;s.has(k)?s.delete(k):s.add(k);b.setAttribute("aria-pressed",s.has(k));fire()});
   rs.onclick=()=>{sel.forEach(s=>s.clear());el.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed","false"));fire()};
   return {ok,fire};
@@ -96,8 +96,9 @@ function home(){
   <p class="small" id="okexp" style="margin:0 0 10px"></p><div class="okgrid" id="okg"></div></section>
   <section class="filt" id="flt" aria-label="Фильтр районов"></section>
 
-  <section><h2>Все районы</h2>
-  <p class="small" id="lexp" style="margin:0 0 10px"></p>
+  <section><h2 id="district-list-heading">Все районы</h2>
+  <div class="metbar list-metrics"><span>Выделить показатель:</span><div class="seg" role="group" aria-label="Показатель в списке районов"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="eco" aria-pressed="false">Экология</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button></div></div>
+  <p class="small" id="lexp" style="margin:0 0 10px"></p><p class="small" id="list-count" aria-live="polite"></p>
   <div class="sortbar"><span>Сортировка:</span><div class="seg" role="group" aria-label="Сортировка списка"><button type="button" data-s="okr" aria-pressed="true">По округам</button><button type="button" data-s="val" aria-pressed="false">По показателю<span class="ar"></span></button></div><span id="sorthint"></span></div>
   <input class="search" id="q" type="search" placeholder="Марьино" aria-label="Найти район"><div id="dl"></div></section>
   <section class="method"><h2>Откуда данные</h2>
@@ -130,28 +131,45 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   let met="hp";
   const MET={eco:{k:"i",c:ecol,low:true,t:"экологический балл: 1 чисто, 10 грязно",best:"от самого чистого"},
     soc:{k:"score",c:scol,low:false,t:"балл соцобъектов: школы, сады и поликлиники на жителя, 1 не хватает, 10 хватает",best:"от лучше всех обеспеченного"},
-    hp:{k:"hp",c:hcol,low:true,t:"средняя цена квадратного метра квартиры на вторичке (Циан, ноябрь 2026)",best:"от самого дешёвого"},
+    hp:{k:"hp",c:hcol,low:true,t:"медианная цена квадратного метра квартиры на вторичке (Циан, ноябрь 2026)",best:"от самого дешёвого"},
     tr:{k:"ts",c:tcol,low:false,t:"транспортный балл: 1 метро далеко, 10 станции рядом и центр близко",best:"от самого удобного"}};
   const mv=f=>f.properties[MET[met].k];
   const mpill=(v,on)=>met==="hp"?ppill(v,on):pill(v,MET[met].c).replace('class="pill"',on?'class="pill on"':'class="pill"');
-  let fOk=()=>true, lastQ="", okW="pop", okSel=null;
+  let fOk=()=>true, lastQ="", okW="pop", okSel=null, filterMetrics=[];
+  const metricLabels={hp:"Цена за м²",eco:"Экология ↓",tr:"Транспорт ↑",soc:"Соцобъекты ↑"};
+  const districtMetrics=f=>'<span class="district-metrics">'+["hp","eco","tr","soc"].map(key=>{
+    const value=f.properties[MET[key].k];
+    const badge=key==="hp"?ppill(value):pill(value,MET[key].c);
+    return '<span class="district-metric'+(key===met?' is-primary':'')+(filterMetrics.includes(key)?' is-filtered':'')+'"><span class="metric-label">'+metricLabels[key]+'</span>'+badge+'</span>';
+  }).join("")+'</span>';
   let sortBy="okr", best=true;
   const renderList=q=>{q=(q||"").trim().toLowerCase().replace("ё","е");lastQ=q;
+    const matchesName=f=>f.properties.n.toLowerCase().replace("ё","е").includes(q);
+    const visible=F.filter(f=>fOk(f)&&(!okSel||f.properties.o===okSel)&&matchesName(f));
+    const emptyMessage=q&&!F.some(matchesName)
+      ?"Такого района нет. Проверьте написание."
+      :"Под выбранные условия районы не найдены. Снимите часть фильтров.";
+    document.getElementById("list-count").textContent="Показано районов: "+visible.length+" из "+F.length+(okSel?" · "+okSel:"")+(filterMetrics.length?" · применены фильтры":"");
+    if(!visible.length){
+      document.getElementById("dl").innerHTML='<p class="small">'+emptyMessage+'</p>';
+      return;
+    }
     if(sortBy!=="okr"){
       const key=mv;
       const low=MET[met].low; const dir=low===best?1:-1;
       const all=F.filter(f=>key(f)!=null).sort((a,b)=>dir*(key(a)-key(b))||(met==="eco"?dir*((a.properties.raw||0)-(b.properties.raw||0)):0)||a.properties.n.localeCompare(b.properties.n,"ru"));
       const rank=new Map(all.map((f,k)=>[f,k+1]));
-      const items=all.filter(f=>fOk(f)&&(!okSel||f.properties.o===okSel)&&f.properties.n.toLowerCase().replace("ё","е").includes(q));
-      const nod=F.filter(f=>key(f)==null&&fOk(f)&&(!okSel||f.properties.o===okSel)&&f.properties.n.toLowerCase().replace("ё","е").includes(q));
-      document.getElementById("dl").innerHTML=items.length||nod.length?`<div class="dlist flat">${items.concat(nod).map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="rk2">${rank.get(f)||"—"}</span><span class="nm">${short(f.properties.n)}<span class="ok2">${f.properties.o}</span></span>${mpill(mv(f))}</a>`).join("")}</div>`:`<p class="small">${lastQ?"Такого района нет. Проверьте написание.":"Под выбранный фильтр районов нет. Снимите часть условий."}</p>`;
+      const visibleSet=new Set(visible);
+      const items=all.filter(f=>visibleSet.has(f));
+      const nod=visible.filter(f=>key(f)==null);
+      document.getElementById("dl").innerHTML=`<div class="dlist flat">${items.concat(nod).map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="rk2">${rank.get(f)||"—"}</span><span class="nm">${short(f.properties.n)}<span class="ok2">${f.properties.o}</span></span>${districtMetrics(f)}</a>`).join("")}</div>`;
       return}
-    document.getElementById("dl").innerHTML=order.map(o=>{const items=F.filter(f=>f.properties.o===o&&fOk(f)&&(!okSel||o===okSel)&&f.properties.n.toLowerCase().replace("ё","е").includes(q)).sort((a,b)=>a.properties.n.localeCompare(b.properties.n,"ru"));
-      return items.length?`<div class="okr"><h3>${o}</h3><div class="dlist">${items.map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="nm">${short(f.properties.n)}</span>${mpill(mv(f))}</a>`).join("")}</div></div>`:""}).join("")||`<p class="small">${lastQ?"Такого района нет. Проверьте написание.":"Под выбранный фильтр районов нет. Снимите часть условий."}</p>`};
+    document.getElementById("dl").innerHTML=order.map(o=>{const items=visible.filter(f=>f.properties.o===o).sort((a,b)=>a.properties.n.localeCompare(b.properties.n,"ru"));
+      return items.length?`<div class="okr"><h3>${o}</h3><div class="dlist">${items.map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="nm">${short(f.properties.n)}</span>${districtMetrics(f)}</a>`).join("")}</div></div>`:""}).join("")};
   renderList(""); document.getElementById("q").addEventListener("input",e=>renderList(e.target.value));
   const sb=[...document.querySelectorAll(".sortbar button")];
   const paintSort=()=>{sb.forEach(b=>{const on=b.dataset.s===sortBy;b.setAttribute("aria-pressed",on);const ar=b.querySelector(".ar");if(ar)ar.textContent=on?(best?"↑":"↓"):""});
-    document.getElementById("lexp").textContent="Цифра у района — "+MET[met].t+". Показатель меняется переключателем в блоке «Округа» выше.";
+    document.getElementById("lexp").textContent="У каждого района показаны цена за м² и три балла из 10. В экологии меньше — лучше, в транспорте и соцобъектах больше — лучше. Выделен "+MET[met].t+". Фильтры отбирают районы, сортировка «По показателю» сравнивает выделенный показатель.";
     document.getElementById("sorthint").textContent=sortBy==="okr"?"":met==="hp"?(best?"сверху дешёвые, нажмите ещё раз, чтобы перевернуть":"сверху дорогие, нажмите ещё раз, чтобы перевернуть"):best?"сверху лучшие, нажмите ещё раз, чтобы перевернуть":"сверху худшие, нажмите ещё раз, чтобы перевернуть";};
   sb.forEach(b=>b.onclick=()=>{const v=b.dataset.s;if(v===sortBy&&v!=="okr")best=!best;else{sortBy=v;best=true}paintSort();renderList(lastQ)});
   paintSort();
@@ -164,7 +182,7 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
     const rows=OKS.map(o=>{const fs=F.filter(f=>f.properties.o===o);return {o,e:wavg(fs,"i",okW),s:wavg(fs,"score",okW),h:wavg(fs,"hp",okW),t:wavg(fs,"ts",okW),pop:d3.sum(fs,f=>f.properties.pop||0),area:d3.sum(fs,f=>f.properties.area||0),n:fs.length}}).filter(r=>r.n);
     rows.forEach(r=>r.v=wavg(F.filter(f=>f.properties.o===r.o),MET[met].k,okW));rows.sort((a,b)=>MET[met].low?a.v-b.v:b.v-a.v);
     document.getElementById("okg").innerHTML=rows.map(r=>`<button type="button" class="okc" data-o="${r.o}" aria-pressed="${okSel===r.o}"><b>${r.o}</b>${mpill(r.v)}<span class="m">${r.n} р-нов · ${num(r.pop/1000)} тыс. жит. · ${fmt(r.area)} км²</span></button>`).join("");
-    document.querySelectorAll(".okc").forEach(b=>b.onclick=()=>{okSel=okSel===b.dataset.o?null:b.dataset.o;renderOk();renderList(lastQ);document.getElementById("dl").scrollIntoView({behavior:"smooth",block:"start"})});
+    document.querySelectorAll(".okc").forEach(b=>b.onclick=()=>{okSel=okSel===b.dataset.o?null:b.dataset.o;renderOk();renderList(lastQ);const list=document.getElementById("district-list-heading");list.style.scrollMarginTop=(document.querySelector(".topbar").getBoundingClientRect().height+8)+"px";list.scrollIntoView({behavior:"smooth",block:"start"})});
   };
   renderOk();
   document.querySelectorAll(".metbar button").forEach(b=>b.onclick=()=>{met=b.dataset.m;renderOk();paintSort();renderList(lastQ);paintMap()});
@@ -177,11 +195,11 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
     document.getElementById("lg").innerHTML=`<p class="atlas-key-heading">${MNAME[met]}</p><ul class="atlas-key">${B.map(b=>`<li><i style="background:${b[3]}"></i>${b[2]}</li>`).join("")}<li><i style="background:var(--nodata)"></i>Нет данных</li></ul><p class="atlas-tip">Выберите район на карте, чтобы открыть его карточку.</p>`;};
   paintMap();
   makeFilter(document.getElementById("flt"),[
-    {label:"Цена квадратного метра",hint:"вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
-    {label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i},
-    {label:"Транспортный балл",hint:"метро, МЦК и МЦД рядом и время до центра: 1 далеко, 10 всё рядом",bins:TBINS,get:f=>f.properties.ts},
-    {label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score}],
-    (ok,any,setN)=>{fOk=any?ok:()=>true;sel.classed("dim",f=>any&&!ok(f));renderList(lastQ);setN(F.filter(ok).length)});
+    {metric:"hp",label:"Цена квадратного метра",hint:"вторичка на Циане, ноябрь 2026",bins:HBINS,get:f=>f.properties.hp},
+    {metric:"eco",label:"Экологический балл",hint:"сводный индекс загрязнения: 1 чисто, 10 грязно",bins:EBINS,get:f=>f.properties.i},
+    {metric:"tr",label:"Транспортный балл",hint:"метро, МЦК и МЦД рядом и время до центра: 1 далеко, 10 всё рядом",bins:TBINS,get:f=>f.properties.ts},
+    {metric:"soc",label:"Балл соцобъектов",hint:"школы, детские сады и поликлиники на жителя: 1 не хватает, 10 хватает",bins:SBINS,get:f=>f.properties.score}],
+    (ok,any,setN,activeMetrics)=>{filterMetrics=activeMetrics;fOk=any?ok:()=>true;sel.classed("dim",f=>any&&!ok(f));renderList(lastQ);setN(F.filter(ok).length)});
 }
 
 function district(f){
