@@ -1,0 +1,13 @@
+.interactive-map{position:relative}
+.atlas-zoom{position:absolute;z-index:2;top:12px;left:12px;display:flex;gap:5px}
+.atlas-zoom button{width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--fg);font:500 22px var(--body);cursor:pointer;box-shadow:0 2px 7px rgb(0 0 0 / 8%)}
+.atlas-zoom button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.atlas-map-labels{pointer-events:none}
+.atlas-label{font-family:var(--body);font-weight:550;fill:var(--fg);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round;letter-spacing:.01em}
+.atlas-label-okr{font-weight:700;letter-spacing:.035em}
+.atlas-label-park{fill:var(--parkhi,var(--accent));font-weight:600}
+.atlas-zoom-hint{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.interactive-map .ov-r1{stroke-width:1.35;stroke-linecap:round;stroke-opacity:.58;vector-effect:non-scaling-stroke}
+.interactive-map .ov-r2{stroke-width:.65;stroke-linecap:round;stroke-opacity:.3;vector-effect:non-scaling-stroke}
+.interactive-map .ov-okr{stroke-width:1;stroke-opacity:.45;vector-effect:non-scaling-stroke}
+.interactive-map .stl{stroke-width:1.4;opacity:.7;vector-effect:non-scaling-stroke}
