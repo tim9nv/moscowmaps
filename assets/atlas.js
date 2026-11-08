@@ -100,9 +100,10 @@ function home(){
   <div class="metbar list-metrics"><span>Выделить показатель:</span><div class="seg" role="group" aria-label="Показатель в списке районов"><button type="button" data-m="hp" aria-pressed="true">Цена жилья</button><button type="button" data-m="eco" aria-pressed="false">Экология</button><button type="button" data-m="tr" aria-pressed="false">Транспорт</button><button type="button" data-m="soc" aria-pressed="false">Соцобъекты</button></div></div>
   <p class="small" id="lexp" style="margin:0 0 10px"></p><p class="small" id="list-count" aria-live="polite"></p>
   <div class="sortbar"><span>Сортировка:</span><div class="seg" role="group" aria-label="Сортировка списка"><button type="button" data-s="okr" aria-pressed="true">По округам</button><button type="button" data-s="val" aria-pressed="false">По показателю<span class="ar"></span></button></div><span id="sorthint"></span></div>
-  <input class="search" id="q" type="search" placeholder="Марьино" aria-label="Найти район"><div id="dl"></div></section>
-  <section class="method"><h2>Откуда данные</h2>
-  <p>Экология: рейтинг EcoStandard за 2025 год, данные Мосэкомониторинга и сообщения о превышениях ПДК, загрязнение Москвы-реки, 36 предприятий, промзон и объектов с координатами, исследования МГУ и РУДН, самые загрязнённые магистрали и западный перенос воздуха. Соцобъекты: школы, детские сады, поликлиники и больницы по OpenStreetMap и население Росстата 2025 года через real-stats.ru. Цены: медиана цены метра в 84 самых свежих объявлениях о продаже квартир на вторичке на Циане по каждому району, ноябрь 2026. Транспорт: станции метро, МЦК и МЦД (включая Рублёво-Архангельскую линию) из справочника HeadHunter, расстояние до станций и модельное время поездки до центра. Границы районов — OpenStreetMap. Подробная методика — на страницах «Экология», «Соцобъекты», «Жильё» и «Транспорт».</p></section>`;
+  <input class="search" id="q" type="search" placeholder="Марьино" aria-label="Найти район"><div id="dl"></div>
+  <button type="button" class="search" id="more-districts" aria-controls="dl" hidden>Показать ещё районы</button></section>
+  <details class="method"><summary>Откуда данные</summary>
+  <p>Экология: рейтинг EcoStandard за 2025 год, данные Мосэкомониторинга и сообщения о превышениях ПДК, загрязнение Москвы-реки, 36 предприятий, промзон и объектов с координатами, исследования МГУ и РУДН, самые загрязнённые магистрали и западный перенос воздуха. Соцобъекты: школы, детские сады, поликлиники и больницы по OpenStreetMap и население Росстата 2025 года через real-stats.ru. Цены: медиана цены метра в 84 самых свежих объявлениях о продаже квартир на вторичке на Циане по каждому району, ноябрь 2026. Транспорт: станции метро, МЦК и МЦД (включая Рублёво-Архангельскую линию) из справочника HeadHunter, расстояние до станций и модельное время поездки до центра. Границы районов — OpenStreetMap. Подробная методика — на страницах «Экология», «Соцобъекты», «Жильё» и «Транспорт».</p></details>`;
   const svg=d3.select("#hm"); const proj=d3.geoMercator().fitExtent([[10,10],[590,610]],inner); const path=d3.geoPath(proj);
   svg.append("clipPath").attr("id","hc").append("rect").attr("width",600).attr("height",620);
   const sel=svg.append("g").attr("clip-path","url(#hc)").selectAll("path").data(F).join("path").attr("class","d").attr("d",path)
@@ -142,14 +143,20 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
     const badge=key==="hp"?ppill(value):pill(value,MET[key].c);
     return '<span class="district-metric'+(key===met?' is-primary':'')+(filterMetrics.includes(key)?' is-filtered':'')+'"><span class="metric-label">'+metricLabels[key]+'</span>'+badge+'</span>';
   }).join("")+'</span>';
-  let sortBy="okr", best=true;
+  let sortBy="okr", best=true, listLimit=12, listContext="";
+  const moreDistricts=document.getElementById("more-districts");
   const renderList=q=>{q=(q||"").trim().toLowerCase().replace("ё","е");lastQ=q;
     const matchesName=f=>f.properties.n.toLowerCase().replace("ё","е").includes(q);
     const visible=F.filter(f=>fOk(f)&&(!okSel||f.properties.o===okSel)&&matchesName(f));
+    const context=JSON.stringify([sortBy,best,met,visible.map(f=>f.properties.slug)]);
+    if(context!==listContext){listContext=context;listLimit=12}
+    const shown=Math.min(visible.length,listLimit);
+    moreDistricts.hidden=shown===visible.length;
+    moreDistricts.textContent="Показать ещё "+Math.min(12,visible.length-shown)+" районов";
     const emptyMessage=q&&!F.some(matchesName)
       ?"Такого района нет. Проверьте написание."
       :"Под выбранные условия районы не найдены. Снимите часть фильтров.";
-    document.getElementById("list-count").textContent="Показано районов: "+visible.length+" из "+F.length+(okSel?" · "+okSel:"")+(filterMetrics.length?" · применены фильтры":"");
+    document.getElementById("list-count").textContent="Показано: "+shown+" · Найдено: "+visible.length+(okSel?" · "+okSel:"")+(filterMetrics.length?" · применены фильтры":"");
     if(!visible.length){
       document.getElementById("dl").innerHTML='<p class="small">'+emptyMessage+'</p>';
       return;
@@ -162,10 +169,13 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
       const visibleSet=new Set(visible);
       const items=all.filter(f=>visibleSet.has(f));
       const nod=visible.filter(f=>key(f)==null);
-      document.getElementById("dl").innerHTML=`<div class="dlist flat">${items.concat(nod).map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="rk2">${rank.get(f)||"—"}</span><span class="nm">${short(f.properties.n)}<span class="ok2">${f.properties.o}</span></span>${districtMetrics(f)}</a>`).join("")}</div>`;
+      document.getElementById("dl").innerHTML=`<div class="dlist flat">${items.concat(nod).slice(0,shown).map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="rk2">${rank.get(f)||"—"}</span><span class="nm">${short(f.properties.n)}<span class="ok2">${f.properties.o}</span></span>${districtMetrics(f)}</a>`).join("")}</div>`;
       return}
-    document.getElementById("dl").innerHTML=order.map(o=>{const items=visible.filter(f=>f.properties.o===o).sort((a,b)=>a.properties.n.localeCompare(b.properties.n,"ru"));
+    let remaining=shown;
+    document.getElementById("dl").innerHTML=order.map(o=>{const items=visible.filter(f=>f.properties.o===o).sort((a,b)=>a.properties.n.localeCompare(b.properties.n,"ru")).slice(0,remaining);
+      remaining-=items.length;
       return items.length?`<div class="okr"><h3>${o}</h3><div class="dlist">${items.map(f=>`<a href="${dUrl(f.properties.slug)}"><span class="nm">${short(f.properties.n)}</span>${districtMetrics(f)}</a>`).join("")}</div></div>`:""}).join("")};
+  moreDistricts.onclick=()=>{listLimit+=12;renderList(lastQ)};
   renderList(""); document.getElementById("q").addEventListener("input",e=>renderList(e.target.value));
   const sb=[...document.querySelectorAll(".sortbar button")];
   const paintSort=()=>{sb.forEach(b=>{const on=b.dataset.s===sortBy;b.setAttribute("aria-pressed",on);const ar=b.querySelector(".ar");if(ar)ar.textContent=on?(best?"↑":"↓"):""});
