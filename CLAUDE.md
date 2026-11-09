@@ -61,3 +61,5 @@ python3 tools/build_sport.py                   # sport.html из шаблона 
 - раз в квартал — `ecolog`, `sotsialshchik`, `transportnik`, `parkovod`, `klimatolog`.
 
 - После публикации заметных изменений запускать `python3 tools/indexnow.py`: отправляет все страницы из sitemap.xml в Яндекс через IndexNow (Вебмастер для этого не нужен). Файл-ключ `324e282c3bce892dd7bb618fbc1dc286.txt` в корне не удалять.
+
+- Файл `googleac5ca9141a612c9a.html` в корне — подтверждение сайта в Google Search Console, не удалять.
