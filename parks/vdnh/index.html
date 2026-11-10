@@ -35,10 +35,16 @@
     <div class="map-shell">
       <div class="tools"><label for="search">Найти место</label><input type="search" id="search" placeholder="Например, Космос или № 34"><div id="filters" class="filters" aria-label="Категории"></div></div>
       <div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div>
+      <div id="route-tools" class="route-tools" hidden>
+        <label for="route-leg">Участок прогулки</label>
+        <select id="route-leg"></select>
+        <p id="route-hint">Стрелки показывают направление. Выберите участок, если дорожка проходится в обе стороны.</p>
+      </div>
       <div id="map" aria-label="Интерактивная карта ВДНХ"></div>
       <p id="status" role="status"></p>
     </div>
     <noscript><p>Для интерактивной карты нужен JavaScript. <a href="https://vdnh.ru/places/">Каталог мест ВДНХ</a>.</p></noscript>
+    <p class="muted"><a href="https://vdnh.ru/map/">Посмотреть 3D-павильоны на официальной карте ВДНХ ↗</a></p>
     <details id="places"><summary>Объекты списком <span id="count"></span></summary><ul id="place-list"></ul></details>
   </section>
   <section id="walks">
@@ -47,6 +53,12 @@
     <p class="muted">Длина рассчитана по дорожкам на карте. Время указано для ходьбы, без осмотра экспозиций.</p>
     <div id="routes" class="routes"></div>
     <p><a href="https://vdnh.ru/routes/">Все маршруты на официальном сайте ВДНХ ↗</a></p>
+  </section>
+  <section class="district" aria-labelledby="nearby-title">
+    <p class="eyebrow">Продолжить прогулку</p>
+    <h2 id="nearby-title">Главный ботанический сад РАН</h2>
+    <p>От Каменских прудов можно перейти в сад имени Цицина. Если хочется продлить прогулку, посмотрите дендрарий, Японский сад или оранжерею. У отдельных экспозиций свой режим посещения.</p>
+    <div class="actions"><a href="#map-section" id="botanical-link">Показать подход на карте</a><a href="https://vdnh.ru/news/5094/">Совместный «Зелёный маршрут» ↗</a><a href="https://www.gbsad.ru/">Сайт и схема сада ↗</a></div>
   </section>
   <section class="district">
     <p class="eyebrow">ВДНХ в Атласе</p>

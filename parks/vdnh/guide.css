@@ -7,3 +7,11 @@ details{margin-top:10px;padding:12px}summary{cursor:pointer;font-weight:600}#pla
 @media(max-width:580px){.hero{grid-template-columns:1fr;position:relative}.hero-art{position:absolute;width:160px;right:-33px;top:8px;opacity:.23;pointer-events:none}.hero-copy{position:relative;z-index:1}.filters{flex-wrap:nowrap;overflow:auto;padding:3px}.filters button{white-space:nowrap}#map{height:420px}}
 .leaflet-marker-icon.route-pin{--pin:#74368d}
 [hidden]{display:none!important}.selected-route{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-top:1px solid var(--border)}.selected-route button{flex:none;font-size:14px}
+
+.route-tools{display:grid;gap:4px;padding:6px 12px 12px}
+.route-tools label{font-size:14px;font-weight:600}
+.route-tools select{display:block;width:min(100%,540px);min-width:0;min-height:44px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;font:inherit;color:var(--ink);background:var(--bg)}
+.route-tools p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.route-arrow{pointer-events:none!important}
+.route-chevron{display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#713887;color:#fff;border:1px solid #fff;font:bold 15px/1 system-ui}
+#map.walking .leaflet-tile-pane{filter:saturate(.55) contrast(.82) brightness(1.13)}

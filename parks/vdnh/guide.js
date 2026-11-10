@@ -79,7 +79,8 @@ function renderPlaces() {
   const filtered = places.filter(place => (category === "all" || place.category === category
     || (category === "pavilion" && place.name.startsWith("Павильон")))
     && (normalize(place.name).includes(query) || (place.aliases || []).some(alias => normalize(alias).includes(query))));
-  const visible = new Set(filtered.map(place => place.id));
+  const showContext = !activeRoute || category !== "all" || Boolean(query);
+  const visible = new Set(showContext ? filtered.map(place => place.id) : []);
   for (const [id, marker] of markers) {
     if (visible.has(id)) marker.addTo(map);
     else marker.remove();
@@ -97,7 +98,7 @@ function renderPlaces() {
     button.type = "button";
     button.addEventListener("click", () => {
       map.setView([place.lat, place.lon], Math.max(17, map.getZoom()));
-      markers.get(place.id).openPopup();
+      markers.get(place.id).addTo(map).openPopup();
       get("map-section").scrollIntoView({ block: "start" });
     });
     li.append(button);
@@ -128,31 +129,104 @@ get("search").addEventListener("input", () => {
 renderPlaces();
 
 const routeLayer = map ? L.layerGroup().addTo(map) : null;
+const arrowLayer = map ? L.layerGroup().addTo(map) : null;
+const routeLeg = get("route-leg");
+let displayedTrack = [];
+let trackOverview = false;
 
-function showRoute(route) {
-  activeRoute = activeRoute === route.id ? null : route.id;
-  routeLayer.clearLayers();
-  for (const button of document.querySelectorAll("[data-route]")) {
-    const selected = button.dataset.route === activeRoute;
-    button.setAttribute("aria-pressed", String(selected));
-    button.textContent = selected ? "Скрыть маршрут" : "Показать маршрут";
+function getLegs(route) {
+  let offset = 0;
+  return route.approaches.slice(1).map(point => {
+    const end = route.track.findIndex((vertex, index) => index > offset
+      && vertex[0] === point[0] && vertex[1] === point[1]);
+    const leg = route.track.slice(offset, end + 1);
+    offset = end;
+    return leg;
+  });
+}
+
+function drawArrows() {
+  arrowLayer.clearLayers();
+  const points = displayedTrack.map(point => map.project(point, map.getZoom()));
+  const edge = index => [displayedTrack[index - 1].join(), displayedTrack[index].join()].sort().join("|");
+  const counts = new Map();
+  for (let i = 1; i < points.length; i++) counts.set(edge(i), (counts.get(edge(i)) || 0) + 1);
+
+  const total = points.slice(1).reduce((length, point, index) => length + point.distanceTo(points[index]), 0);
+  const spacing = Math.max(54, total / 32);
+  let next = Math.min(spacing * 0.65, total / 2);
+  let travelled = 0;
+  for (let i = 1; i < points.length; i++) {
+    const from = points[i - 1];
+    const delta = points[i].subtract(from);
+    const length = points[i].distanceTo(from);
+    while (length && next < travelled + length) {
+      if (!trackOverview || counts.get(edge(i)) === 1) {
+        const point = map.unproject(from.add(delta.multiplyBy((next - travelled) / length)), map.getZoom());
+        const angle = Math.atan2(delta.y, delta.x) * 180 / Math.PI;
+        const arrow = element("span", "➜", "route-chevron");
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.style.transform = `rotate(${angle}deg)`;
+        const icon = L.divIcon({ className: "route-arrow", html: arrow, iconSize: [21, 21] });
+        L.marker(point, { icon, interactive: false, keyboard: false, zIndexOffset: 600 }).addTo(arrowLayer);
+      }
+      next += spacing;
+    }
+    travelled += length;
   }
-  routeBanner.hidden = !activeRoute;
-  if (!activeRoute) return;
-  get("selected-route-name").textContent = route.name;
+}
+
+function drawRoute(route) {
+  routeLayer.clearLayers();
+  const legIndex = Number(routeLeg.value);
+  trackOverview = legIndex < 0;
+  displayedTrack = trackOverview ? route.track : getLegs(route)[legIndex];
   map.closePopup();
-  L.polyline(route.track, { color: "#fff", weight: 9, interactive: false }).addTo(routeLayer);
-  const line = L.polyline(route.track, { color: "#8848a3", weight: 5, interactive: false }).addTo(routeLayer);
+  L.polyline(displayedTrack, { color: "#fff", weight: 10, interactive: false }).addTo(routeLayer);
+  const line = L.polyline(displayedTrack, { color: "#713887", weight: 6, interactive: false }).addTo(routeLayer);
   route.stops.forEach((id, index) => {
+    if (!trackOverview && index !== legIndex && index !== legIndex + 1) return;
     const place = byId.get(id);
     const icon = L.divIcon({ className: "poi-icon route-pin", html: String(index + 1), iconSize: [29, 29] });
     L.marker(route.approaches[index], { icon, title: place.name, alt: place.name, zIndexOffset: 800 })
       .bindPopup(popup(place, true)).addTo(routeLayer);
   });
-  map.fitBounds(line.getBounds(), { padding: [32, 32], maxZoom: 17 });
+  map.fitBounds(line.getBounds(), { padding: [32, 32], maxZoom: 18 });
+  drawArrows();
+}
+
+function showRoute(route) {
+  activeRoute = activeRoute === route.id ? null : route.id;
+  routeLayer.clearLayers();
+  arrowLayer.clearLayers();
+  displayedTrack = [];
+  for (const button of document.querySelectorAll("[data-route]")) {
+    const selected = button.dataset.route === activeRoute;
+    button.setAttribute("aria-pressed", String(selected));
+    button.textContent = selected ? "Скрыть маршрут" : "Показать маршрут";
+  }
+  routeBanner.hidden = get("route-tools").hidden = !activeRoute;
+  get("map").classList.toggle("walking", Boolean(activeRoute));
+  renderPlaces();
+  if (!activeRoute) return;
+  get("selected-route-name").textContent = route.name;
+  const overview = element("option", "Весь маршрут");
+  overview.value = "-1";
+  const options = route.stops.slice(1).map((id, index) => {
+    const option = element("option", `${index + 1} → ${index + 2} · ${byId.get(id).name}`);
+    option.value = String(index);
+    return option;
+  });
+  routeLeg.replaceChildren(overview, ...options);
+  drawRoute(route);
   get("map-section").scrollIntoView({ block: "start" });
   get("clear-route").focus({ preventScroll: true });
 }
+
+if (map) map.on("zoomend", drawArrows);
+routeLeg.addEventListener("change", () => {
+  if (activeRoute) drawRoute(routes.find(route => route.id === activeRoute));
+});
 
 get("clear-route").addEventListener("click", () => {
   if (activeRoute) {
@@ -178,6 +252,18 @@ for (const route of routes) {
   }
   get("routes").append(article);
 }
+
+get("botanical-link").addEventListener("click", () => {
+  if (activeRoute) showRoute(routes.find(route => route.id === activeRoute));
+  get("filters").querySelector('[data-category="all"]').click();
+  get("search").value = "подход со стороны ВДНХ";
+  get("places").open = true;
+  renderPlaces();
+  if (!map) return;
+  const place = byId.get("botanical-approach");
+  map.setView([place.lat, place.lon], 17);
+  markers.get(place.id).openPopup();
+});
 
 function stopLocation() {
   if (watch !== null) navigator.geolocation.clearWatch(watch);
