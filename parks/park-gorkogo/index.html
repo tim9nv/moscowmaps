@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Парк Горького: карта, тропы и что посмотреть — Атлас Москвы</title>
+<meta name="description" content="Парк Горького в Москве: карта с дорожками и тропами, 11 достопримечательностей, 7 музеев, 8 смотровых площадок, 133 скульптуры. Геолокация «Я на карте».">
+<link rel="canonical" href="https://www.mskatlas.ru/parks/park-gorkogo/">
+<meta property="og:type" content="article"><meta property="og:title" content="Парк Горького: карта, тропы и что посмотреть — Атлас Москвы"><meta property="og:description" content="Парк Горького в Москве: карта с дорожками и тропами, 11 достопримечательностей, 7 музеев, 8 смотровых площадок, 133 скульптуры. Геолокация «Я на карте»."><meta property="og:url" content="https://www.mskatlas.ru/parks/park-gorkogo/"><meta property="og:site_name" content="Атлас Москвы"><meta property="og:locale" content="ru_RU">
+<link rel="stylesheet" href="../vdnh/guide.css">
+<link rel="stylesheet" href="../catalog/catalog.css?v=20261110i">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>window.PARK_ID="48";window.PARK_BASE="../catalog/";</script>
+<script defer src="../catalog/catalog.js?v=20261110i"></script>
+</head>
+<body>
+<header class="bar"><div class="wrap"><a href="../../index.html"><img src="../../assets/logo.svg" alt="" width="32" height="32"> Атлас Москвы</a><a href="../../parks.html">Парки и прогулки</a></div></header>
+<main class="wrap">
+  <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / Парк Горького</nav>
+  <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве · Якиманка</p><h1 id="title">Парк Горького</h1><p id="intro">Парк Горького находится в районе Якиманка, площадь 0,70 км². На карте отмечено: 11 достопримечательностей, 7 музеев, 8 смотровых площадок, 133 скульптуры, 59 кафе, 16 детских площадок, 27 туалетов.</p><div class="actions"><a class="primary" href="#map-section">Открыть карту</a></div></div></header>
+  <p id="load-error" role="status" hidden></p>
+  <section id="map-section" aria-labelledby="map-title" hidden>
+    <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
+    <div class="tools" id="park-tools" hidden><label for="search">Что есть в парке</label><input type="search" id="search" placeholder="Например, кафе или памятник"><div id="filters" class="filters" aria-label="Категории"></div></div>
+    <div class="map-shell" id="map-shell">
+      <div class="map-toolbar" aria-label="Управление картой">
+        <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
+        <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
+      </div>
+      <div class="trail-controls">
+        <label><input id="trail-toggle" type="checkbox" checked disabled> Тропы и аллеи</label>
+        <div class="trail-legend" aria-label="Типы дорожек"><span class="paved">Твёрдое покрытие</span><span class="unpaved">Грунт и гравий</span><span class="boardwalk">Настил</span><span class="steps">Ступени</span><span class="unknown">Покрытие неизвестно</span></div>
+        <p id="trail-status" class="muted" role="status"></p>
+      </div>
+      <div id="map" aria-label="Интерактивная карта парка"></div>
+      <p id="status" role="status"></p>
+    </div>
+    <details id="places" hidden><summary>Объекты списком <span id="count"></span></summary><p class="muted" id="places-note"></p><ul id="place-list"></ul></details>
+    <div hidden><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>
+  </section>
+<section class="park-sec"><h2>Достопримечательности</h2><ul class="park-names"><li>Арка главного входа в ЦПКиО им. Горького</li><li>Девушка на буме</li><li>Дед Мазай и зайцы</li><li>Махатма Ганди</li><li>Павильон «Шестигранник»</li><li>Памятник Максиму Горькому</li><li>Памятник Погибшим сотрудникам</li><li>Памятник Ф. Э. Дзержинскому</li><li>Презервация Тишины</li><li>СССР — оплот мира</li><li>Церковь Николая Чудотворца</li></ul></section>
+<section class="park-sec"><h2>Музеи и театры</h2><ul class="park-names"><li>Гараж</li><li>Китайский уголок</li><li>Музей Павла и Сергея Третьяковых</li><li>Музей Парка Горького</li><li>Новая Третьяковка</li><li>Парк искусств Музеон</li><li>Центральный дом художника</li></ul></section>
+<section class="park-sec"><h2>Смотровые площадки</h2><ul class="park-names"><li>Смотровая площадка</li></ul></section>
+<section class="park-sec"><h2>Скульптуры</h2><ul class="park-names"><li>Адамово яблоко</li><li>Аккорд</li><li>Аматерасу</li><li>Ангел</li><li>Аргумент</li><li>Арлекин</li><li>Афган</li><li>Беженцы</li><li>Большой мяч</li><li>Брежнев</li><li>Броненосец</li><li>Буратино</li><li>Варан</li><li>Вечер</li><li>Вечером</li><li>Вита</li><li>Воин-призрак</li><li>Волшебные звуки</li><li>Врата</li><li>Всадник</li><li>Девушка с ППШ</li><li>Дискобол</li><li>Добрый пастырь</li><li>Дон Кихот</li><li>Дуэль</li><li>Ева</li><li>Женщина с птицей</li><li>Жертвоприношение</li><li>Звездочёт</li><li>Игнатий</li><li>Изгнание</li><li>Кавказец</li><li>Калинин</li><li>Камень Harley-Davidson</li><li>Кентавр</li><li>Колыбельная гения</li><li>Корабль-призрак</li><li>Кормящая неродившихся</li><li>Косыгин</li><li>Лев</li><li class="muted">и ещё 83 — на карте</li></ul></section>
+<section class="park-sec"><h2>Кафе и рестораны</h2><ul class="park-names"><li>8 Oz</li><li>Burger Heroes</li><li>Cafe Garage</li><li>Cameo</li><li>Cezve Coffee</li><li>Chicko</li><li>Cochonnet</li><li>Cotto</li><li>Crop</li><li>Forte Asteria</li><li>G-Drive</li><li>GemoPuri</li><li>Holy Gyros</li><li>Hot Dog Bulldog</li><li>Kaffebröd</li><li>Lukumàdes</li><li>Made in Bali</li><li>MagGrill</li><li>Mimi Pizza</li><li>Pho Bo</li><li>Pims</li><li>Pizzamento</li><li>Remy Kitchen Bakery</li><li>Rostic&#x27;s</li><li>sbw</li><li>Select Перекрёсток</li><li>Shawarma house</li><li>Sibsa</li><li>Stardogs</li><li>Substance</li><li>Surf Coffee</li><li>Sweet To Me</li><li>Veranda</li><li>Wursthaus</li><li>Барбекю</li><li>Блинский</li><li>Вкусно — и точка</li><li>Времена года</li><li>Жаровня</li><li>Кофе Пончик</li><li class="muted">и ещё 15 — на карте</li></ul></section>
+  <nav class="park-links" aria-label="Районы рядом"><a href="../../rayon/yakimanka/">Район Якиманка</a></nav>
+  <footer>Карта, дорожки и объекты — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>, выгрузка 10.11.2026. Площадь — по контуру парка на карте Атласа. Проходы и ограничения могут меняться. Сверяйтесь с указателями на месте.</footer>
+</main>
+</body>
+</html>

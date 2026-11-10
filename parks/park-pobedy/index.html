@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Парк Победы: карта, тропы и что посмотреть — Атлас Москвы</title>
+<meta name="description" content="Парк Победы в Москве: карта с дорожками и тропами, 41 достопримечательность, 2 музея, 7 кафе, 1 детская площадка. Геолокация «Я на карте».">
+<link rel="canonical" href="https://www.mskatlas.ru/parks/park-pobedy/">
+<meta property="og:type" content="article"><meta property="og:title" content="Парк Победы: карта, тропы и что посмотреть — Атлас Москвы"><meta property="og:description" content="Парк Победы в Москве: карта с дорожками и тропами, 41 достопримечательность, 2 музея, 7 кафе, 1 детская площадка. Геолокация «Я на карте»."><meta property="og:url" content="https://www.mskatlas.ru/parks/park-pobedy/"><meta property="og:site_name" content="Атлас Москвы"><meta property="og:locale" content="ru_RU">
+<link rel="stylesheet" href="../vdnh/guide.css">
+<link rel="stylesheet" href="../catalog/catalog.css?v=20261110i">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>window.PARK_ID="39";window.PARK_BASE="../catalog/";</script>
+<script defer src="../catalog/catalog.js?v=20261110i"></script>
+</head>
+<body>
+<header class="bar"><div class="wrap"><a href="../../index.html"><img src="../../assets/logo.svg" alt="" width="32" height="32"> Атлас Москвы</a><a href="../../parks.html">Парки и прогулки</a></div></header>
+<main class="wrap">
+  <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / Парк Победы</nav>
+  <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве · Дорогомилово</p><h1 id="title">Парк Победы</h1><p id="intro">Парк Победы находится в районе Дорогомилово, площадь 1,0 км². На карте отмечено: 41 достопримечательность, 2 музея, 7 кафе, 1 детская площадка, 6 туалетов.</p><div class="actions"><a class="primary" href="#map-section">Открыть карту</a></div></div></header>
+  <p id="load-error" role="status" hidden></p>
+  <section id="map-section" aria-labelledby="map-title" hidden>
+    <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
+    <div class="tools" id="park-tools" hidden><label for="search">Что есть в парке</label><input type="search" id="search" placeholder="Например, кафе или памятник"><div id="filters" class="filters" aria-label="Категории"></div></div>
+    <div class="map-shell" id="map-shell">
+      <div class="map-toolbar" aria-label="Управление картой">
+        <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
+        <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
+      </div>
+      <div class="trail-controls">
+        <label><input id="trail-toggle" type="checkbox" checked disabled> Тропы и аллеи</label>
+        <div class="trail-legend" aria-label="Типы дорожек"><span class="paved">Твёрдое покрытие</span><span class="unpaved">Грунт и гравий</span><span class="boardwalk">Настил</span><span class="steps">Ступени</span><span class="unknown">Покрытие неизвестно</span></div>
+        <p id="trail-status" class="muted" role="status"></p>
+      </div>
+      <div id="map" aria-label="Интерактивная карта парка"></div>
+      <p id="status" role="status"></p>
+    </div>
+    <details id="places" hidden><summary>Объекты списком <span id="count"></span></summary><p class="muted" id="places-note"></p><ul id="place-list"></ul></details>
+    <div hidden><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>
+  </section>
+<section class="park-sec"><h2>Достопримечательности</h2><ul class="park-names"><li>1-й Белорусский фронт</li><li>1-й Прибалтийский фронт</li><li>1-й Украинский фронт</li><li>2-й Белорусский фронт</li><li>2-й Украинский фронт</li><li>3-й Белорусский фронт</li><li>3-й Украинский фронт</li><li>4-й Украинский фронт</li><li>Балтийский флот</li><li>В борьбе против фашизма мы были вместе</li><li>Вечный огонь</li><li>Военно-морская техника</li><li>Георгий Победоносец</li><li>Испанцам, павшим в Великой Отечественной войне</li><li>Карельский фронт</li><li>Ленинградский фронт</li><li>Мемориальная мечеть</li><li>Мемориальная синагога</li><li>Менора</li><li>Монумент Победы</li><li>Памятник Военным морякам, погибшим в битве под Москвой 1941-1942 гг.</li><li>Памятник Воинам-интернационалистам</li><li>Памятник Героям Первой мировой войны</li><li>Памятник Городам воинской славы</li><li>Памятник Защитникам земли Русской</li><li>Памятник Защитникам Москвы</li><li>Памятник Ликвидаторам аварии на Чернобыльской АЭС</li><li>Памятник Пропавшим без вести</li><li>Памятник Солдатам стран-участниц антигитлеровской коалиции</li><li>Памятник Сыновьям и дочерям Словении</li><li>Памятник-ансамбль</li><li>Партизаны и подпольщики</li><li>По дорогам войны</li><li>св. Георгия Победоносца</li><li>Северный флот</li><li>Трагедия народов</li><li>Труженики тыла</li><li>Фронтовой собаке</li><li>Цветочные часы</li><li>Черноморский флот</li><li class="muted">и ещё 1 — на карте</li></ul></section>
+<section class="park-sec"><h2>Музеи и театры</h2><ul class="park-names"><li>Музей Г.О.Р.А.</li><li>Музей Победы</li></ul></section>
+<section class="park-sec"><h2>Кафе и рестораны</h2><ul class="park-names"><li>Padre&#x27;s corndog</li><li>Street food</li><li>Umma</li><li>Партизанская Поляна</li><li>Полевая кухня</li><li>Свадебное кафе</li><li>Стардог!s</li></ul></section>
+  <nav class="park-links" aria-label="Районы рядом"><a href="../../rayon/dorogomilovo/">Район Дорогомилово</a></nav>
+  <footer>Карта, дорожки и объекты — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>, выгрузка 10.11.2026. Площадь — по контуру парка на карте Атласа. Проходы и ограничения могут меняться. Сверяйтесь с указателями на месте.</footer>
+</main>
+</body>
+</html>
