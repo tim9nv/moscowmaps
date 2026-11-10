@@ -42,7 +42,7 @@ sp_rank = sorted(sp_F, key=lambda f: -P(f)['sp']['s'])
 N = len(F)
 import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import proscons
-zhit = proscons.zhit
+zhit = proscons.zhit; pl = proscons.pl; minut_rod = proscons.minut_rod
 GREEN = proscons.load_green(REPO)
 green_F = [f for f in F if (GREEN.get(P(f)['n']) or {}).get('pct') is not None]
 green_rank = sorted(green_F, key=lambda f: -GREEN[P(f)['n']]['pct'])
@@ -135,6 +135,8 @@ EXTRA_CSS = '''<style>
 
 def head(title, desc, canon, depth, img=None):
     h = head_src
+    # свои description, canonical и og у каждой страницы: убираем те, что пришли из шапки главной
+    h = re.sub(r'<meta name="description"[^>]*>\n?|<link rel="canonical"[^>]*>\n?|<meta property="og:[^>]*>\n?', '', h)
     h = re.sub(r'<title>.*?</title>', f'<title>{E(title)}</title>', h, count=1, flags=re.S)
     meta = (f'<meta name="description" content="{E(desc)}">\n<link rel="canonical" href="{canon}">\n'
             f'<meta property="og:type" content="website"><meta property="og:title" content="{E(title)}">'
@@ -153,23 +155,23 @@ def foot(depth):
             f'транспорт, школы, поликлиники, спорт и магазины — OpenStreetMap (ноябрь 2026), население — Росстат и Wikidata 2025, гербы — Викисклад. '
             f'Подробно о методике — на страницах <a href="{pre}ecology.html">экологии</a>, <a href="{pre}housing.html">цен</a>, '
             f'<a href="{pre}transport.html">транспорта</a>, <a href="{pre}social.html">городской среды</a> и <a href="{pre}climate.html">географии</a>. '
-            f'<a href="{pre}rayon/">Все районы Москвы</a> · <a href="{pre}reyting/">Рейтинги районов</a>: <a href="{pre}reyting/luchshie-rayony/">лучшие</a>, <a href="{pre}reyting/ekologiya/">экология</a>, <a href="{pre}reyting/zelenye-rayony/">зелёные</a>, <a href="{pre}reyting/deshevye-rayony/">дешёвые</a>, <a href="{pre}reyting/dlya-semi-s-detmi/">для семьи</a>.</p>')
+            f'<a href="{pre}rayon/">Все районы Москвы</a> · <a href="{pre}reyting/">Рейтинги районов</a>: <a href="{pre}reyting/luchshie-rayony/">лучшие</a>, <a href="{pre}reyting/ekologiya/">экология</a>, <a href="{pre}reyting/zelenye-rayony/">зелёные</a>, <a href="{pre}reyting/deshevye-rayony/">дешёвые</a>, <a href="{pre}reyting/transport/">транспорт</a>, <a href="{pre}reyting/dlya-semi-s-detmi/">для семьи</a>.</p>')
 
 def page(f):
     p = P(f); sl = p['slug']; n = p['n']; o = p['o']
     nbs = [BY[x] for x in (p.get('nb') or []) if x in BY]
     er = eco_rank.index(f) + 1
-    title = f'Район {n} ({o}): экология, цены на жильё, транспорт, школы — Атлас районов Москвы'
+    title = f'Район {n} ({o}): цены на квартиры, экология, транспорт, плюсы и минусы'
     bits = [f'{n} — район {o} Москвы' + (f', {num(p["pop"])} {zhit(p["pop"])}' if p.get('pop') else '')]
-    if p.get('hp'): bits.append(f'метр жилья на вторичке около {round(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
-    bits.append(f'экология {fmt(p["i"])} из 10, {er}-е место по чистоте')
-    if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} минут')
+    if p.get('hp'): bits.append(f'метр жилья на вторичке около {num(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
+    bits.append(f'экологический балл {fmt(p["i"])} из 10 (чем меньше, тем чище), {er}-е место по чистоте')
+    if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} {minut_rod(p["tr"]["tmed"])}')
     desc = '; '.join(bits) + '. Школы, поликлиники, спорт, парки и микроклимат в сравнении со всеми районами Москвы.'
     lead = bits[0] + '. ' + '. '.join(x[0].upper() + x[1:] for x in bits[1:]) + '.' if len(bits) > 1 else bits[0] + '.'
     canon = f'{BASE}/rayon/{sl}/'
     tiles = []
-    tiles.append(tile('Цена за м²', f'{round(p["hp"]/1000)}<span style="font-size:18px"> тыс. ₽</span>' if p.get('hp') else '—',
-                      f'{p["hrk"]}-е место из 125 · 1 — самый дорогой' if p.get('hp') else 'нет данных',
+    tiles.append(tile('Цена за м²', f'{num(p["hp"]/1000)}<span style="font-size:18px"> тыс. ₽</span>' if p.get('hp') else '—',
+                      f'{p["hrk"]}-е место из 125 по цене' if p.get('hp') else 'нет данных',
                       min(100, p['hp']/10000) if p.get('hp') else 0, hcol(p['hp']) if p.get('hp') else 'none'))
     tiles.append(tile('Экология · 10 грязно', fmt(p['i']), f'{er}-е место из {N} по чистоте', p['i']*10, f'var(--e{band(p["i"])})', p['i'] >= 6))
     if p.get('tr'): tiles.append(tile('Транспорт', fmt(p['tr']['score']), f'{tr_rank.index(f)+1}-е место из {len(tr_F)} · до центра {p["tr"]["tmed"]} мин', p['tr']['score']*10, f'var(--s{band(p["tr"]["score"])})'))
@@ -189,7 +191,7 @@ def page(f):
             ss = p['tr']['st']
             txt = ('Станции в районе: ' + '; '.join(E(x[0]) + ' (' + (', '.join(x[2]) if x[1] != 'mcc' else 'МЦК') + ')' for x in ss) + '.') if ss else 'Внутри района нет станций метро, МЦК и МЦД.'
             txt = f'<p class="small" style="margin-top:10px">{txt}</p>'
-        if p.get('hp'): txt += f'<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, {num(p.get("hcnt"))} объявлений в районе).</p>'
+        if p.get('hp'): txt += f'<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, {num(p.get("hcnt"))} {pl(p.get("hcnt") or 0,"объявление","объявления","объявлений")} в районе).</p>'
         sec.append(f'<section><h2>Жильё и транспорт</h2><div class="stats">{"".join(st)}</div>{txt}</section>')
     # ecology
     fac = [f'<div><span>База: EcoStandard и замеры воздуха<span class="note">EcoStandard {fmt(p["a"])} · замеры {p["b"]}</span></span><b>{fmt(0.6*p["a"]+0.4*p["b"])}</b></div>']
@@ -205,17 +207,17 @@ def page(f):
     if p.get('sp'):
         q = p['sp']; lv = p['lv']
         sec.append(f'<section><h2>Спорт и жизнь вокруг</h2><div class="stats">{stat("Бассейны",q["pool"],q["pp"],q["p10"])}{stat("Спортзалы и клубы",q["halls"],q["hp"],q["h10"])}{stat("Площадки и воркауты",q["grounds"],q["gp"],q["g10"])}'
-                   f'<div class="stat"><div class="l">Оживлённость</div><div class="v">{LV[lv["l"]]}</div><div class="s">{num(lv["f"])} кафе и ресторанов · {num(lv["h"])} магазинов · {num(lv["d"])} на км²</div></div></div>'
+                   f'<div class="stat"><div class="l">Оживлённость</div><div class="v">{LV[lv["l"]]}</div><div class="s">{num(lv["f"])} кафе и ресторанов · {num(lv["h"])} {pl(lv["h"],"магазин","магазина","магазинов")} · {num(lv["d"])} на км²</div></div></div>'
                    f'<p class="small" style="margin-top:10px">Спорт {fmt(q["s"])} из 10 · <a href="../../sport.html">карта спорта по районам</a>. Оживлённость — кафе, рестораны, бары и магазины на квадратный километр; это характеристика, а не оценка.</p></section>')
     if p.get('cl'):
         c = p['cl']
         st = [f'<div class="stat"><div class="l">Средняя высота</div><div class="v">{round(c["h"])} м</div><div class="s">{"+" if c["rel"]>=0 else ""}{round(c["rel"])} м к середине города · перепад {round(c["rng"])} м</div></div>']
         if c.get('uhi') is not None:
-            st.append(f'<div class="stat"><div class="l">Теплее за год</div><div class="v">+{fmt(c["uhi"])} °C</div><div class="s">к Подмосковью · морозной ночью до +{fmt(c["night"])} °C</div></div>')
+            st.append(f'<div class="stat"><div class="l">Теплее за год</div><div class="v">+{fmt(c["uhi"])} °C</div><div class="s">к Подмосковью · ясной зимней ночью разница до +{fmt(c["night"])} °C</div></div>')
             st.append(f'<div class="stat"><div class="l">Влажность и ветер</div><div class="v">{fmt(76.6+c["rh"])} %</div><div class="s">{fmt(c["rh"])} % к Подмосковью · ветер {fmt(c["wind"])} м/с</div></div>')
         st.append(f'<div class="stat"><div class="l">Сырость и туманы</div><div class="v">{fmt(c["damp"])}</div><div class="s">из 10 · {round(c["low"])}% территории ниже 135 м</div></div>')
         t = ("Район на возвышенности: лучше продувается, туманы и холодный воздух не застаиваются." if c['rel'] >= 25 else
-             "Район в низине: ночью сюда стекает холодный воздух, чаще туманы и сырость, в безветрие дольше держатся выбросы." if c['rel'] <= -20 else "Район на среднем для Москвы уровне.")
+             "Район в низине: ночью сюда стекает холодный воздух, чаще туманы и сырость, в безветрие дольше держатся выбросы." if c['rel'] <= -20 else "По высоте район средний для Москвы: не возвышенность и не низина.")
         sec.append(f'<section><h2>Рельеф и микроклимат</h2><div class="stats">{"".join(st)}</div><p class="small" style="margin-top:10px">{t}</p></section>')
     ranks = {'er': er, 'soc_r': soc_rank.index(f)+1 if f in soc_F else None, 'soc_n': len(soc_F),
              'green_r': green_rank.index(f)+1 if f in green_F else None, 'green_n': len(green_F)}
@@ -241,7 +243,7 @@ def page(f):
             f'<h1>Район {E(n)}</h1></div></div><p class="lead">{E(lead)}</p>' + (f'<p class="hist">{E(p["hist"])}</p>' if p.get('hist') else '') + '</header>\n'
             f'<section class="scores">{"".join(tiles)}</section>\n' + pc + '\n'
             f'<section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Карта района {E(n)}: улицы, станции, рельеф и источники загрязнения рядом"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>\n'
-            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261107b";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
+            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261110";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
     return head(title, desc, canon, 2, f'{BASE}/rayon/gerb/{sl}.png' if local_arms(sl) else None) + body
 
 def index_page():
@@ -274,7 +276,7 @@ locs=[f'{BASE}/']+[f'{BASE}/{x}' for x in pages[1:]]+[f'{BASE}/rayon/']+[f'{BASE
 today=date.today().isoformat()
 sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in locs)+'</urlset>\n'
 open(f'{REPO}/sitemap.xml','w').write(sm)
-open(f'{REPO}/robots.txt','w').write(f'User-agent: *\nAllow: /\n\nHost: {BASE}\nSitemap: {BASE}/sitemap.xml\n')
+open(f'{REPO}/robots.txt','w').write(f'User-agent: *\nAllow: /\nClean-param: v\n\nHost: {BASE}\nSitemap: {BASE}/sitemap.xml\n')
 print('sitemap urls',len(locs))
 
 # ================= rating landing pages =================
@@ -343,7 +345,7 @@ RATINGS = [
 ]
 def col_val(c, f, pre):
     p = P(f); g = GREEN.get(p['n']) or {}
-    if c == 'price': return ('Цена м²', f'{round(p["hp"]/1000)}&nbsp;тыс.&nbsp;₽' if p.get('hp') else '—')
+    if c == 'price': return ('Цена м²', f'{num(p["hp"]/1000)}&nbsp;тыс.&nbsp;₽' if p.get('hp') else '—')
     if c == 'eco': return ('Экология', fmt(p['i']))
     if c == 'tr': return ('До центра', f'{p["tr"]["tmed"]} мин' if p.get('tr') else '—')
     if c == 'src': return ('Источники рядом', E(', '.join(x[1] for x in (p.get('s') or [])[:2])) or '—')
@@ -359,7 +361,7 @@ def metric_val(R, f):
     if 'w' in R: return fmt(combo(f, R['w']))
     if R['slug'] == 'ekologiya': return fmt(p['i'])
     if R['slug'] == 'zelenye-rayony': g = g_pct(f); return f'{g} %' if g is not None else '—'
-    if R['slug'] == 'deshevye-rayony': return f'{round(p["hp"]/1000)}' if p.get('hp') else '—'
+    if R['slug'] == 'deshevye-rayony': return f'{num(p["hp"]/1000)}' if p.get('hp') else '—'
     if R['slug'] == 'transport': return fmt(p['tr']['score']) if p.get('tr') else '—'
 
 RCSS = '''<style>.rt{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums}
