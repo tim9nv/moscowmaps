@@ -8,7 +8,7 @@ import json, re, os, gzip, base64, math, html, datetime
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAT = f'{REPO}/parks/catalog'
 BASE = 'https://www.mskatlas.ru'
-V = datetime.date.today().strftime("%Y%m%d") + "i"
+V = datetime.date.today().strftime("%Y%m%d") + "k"
 GUIDES = {'14': '../botanicheskiy-sad/'}          # у этих парков уже есть свой путеводитель
 RESERVED = {'catalog', 'vdnh', 'botanicheskiy-sad'}
 TR = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя', ['a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','h','ts','ch','sh','sch','','y','','e','yu','ya']))
@@ -29,6 +29,7 @@ parks = json.load(open(f'{CAT}/parks.json', encoding='utf-8'))
 places = json.load(open(f'{CAT}/places.json', encoding='utf-8'))
 PARKS = json.loads(re.search(r'const PARKS = (.*?);\n', open(f'{REPO}/parks.html', encoding='utf-8').read()).group(1))
 dslug = {n: (s, o) for s, n, o in json.load(open(f'{REPO}/tools/data/districts_list.json', encoding='utf-8'))}
+walks = json.load(open(f'{CAT}/walks.json', encoding='utf-8')) if os.path.exists(f'{CAT}/walks.json') else {}
 trails = {}
 for g in sorted({p['group'] for p in parks}):
     trails.update(json.loads(gzip.decompress(base64.b64decode(open(f'{CAT}/trails-{g}.txt').read()))))
@@ -66,6 +67,16 @@ for p in parks:
         if not names: continue
         more = f'<li class="muted">и ещё {len(names) - 40} — на карте</li>' if len(names) > 40 else ''
         secs += f'<section class="park-sec"><h2>{h}</h2><ul class="park-names">' + ''.join(f'<li>{E(n)}</li>' for n in names[:40]) + more + '</ul></section>\n'
+    wk = walks.get(pid)
+    walk_html = ''; route_ui = '<div hidden><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>'
+    if wk:
+        r = wk['routes'][0]; names = {x['id']: x['name'] for x in wk['places']}
+        kmr = num(r['metres'] / 1000); mins = math.ceil(r['metres'] / (4000 / 60) / 5) * 5
+        walk_html = (f'<section id="walks" class="park-sec"><h2>Прогулка Атласа</h2><p class="muted">Длина по пешеходным дорожкам, время без остановок.</p><div id="routes" class="routes"></div>'
+                     f'<noscript><p><b>{E(r["name"])}</b> — {kmr} км, около {mins} мин. ' + ' → '.join(E(names[i]) for i in r['stops']) + '</p></noscript></section>\n')
+        route_ui = ''
+        lead += f' Есть готовая прогулка: «{r["name"]}», {kmr} км.'
+        desc = desc.replace(' Геолокация «Я на карте».', f' Готовая прогулка на {kmr} км.')
     links = ''.join(f'<a href="../../rayon/{dslug[d][0]}/">Район {E(d)}</a>' for d in dist)
     page = f'''<!doctype html>
 <html lang="ru">
@@ -97,6 +108,7 @@ for p in parks:
         <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
         <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
       </div>
+      {'<div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div><div id="route-tools" class="route-tools" hidden><label for="route-leg">Участок прогулки</label><select id="route-leg"></select></div>' if wk else ''}
       <div class="trail-controls">
         <label><input id="trail-toggle" type="checkbox" checked disabled> Тропы и аллеи</label>
         <div class="trail-legend" aria-label="Типы дорожек"><span class="paved">Твёрдое покрытие</span><span class="unpaved">Грунт и гравий</span><span class="boardwalk">Настил</span><span class="steps">Ступени</span><span class="unknown">Покрытие неизвестно</span></div>
@@ -106,9 +118,9 @@ for p in parks:
       <p id="status" role="status"></p>
     </div>
     <details id="places" hidden><summary>Объекты списком <span id="count"></span></summary><p class="muted" id="places-note"></p><ul id="place-list"></ul></details>
-    <div hidden><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>
+    {route_ui}
   </section>
-{secs}  {f'<nav class="park-links" aria-label="Районы рядом">{links}</nav>' if links else ''}
+{walk_html}{secs}  {f'<nav class="park-links" aria-label="Районы рядом">{links}</nav>' if links else ''}
   <footer>Карта, дорожки и объекты — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>, выгрузка {places["date"]}. Площадь — по контуру парка на карте Атласа. Проходы и ограничения могут меняться. Сверяйтесь с указателями на месте.</footer>
 </main>
 </body>
