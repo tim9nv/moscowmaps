@@ -1,0 +1,43 @@
+diff --git a/assets/atlas.js b/assets/atlas.js
+index 647cd9c..1be895d 100644
+--- a/assets/atlas.js
++++ b/assets/atlas.js
+@@ -386,6 +386,38 @@ function drawDMap(f){
+   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
+   zb.querySelector("[data-z='reset']").onclick=()=>svg.transition().duration(250).call(zoom.transform,d3.zoomIdentity);
+   document.getElementById("dlg").innerHTML=`<span><svg width="30" height="14" viewBox="0 0 30 14"><line x1="1" y1="7" x2="29" y2="7" stroke="#d6083b" stroke-width="3.5"/><circle cx="15" cy="7" r="4.5" fill="#fff" stroke="#d6083b" stroke-width="2.6"/></svg>Метро и МЦК</span><span><svg width="30" height="14" viewBox="0 0 30 14"><line x1="1" y1="7" x2="29" y2="7" stroke="#f6a600" stroke-width="2.5" stroke-dasharray="7 4"/></svg>МЦД</span><span><svg width="22" height="14" viewBox="0 0 22 14"><rect x="1" y="3" width="20" height="8" rx="3" style="fill:#8ec5ef;stroke:#3f8fd2"/></svg>Реки и пруды</span>`+(relInfo?`<span><svg width="40" height="12" viewBox="0 0 40 12"><defs><linearGradient id="rlg"><stop offset="0" stop-color="#a9d39c"/><stop offset=".4" stop-color="#e3eab0"/><stop offset=".7" stop-color="#ecc98f"/><stop offset="1" stop-color="#c9925c"/></linearGradient></defs><rect width="40" height="12" rx="2" fill="url(#rlg)"/></svg>Рельеф на карте: от ${relInfo.lo} м (зелёное, низины) до ${relInfo.hi} м (коричневое), горизонтали через ${relInfo.step} м</span>`:"")+roadLegend(true)+[...used].map(t=>`<span>${iconSvg(t)}${TYPES[t][0]}</span>`).join("")+(near.length?`<span><svg width="14" height="14" viewBox="-8 -8 16 16"><circle r="6" style="fill:none;stroke:var(--muted);stroke-dasharray:3 2"/></svg>Зона 3 км вокруг источника</span>`:"")+(used.size?"":`<span>Крупных источников загрязнения рядом нет</span>`);
++  // Park links reuse the catalogue IDs and the same projection as the district map.
++  fetch(ATLAS_ROOT + "parks/catalog/parks.json")
++    .then(response => response.ok ? response.json() : [])
++    .then(parks => {
++      if (!svg.node().isConnected) return;
++      const local = parks.filter(park => d3.geoContains(f, park.center));
++      const adjacent = p.n === "Отрадное" ? parks.filter(park => park.id === "86" && !local.includes(park)) : [];
++      if (!local.length && !adjacent.length) return;
++      const link = park => ATLAS_ROOT + "parks/catalog/?park=" + encodeURIComponent(park.id);
++      const legend = d3.select("#dlg").append("div").style("flex-basis", "100%");
++      legend.append("b").text("Карты парков и троп");
++      [...local, ...adjacent].forEach(park => {
++        legend.append("span").style("display", "inline-block").style("margin-inline-start", "10px")
++          .append("a").attr("href", link(park)).text(park.name + (adjacent.includes(park) ? " (рядом)" : ""));
++      });
++      const transform = d3.zoomTransform(svg.node());
++      local.forEach(park => {
++        const [x,y] = proj(park.center);
++        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
++        add(x,y,g=>{
++          const a = g.append("a").attr("href", link(park)).attr("aria-label", "Карта троп: " + park.name);
++          a.append("title").text(park.name);
++          a.append("circle").attr("r",8).style("fill","#22614c").style("stroke","#fff").style("stroke-width",2);
++          a.append("text").attr("text-anchor","middle").attr("dy","0.35em")
++            .style("fill","#fff").style("font","700 9px system-ui").text("П");
++          return g;
++        });
++        const [marker] = pts[pts.length-1];
++        marker.attr("transform", `translate(${transform.applyX(x)},${transform.applyY(y)})`);
++      });
++    })
++    .catch(() => { /* The district map remains usable if the catalogue is unavailable. */ });
+   if(!window.ATLAS_DISTRICT)window.scrollTo(0,0);
+ }
+ 
