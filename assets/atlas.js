@@ -90,15 +90,17 @@ function home(){
   const lf=f=>LIFE[f.properties.slug]||null;
   const col=f=>{const v=lf(f);return v?`var(--s${5-Math.min(4,Math.floor((v[1]-1)/25))})`:"var(--nodata)"};
   const tip=f=>{const v=lf(f);return f.properties.n+(v?` — ${fmt(v[0])} из 10, ${v[1]}-е место из 125`:"")};
+  const top=Object.entries(LIFE).sort((x,y)=>x[1][1]-y[1][1]).slice(0,6).map(([sl,v])=>{const f=F.find(g=>g.properties.slug===sl);return f?`<li><a href="${dUrl(sl)}"><span class="tn">${v[1]}</span><span class="tnm">${f.properties.n}</span><span class="to">${f.properties.o}</span><b style="background:${col(f)}">${fmt(v[0])}</b></a></li>`:""}).join("");
   app.innerHTML=`
   <header><h1>Атлас Москвы</h1>
   <p class="lede">Все 125 районов на одной карте. Чем зеленее район, тем лучше в нём жить. Выбирайте, где хотите жить и гулять: нажмите на район, чтобы увидеть цены, парки, школы и поликлиники рядом.</p></header>
+  <div class="L hsearch"><label for="q">Найти район</label><input class="search" id="q" type="search" placeholder="Например, Марьино" autocomplete="off"></div>
+  <section class="L top6" aria-labelledby="top6-h"><h2 id="top6-h">Лучшие для жизни</h2><ol>${top}</ol><a class="allr" href="reyting/luchshie-rayony/">Весь рейтинг районов</a></section>
   <section class="map" aria-label="Карта районов Москвы">
     <svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы: чем зеленее, тем лучше для жизни"></svg>
     <div class="legend" id="lg"></div>
   </section>
-  <p class="small" style="margin:0">Балл «для жизни»: транспорт 25 %, экология 25 %, школы, сады и поликлиники 20 %, зелень 15 %, кафе и магазины рядом 10 %, спорт 5 %. Цена жилья в балл не входит. <a href="reyting/luchshie-rayony/">Весь рейтинг и как он считается</a>. Зеленоград на карту не поместился — его районы в списке ниже.</p>
-  <input class="search" id="q" type="search" placeholder="Найти район, например Марьино" aria-label="Найти район">
+  <p class="L small" style="margin:0">Балл «для жизни»: транспорт 25 %, экология 25 %, школы, сады и поликлиники 20 %, зелень 15 %, кафе и магазины рядом 10 %, спорт 5 %. Цена жилья в балл не входит. Зеленоград на карту не поместился — его районы в списке ниже.</p>
   <section><h2 id="district-list-heading">Районы по округам</h2><p class="small" id="list-count" aria-live="polite" style="margin:0 0 8px"></p><div id="dl"></div></section>`;
   const svg=d3.select("#hm"); const proj=d3.geoMercator().fitExtent([[10,10],[590,610]],inner); const path=d3.geoPath(proj);
   svg.append("clipPath").attr("id","hc").append("rect").attr("width",600).attr("height",620);
