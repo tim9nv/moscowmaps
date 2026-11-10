@@ -109,7 +109,19 @@ async function renderPark(park) {
     getCatalogElement("places").hidden = false;
     getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. Нажмите на значок на карте или на название в списке.`;
   }
-  window.parkGuide = { parkName: park.name, parkBounds, places, routes: [], categories };
+  // Прогулка Атласа, если она собрана для этого парка: tools/build_park_walks.py -> walks.json
+  let routes = [];
+  try {
+    const walk = (await read("walks.json", "json"))[park.id];
+    if (walk && getCatalogElement("walks")) {
+      places = [...walk.places, ...places];
+      routes = walk.routes;
+      categories.stop = ["Остановки прогулки", "●", "#22614c"];
+      getCatalogElement("park-tools").hidden = false;
+      getCatalogElement("places").hidden = false;
+    }
+  } catch (error) { /* без прогулки страница работает как раньше */ }
+  window.parkGuide = { parkName: park.name, parkBounds, places, routes, categories };
   const trailUrl = URL.createObjectURL(new Blob([JSON.stringify({ type: "FeatureCollection", features })], { type: "application/json" }));
   getCatalogElement("map").dataset.trails = trailUrl;
   getCatalogElement("trail-status").textContent = park.count
