@@ -91,14 +91,14 @@ function home(){
   const col=f=>{const v=lf(f);return v?`var(--s${5-Math.min(4,Math.floor((v[1]-1)/25))})`:"var(--nodata)"};
   const tip=f=>{const v=lf(f);return f.properties.n+(v?` — ${fmt(v[0])} из 10, ${v[1]}-е место из 125`:"")};
   app.innerHTML=`
-  <header class="atlas-hero"><h1>Атлас Москвы</h1>
+  <header><h1>Атлас Москвы</h1>
   <p class="lede">Все 125 районов на одной карте. Чем зеленее район, тем лучше в нём жить. Нажмите на район, чтобы открыть его страницу: цены, экология, транспорт, школы и поликлиники.</p></header>
-  <input class="search" id="q" type="search" placeholder="Найти район, например Марьино" aria-label="Найти район">
   <section class="map" aria-label="Карта районов Москвы">
     <svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы: чем зеленее, тем лучше для жизни"></svg>
     <div class="legend" id="lg"></div>
   </section>
-  <p class="small" style="margin:10px 0 0">Балл «для жизни»: транспорт 25 %, экология 25 %, школы, сады и поликлиники 20 %, зелень 15 %, кафе и магазины рядом 10 %, спорт 5 %. Цена жилья в балл не входит. <a href="reyting/luchshie-rayony/">Весь рейтинг и как он считается</a>. Зеленоград на карту не поместился — его районы в списке ниже.</p>
+  <p class="small" style="margin:0">Балл «для жизни»: транспорт 25 %, экология 25 %, школы, сады и поликлиники 20 %, зелень 15 %, кафе и магазины рядом 10 %, спорт 5 %. Цена жилья в балл не входит. <a href="reyting/luchshie-rayony/">Весь рейтинг и как он считается</a>. Зеленоград на карту не поместился — его районы в списке ниже.</p>
+  <input class="search" id="q" type="search" placeholder="Найти район, например Марьино" aria-label="Найти район">
   <section><h2 id="district-list-heading">Районы по округам</h2><p class="small" id="list-count" aria-live="polite" style="margin:0 0 8px"></p><div id="dl"></div></section>`;
   const svg=d3.select("#hm"); const proj=d3.geoMercator().fitExtent([[10,10],[590,610]],inner); const path=d3.geoPath(proj);
   svg.append("clipPath").attr("id","hc").append("rect").attr("width",600).attr("height",620);

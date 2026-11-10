@@ -27,7 +27,13 @@
 .topbar .tabs a.nm{margin-left:13px;position:relative;box-shadow:inset 0 0 0 1px var(--nav-line)}
 .topbar .tabs a.nm:before{content:"";position:absolute;left:-9px;top:6px;bottom:6px;width:1px;background:var(--nav-line)}
 @media (max-width:560px){.topbar .tabs{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);padding-right:24px}}
-/*TOPBAR-WIDE*/@media (min-width:1000px){.topbar .in{max-width:1140px}.topbar .tabs{justify-content:center}}
+/*TOPBAR-ONE*/.topbar .in{flex-direction:row;align-items:center;gap:12px}.topbar .brand{font-size:0;gap:0;flex:none}.topbar .brand i{width:32px;height:32px;border-radius:0;background:url("assets/logo.svg") center/contain no-repeat}.topbar .brand i:after{content:none}.topbar .tabs{margin-left:0}@media (min-width:1000px){.topbar .in{max-width:1140px}}
+/*FRAME-ONE: на всех вкладках заголовок и карта стоят на одном месте, пояснения и фильтры — под картой*/
+.wrap>header{display:contents}
+.wrap>header>h1{order:-3;text-align:center;font-size:clamp(32px,8.4vw,64px);letter-spacing:-.04em;line-height:1.05;margin:4px 0 0;white-space:nowrap}
+.wrap>.map,.wrap>.atlas-zoom-hint{order:-2}
+.wrap>.walks{order:-1}
+.wrap>.map>svg{max-height:calc(100vh - 170px);min-height:300px}
 </style>
 <style>
 /* Layout: one column, map is the page; detail card under it, then rankings and method */
@@ -136,7 +142,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 
 <div class="wrap">
   <header>
-    <h1>Экологическая карта районов Москвы</h1>
+    <h1>Экология</h1>
     <p class="lede">Сводный индекс экологической нагрузки по 125 районам Москвы: рейтинг факторов EcoStandard, замеры воздуха и жалобы на запах, грязная вода у берега, близость к НПЗ, мусоросжигательным и асфальтовым заводам, ТЭЦ и очистным, радиационно опасным объектам, промзонам, свалкам и аэропортам, самые загруженные магистрали и западный перенос воздуха. Шкала от 1 (чище) до 10 (грязнее). Наведите на район, чтобы увидеть цифры, нажмите, чтобы открыть его страницу.</p>
   </header>
 

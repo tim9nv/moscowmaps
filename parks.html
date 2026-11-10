@@ -28,7 +28,13 @@
 .topbar .tabs a.nm:before{content:"";position:absolute;left:-9px;top:6px;bottom:6px;width:1px;background:var(--nav-line)}
 @media (max-width:560px){.topbar .tabs{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);padding-right:24px}}
 .walks{margin:14px 0 18px}.walks h2{margin:0 0 10px}.walks-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}.walks-g a{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:14px;background:#22614c;color:#fff;text-decoration:none}.walks-g a:hover{background:#1b4f3e}.walks-g b{font-size:17px}.walks-g span{font-size:13.5px;opacity:.9;line-height:1.4}
-/*TOPBAR-WIDE*/@media (min-width:1000px){.topbar .in{max-width:1140px}.topbar .tabs{justify-content:center}}
+/*TOPBAR-ONE*/.topbar .in{flex-direction:row;align-items:center;gap:12px}.topbar .brand{font-size:0;gap:0;flex:none}.topbar .brand i{width:32px;height:32px;border-radius:0;background:url("assets/logo.svg") center/contain no-repeat}.topbar .brand i:after{content:none}.topbar .tabs{margin-left:0}@media (min-width:1000px){.topbar .in{max-width:1140px}}
+/*FRAME-ONE: на всех вкладках заголовок и карта стоят на одном месте, пояснения и фильтры — под картой*/
+.wrap>header{display:contents}
+.wrap>header>h1{order:-3;text-align:center;font-size:clamp(32px,8.4vw,64px);letter-spacing:-.04em;line-height:1.05;margin:4px 0 0;white-space:nowrap}
+.wrap>.map,.wrap>.atlas-zoom-hint{order:-2}
+.wrap>.walks{order:-1}
+.wrap>.map>svg{max-height:calc(100vh - 170px);min-height:300px}
 </style>
 <style>
 /* Layout: one column; map of parks over a tree-cover choropleth, district card, rankings, park list, method */
@@ -142,7 +148,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 
 <div class="wrap">
   <header>
-    <h1>Парки и достопримечательности Москвы</h1>
+    <h1>Парки и прогулки</h1>
     <p class="lede">Крупные парки, лесопарки и природные территории, усадьбы, кремли, монастыри и музеи, а под ними — доля зелени в каждом районе по спутниковым снимкам. Наведите на парк или точку, чтобы увидеть название; нажмите на парк, чтобы открыть карту троп, на точку — чтобы прочитать о месте, на район — чтобы открыть его страницу.</p>
   </header>
   <aside class="walks" aria-label="Прогулки по паркам">
