@@ -1,6 +1,6 @@
 "use strict";
 
-const { places, routes } = window.vdnhGuide;
+const { places, routes, parkBounds, parkName } = window.parkGuide || window.vdnhGuide;
 const byId = new Map(places.map(place => [place.id, place]));
 const categories = {
   all: ["Все", "", ""],
@@ -17,7 +17,7 @@ const normalize = text => text.toLocaleLowerCase("ru").replace(/ё/g, "е").repl
 const status = get("status");
 const locate = get("locate");
 const map = window.L ? L.map("map", { scrollWheelZoom: false }) : null;
-const bounds = [[55.824, 37.608], [55.844, 37.648]];
+const bounds = parkBounds || [[55.824, 37.608], [55.844, 37.648]];
 const routeBanner = get("selected-route");
 let category = "all";
 let activeRoute = null;
@@ -184,10 +184,14 @@ function drawRoute(route) {
   map.closePopup();
   L.polyline(displayedTrack, { color: "#fff", weight: 10, interactive: false }).addTo(routeLayer);
   const line = L.polyline(displayedTrack, { color: "#713887", weight: 6, interactive: false }).addTo(routeLayer);
+  const last = route.stops.length - 1;
+  const loop = route.stops[0] === route.stops[last] && route.approaches[0].join() === route.approaches[last].join();
   route.stops.forEach((id, index) => {
+    if (trackOverview && loop && index === last) return;
     if (!trackOverview && index !== legIndex && index !== legIndex + 1) return;
     const place = byId.get(id);
-    const icon = L.divIcon({ className: "poi-icon route-pin", html: String(index + 1), iconSize: [29, 29] });
+    const label = trackOverview && loop && index === 0 ? `1·${last + 1}` : String(index + 1);
+    const icon = L.divIcon({ className: "poi-icon route-pin", html: label, iconSize: [29, 29] });
     L.marker(route.approaches[index], { icon, title: place.name, alt: place.name, zIndexOffset: 800 })
       .bindPopup(popup(place, true)).addTo(routeLayer);
   });
@@ -253,7 +257,7 @@ for (const route of routes) {
   get("routes").append(article);
 }
 
-get("botanical-link").addEventListener("click", () => {
+get("botanical-link")?.addEventListener("click", () => {
   if (activeRoute) showRoute(routes.find(route => route.id === activeRoute));
   get("filters").querySelector('[data-category="all"]').click();
   get("search").value = "подход со стороны ВДНХ";
@@ -264,6 +268,16 @@ get("botanical-link").addEventListener("click", () => {
   map.setView([place.lat, place.lon], 17);
   markers.get(place.id).openPopup();
 });
+
+for (const link of document.querySelectorAll("[data-place]")) {
+  link.addEventListener("click", () => {
+    const place = byId.get(link.dataset.place);
+    if (!place || !map) return;
+    if (activeRoute) showRoute(routes.find(route => route.id === activeRoute));
+    map.setView([place.lat, place.lon], 17);
+    markers.get(place.id).addTo(map).openPopup();
+  });
+}
 
 function stopLocation() {
   if (watch !== null) navigator.geolocation.clearWatch(watch);
@@ -288,7 +302,7 @@ function showLocation({ coords }) {
   locate.textContent = "Скрыть позицию";
   status.textContent = nearby
     ? `Вы на карте. Точность около ${Math.round(coords.accuracy)} м.`
-    : "Вы находитесь за пределами карты ВДНХ.";
+    : `Вы находитесь за пределами карты: ${parkName || "ВДНХ"}.`;
 }
 
 locate.addEventListener("click", () => {
