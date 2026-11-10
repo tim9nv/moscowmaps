@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ВДНХ на карте: павильоны и прогулочные маршруты — Атлас районов Москвы</title>
+<meta name="description" content="Подробная карта ВДНХ с павильонами, фонтанами, входами и прогулками. Найдите себя на карте и выберите, куда идти.">
+<link rel="canonical" href="https://www.mskatlas.ru/parks/vdnh/">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="guide.css">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script defer src="data.js"></script>
+<script defer src="guide.js"></script>
+</head>
+<body>
+<header class="bar"><div class="wrap"><a href="../../index.html"><img src="../../assets/logo.svg" alt="" width="32" height="32"> Атлас районов Москвы</a><a href="../../parks.html">Все парки</a></div></header>
+<main class="wrap">
+  <nav class="crumb" aria-label="Навигация"><a href="../../parks.html">Парки Москвы</a> / ВДНХ</nav>
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Путеводитель по Москве · Останкинский район</p>
+      <h1>ВДНХ</h1>
+      <p>От парадной аллеи и фонтанов до павильонов, прудов и тихих дорожек. Выберите, что посмотреть, и возьмите карту с собой.</p>
+      <div class="actions"><a class="primary" href="#map-section">Открыть карту</a><a href="#walks">Выбрать прогулку ↓</a></div>
+    </div>
+    <svg class="hero-art" viewBox="0 0 320 210" aria-hidden="true" fill="none">
+      <circle cx="242" cy="55" r="37" fill="#e6bc71"/>
+      <path d="M0 175h320M22 193h270M48 160h221V97H48zm-9-63h239l-42-27H81zM60 106v47m24-47v47m24-47v47m104-47v47m24-47v47m24-47v47M123 160v-34a34 34 0 0 1 68 0v34M110 70V51h98v19m-59-19V34h18v17m-9-17V11" stroke="currentColor" stroke-width="3"/>
+      <path d="M14 167v-43m-9 18 9-22 9 22m283 25v-43m-9 18 9-22 9 22" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </header>
+  <section id="map-section" aria-labelledby="map-title">
+    <div class="section-head"><div><p class="eyebrow">Ориентиры на территории</p><h2 id="map-title" tabindex="-1">Карта ВДНХ</h2></div><button id="locate" type="button" aria-pressed="false">◎ Я на карте</button></div>
+    <div class="map-shell">
+      <div class="tools"><label for="search">Найти место</label><input type="search" id="search" placeholder="Например, Космос или № 34"><div id="filters" class="filters" aria-label="Категории"></div></div>
+      <div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div>
+      <div id="map" aria-label="Интерактивная карта ВДНХ"></div>
+      <p id="status" role="status"></p>
+    </div>
+    <noscript><p>Для интерактивной карты нужен JavaScript. <a href="https://vdnh.ru/places/">Каталог мест ВДНХ</a>.</p></noscript>
+    <details id="places"><summary>Объекты списком <span id="count"></span></summary><ul id="place-list"></ul></details>
+  </section>
+  <section id="walks">
+    <p class="eyebrow">Пешком по выставке</p>
+    <h2>Готовые прогулки</h2>
+    <p class="muted">Длина рассчитана по дорожкам на карте. Время указано для ходьбы, без осмотра экспозиций.</p>
+    <div id="routes" class="routes"></div>
+    <p><a href="https://vdnh.ru/routes/">Все маршруты на официальном сайте ВДНХ ↗</a></p>
+  </section>
+  <section class="district">
+    <p class="eyebrow">ВДНХ в Атласе</p>
+    <h2>Что вокруг выставки</h2>
+    <p>Смотрите цены на жильё, транспорт и городскую среду в районах у ВДНХ.</p>
+    <div class="actions"><a href="../../rayon/ostankinskiy/">Останкинский</a><a href="../../rayon/alekseevskiy/">Алексеевский</a><a href="../../rayon/rostokino/">Ростокино</a></div>
+  </section>
+  <footer><a href="https://vdnh.ru/map/">Официальная карта ВДНХ</a> · <a href="https://vdnh.ru/places/">Павильоны и места</a> · <a href="https://vdnh.ru/visitors/transport/">Как добраться и проезд по территории</a> · <a href="https://vdnh.ru/dostupnaya-sreda/">Доступная среда</a> · <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a><p>Данные сверены в ноябре 2026 года. Режим работы и ограничения прохода проверяйте на официальном сайте ВДНХ.</p></footer>
+</main>
+</body>
+</html>
