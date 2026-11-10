@@ -1,0 +1,8 @@
+.hero{grid-template-columns:1fr;padding:clamp(18px,4vw,42px)}
+.hero h1{font-size:clamp(1.9rem,5.8vw,4rem);letter-spacing:-.045em;overflow-wrap:anywhere}
+.hero p:not(.eyebrow){max-width:58ch}
+.catalog-featured{display:flex;flex-wrap:wrap;gap:12px 20px;margin-bottom:20px}
+#catalog label{display:block;font-weight:600}
+#park-search{margin:5px 0 10px;padding:9px 12px;width:min(100%,480px);height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink)}
+#park-list{padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,245px),1fr));gap:8px}
+#park-list a{display:block;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}

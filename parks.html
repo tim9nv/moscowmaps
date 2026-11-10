@@ -142,10 +142,11 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 <div class="wrap">
   <header>
     <h1>Парки и достопримечательности Москвы</h1>
-    <p class="lede">Крупные парки, лесопарки и природные территории, усадьбы, кремли, монастыри и музеи, а под ними — доля зелени в каждом районе по спутниковым снимкам. Наведите на парк или точку, чтобы увидеть название; клик по точке открывает статью в Википедии, клик по району — его страницу.</p>
+    <p class="lede">Крупные парки, лесопарки и природные территории, усадьбы, кремли, монастыри и музеи, а под ними — доля зелени в каждом районе по спутниковым снимкам. Наведите на парк или точку, чтобы увидеть название; нажмите на парк, чтобы открыть карту троп, на точку — чтобы прочитать о месте, на район — чтобы открыть его страницу.</p>
   </header>
   <aside class="card" aria-label="Путеводители по паркам">
     <h2><a href="parks/vdnh/">ВДНХ: карта павильонов и прогулки</a></h2>
+    <p><a href="parks/catalog/">Открыть каталог карт парков Москвы</a></p>
     <p>Выберите прогулку, найдите нужный павильон или посмотрите своё местоположение на карте выставки.</p>
   </aside>
   <div class="seg" role="group" aria-label="Показатель"><button data-m="pct" aria-pressed="true">Доля зелени</button><button data-m="pp" aria-pressed="false">Зелени на жителя</button></div>
@@ -250,7 +251,8 @@ const tip=document.getElementById("tip");
 const ringD=r=>{let s="";for(let k=0;k<r.length;k++){const q=proj(r[k]);s+=(k?"L":"M")+q[0].toFixed(1)+","+q[1].toFixed(1)}return s+"Z"};
 const pks=pg.selectAll("path").data(PARKS).join("path").attr("class","pk").attr("fill-rule","evenodd").attr("d",p=>p.p.map(ringD).join(""))
   .on("mousemove",(e,p)=>{const r=svg.node().getBoundingClientRect(),m=document.querySelector(".map").getBoundingClientRect();tip.style.display="block";tip.style.left=(e.clientX-m.left)+"px";tip.style.top=(e.clientY-m.top)+"px";tip.textContent=`${p.n} · ${fmt(p.a,p.a<10?1:0)} км²`})
-  .on("mouseleave",()=>{tip.style.display="none"});
+  .on("mouseleave",()=>{tip.style.display="none"})
+  .on("click",(event,park)=>{event.stopPropagation();location.href=`parks/catalog/?park=${PARKS.indexOf(park)+1}`});
 // labels for the largest parks, collision-checked
 {const boxes=[],fits=(x,y,w,h)=>{for(const b of boxes)if(Math.abs(x-b[0])<(w+b[2])/2&&Math.abs(y-b[1])<(h+b[3])/2)return false;boxes.push([x,y,w,h]);return true};
  ovl.selectAll(".ov-lbl").each(function(){const b=this.getBBox();boxes.push([b.x+b.width/2,b.y+b.height/2,b.width,b.height])});

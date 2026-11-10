@@ -394,15 +394,21 @@ if (map && trailSource) {
       return response.json();
     })
     .then(data => {
+      const style = feature => {
+        const settings = trailStyles[feature.properties.kind];
+        if (map.getZoom() >= 16 || !feature.geometry.type.includes("LineString")) return settings;
+        return { ...settings, weight: settings.weight * 0.55, opacity: 0.75 };
+      };
       const layer = L.geoJSON(data, {
         renderer,
         interactive: false,
-        style: feature => trailStyles[feature.properties.kind],
+        style,
       }).addTo(map);
       const kinds = new Set(data.features.map(feature => feature.properties.kind));
       for (const item of document.querySelectorAll(".trail-legend span")) {
         item.hidden = !kinds.has(item.className);
       }
+      map.on("zoomend", () => layer.setStyle(style));
       toggle.disabled = false;
       toggle.addEventListener("change", () => {
         if (toggle.checked) layer.addTo(map);
