@@ -34,3 +34,11 @@ body.map-view-open{overflow:hidden}
 .trail-legend .boardwalk::before{border-color:#1966a0;border-top-style:dashed}
 .trail-legend .steps::before{border-color:#a32646;border-top-style:dotted}
 .trail-legend .unknown::before{border-color:#6c767d;border-top-style:dotted}
+
+
+
+
+
+
+
+/*NIGHT-THEME*/:root{color-scheme:dark;--bg:#070D22;--surface:#0F1A3C;--ink:#F2F5FF;--muted:#B4C1E4;--border:#27376B;--green:#8BEAB5;--hero:#13235A;--onhero:#F2F5FF;--focus:#FFD86B}body{background:#070D22}.bar{background:#0A1230}::selection{{background:#FFD86B;color:#0B1330}}/*NIGHT-THEME-END*/
