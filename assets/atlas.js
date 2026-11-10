@@ -127,7 +127,7 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   const binc=B=>v=>{if(v==null)return "var(--nodata)";for(const b of B)if(v<b[1])return b[3];return B[B.length-1][3]};
   const hcol=binc(HBINS),tcol=binc(TBINS);
   F.forEach(f=>{f.properties.ts=f.properties.tr?f.properties.tr.score:null});
-  const ppill=(v,on)=>{const b=hcol(v);return `<span class="pill${on?" on":""}" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${v==null?"—":Math.round(v/1000)+" тыс. ₽/м²"}</span>`};
+  const ppill=(v,on)=>{const b=hcol(v);return `<span class="pill${on?" on":""}" style="background:${b};color:${v==null?"var(--muted)":(lum(b)<.22?"#fff":"#1c1e1b")}">${v==null?"—":Math.round(v/1000).toLocaleString("ru-RU")+" тыс. ₽/м²"}</span>`};
   const P4=(f,k)=>pill(f.properties.i,ecol).replace('class="pill"',k==="eco"?'class="pill on"':'class="pill"')+pill(f.properties.score,scol).replace('class="pill"',k==="soc"?'class="pill on"':'class="pill"')+ppill(f.properties.hp,k==="hp")+pill(f.properties.ts,tcol).replace('class="pill"',k==="tr"?'class="pill on"':'class="pill"');
   let met="hp";
   const MET={eco:{k:"i",c:ecol,low:true,t:"экологический балл: 1 чисто, 10 грязно",best:"от самого чистого"},
@@ -179,7 +179,7 @@ const pill=(v,c)=>{const b=c(v);return `<span class="pill" style="background:${b
   renderList(""); document.getElementById("q").addEventListener("input",e=>renderList(e.target.value));
   const sb=[...document.querySelectorAll(".sortbar button")];
   const paintSort=()=>{sb.forEach(b=>{const on=b.dataset.s===sortBy;b.setAttribute("aria-pressed",on);const ar=b.querySelector(".ar");if(ar)ar.textContent=on?(best?"↑":"↓"):""});
-    document.getElementById("lexp").textContent="У каждого района показаны цена за м² и три балла из 10. В экологии меньше — лучше, в транспорте и соцобъектах больше — лучше. Выделен "+MET[met].t+". Фильтры отбирают районы, сортировка «По показателю» сравнивает выделенный показатель.";
+    document.getElementById("lexp").textContent="У каждого района показаны цена за м² и три балла из 10. В экологии меньше — лучше, в транспорте и соцобъектах больше — лучше. Выделено: "+MET[met].t+". Фильтры отбирают районы, сортировка «По показателю» сравнивает выделенный показатель.";
     document.getElementById("sorthint").textContent=sortBy==="okr"?"":met==="hp"?(best?"сверху дешёвые, нажмите ещё раз, чтобы перевернуть":"сверху дорогие, нажмите ещё раз, чтобы перевернуть"):best?"сверху лучшие, нажмите ещё раз, чтобы перевернуть":"сверху худшие, нажмите ещё раз, чтобы перевернуть";};
   sb.forEach(b=>b.onclick=()=>{const v=b.dataset.s;if(v===sortBy&&v!=="okr")best=!best;else{sortBy=v;best=true}paintSort();renderList(lastQ)});
   paintSort();
@@ -227,7 +227,7 @@ function district(f){
   <header><div class="eyebrow">${p.o}${p.pop?` · ${num(p.pop)} жителей · ${num(p.dens)} чел/км² · ${String(p.area).replace(".",",")} км²`:""}</div>
   <h1>${p.n}</h1>${p.hist?`<p class="hist">${p.hist}</p>`:""}</header>
   <section class="scores">
-    <div class="tile"><div class="eyebrow">Цена за м²</div><div class="big">${p.hp?Math.round(p.hp/1000)+'<span style="font-size:18px"> тыс. ₽</span>':"—"}</div><div class="rk">${p.hp?`${p.hrk}-е место из 125 · 1 — самый дорогой`:"нет данных"}</div><div class="bar"><i style="width:${p.hp?Math.min(100,p.hp/10000):0}%;background:${p.hp?hcolG(p.hp):"none"}"></i></div></div>
+    <div class="tile"><div class="eyebrow">Цена за м²</div><div class="big">${p.hp?Math.round(p.hp/1000).toLocaleString("ru-RU")+'<span style="font-size:18px"> тыс. ₽</span>':"—"}</div><div class="rk">${p.hp?`${p.hrk}-е место из 125 по цене`:"нет данных"}</div><div class="bar"><i style="width:${p.hp?Math.min(100,p.hp/10000):0}%;background:${p.hp?hcolG(p.hp):"none"}"></i></div></div>
     <div class="tile"><div class="eyebrow">Экология · 10 грязно</div><div class="big" style="color:${p.i>=6?"var(--warn)":"var(--fg)"}">${fmt(p.i)}</div><div class="rk">${er}-е место из ${F.length} по чистоте</div><div class="bar"><i style="width:${p.i*10}%;background:${ecol(p.i)}"></i></div></div>
     <div class="tile"><div class="eyebrow">Транспорт</div><div class="big">${p.tr?fmt(p.tr.score):"—"}</div><div class="rk">${p.tr?`${trRank.indexOf(f)+1}-е место из ${trF.length} · до центра ${p.tr.tmed} мин`:"нет данных"}</div><div class="bar"><i style="width:${p.tr?p.tr.score*10:0}%;background:${p.tr?scol(p.tr.score):"none"}"></i></div></div>
     <div class="tile"><div class="eyebrow">Соцобъекты</div><div class="big" style="color:${p.score!=null&&p.score<4.5?"var(--warn)":"var(--fg)"}">${fmt(p.score)}</div><div class="rk">${p.score!=null?`${sr}-е место из ${socF.length}`:"для Новой Москвы нет данных"}</div><div class="bar"><i style="width:${(p.score||0)*10}%;background:${scol(p.score)}"></i></div></div>

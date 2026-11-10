@@ -161,15 +161,15 @@ def page(f):
     er = eco_rank.index(f) + 1
     title = f'Район {n} ({o}): экология, цены на жильё, транспорт, школы — Атлас районов Москвы'
     bits = [f'{n} — район {o} Москвы' + (f', {num(p["pop"])} {zhit(p["pop"])}' if p.get('pop') else '')]
-    if p.get('hp'): bits.append(f'метр жилья на вторичке около {round(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
+    if p.get('hp'): bits.append(f'метр жилья на вторичке около {num(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
     bits.append(f'экология {fmt(p["i"])} из 10, {er}-е место по чистоте')
     if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} минут')
     desc = '; '.join(bits) + '. Школы, поликлиники, спорт, парки и микроклимат в сравнении со всеми районами Москвы.'
     lead = bits[0] + '. ' + '. '.join(x[0].upper() + x[1:] for x in bits[1:]) + '.' if len(bits) > 1 else bits[0] + '.'
     canon = f'{BASE}/rayon/{sl}/'
     tiles = []
-    tiles.append(tile('Цена за м²', f'{round(p["hp"]/1000)}<span style="font-size:18px"> тыс. ₽</span>' if p.get('hp') else '—',
-                      f'{p["hrk"]}-е место из 125 · 1 — самый дорогой' if p.get('hp') else 'нет данных',
+    tiles.append(tile('Цена за м²', f'{num(p["hp"]/1000)}<span style="font-size:18px"> тыс. ₽</span>' if p.get('hp') else '—',
+                      f'{p["hrk"]}-е место из 125 по цене' if p.get('hp') else 'нет данных',
                       min(100, p['hp']/10000) if p.get('hp') else 0, hcol(p['hp']) if p.get('hp') else 'none'))
     tiles.append(tile('Экология · 10 грязно', fmt(p['i']), f'{er}-е место из {N} по чистоте', p['i']*10, f'var(--e{band(p["i"])})', p['i'] >= 6))
     if p.get('tr'): tiles.append(tile('Транспорт', fmt(p['tr']['score']), f'{tr_rank.index(f)+1}-е место из {len(tr_F)} · до центра {p["tr"]["tmed"]} мин', p['tr']['score']*10, f'var(--s{band(p["tr"]["score"])})'))
@@ -211,11 +211,11 @@ def page(f):
         c = p['cl']
         st = [f'<div class="stat"><div class="l">Средняя высота</div><div class="v">{round(c["h"])} м</div><div class="s">{"+" if c["rel"]>=0 else ""}{round(c["rel"])} м к середине города · перепад {round(c["rng"])} м</div></div>']
         if c.get('uhi') is not None:
-            st.append(f'<div class="stat"><div class="l">Теплее за год</div><div class="v">+{fmt(c["uhi"])} °C</div><div class="s">к Подмосковью · морозной ночью до +{fmt(c["night"])} °C</div></div>')
+            st.append(f'<div class="stat"><div class="l">Теплее за год</div><div class="v">+{fmt(c["uhi"])} °C</div><div class="s">к Подмосковью · ясной зимней ночью разница до +{fmt(c["night"])} °C</div></div>')
             st.append(f'<div class="stat"><div class="l">Влажность и ветер</div><div class="v">{fmt(76.6+c["rh"])} %</div><div class="s">{fmt(c["rh"])} % к Подмосковью · ветер {fmt(c["wind"])} м/с</div></div>')
         st.append(f'<div class="stat"><div class="l">Сырость и туманы</div><div class="v">{fmt(c["damp"])}</div><div class="s">из 10 · {round(c["low"])}% территории ниже 135 м</div></div>')
         t = ("Район на возвышенности: лучше продувается, туманы и холодный воздух не застаиваются." if c['rel'] >= 25 else
-             "Район в низине: ночью сюда стекает холодный воздух, чаще туманы и сырость, в безветрие дольше держатся выбросы." if c['rel'] <= -20 else "Район на среднем для Москвы уровне.")
+             "Район в низине: ночью сюда стекает холодный воздух, чаще туманы и сырость, в безветрие дольше держатся выбросы." if c['rel'] <= -20 else "По высоте район средний для Москвы: не возвышенность и не низина.")
         sec.append(f'<section><h2>Рельеф и микроклимат</h2><div class="stats">{"".join(st)}</div><p class="small" style="margin-top:10px">{t}</p></section>')
     ranks = {'er': er, 'soc_r': soc_rank.index(f)+1 if f in soc_F else None, 'soc_n': len(soc_F),
              'green_r': green_rank.index(f)+1 if f in green_F else None, 'green_n': len(green_F)}
@@ -241,7 +241,7 @@ def page(f):
             f'<h1>Район {E(n)}</h1></div></div><p class="lead">{E(lead)}</p>' + (f'<p class="hist">{E(p["hist"])}</p>' if p.get('hist') else '') + '</header>\n'
             f'<section class="scores">{"".join(tiles)}</section>\n' + pc + '\n'
             f'<section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Карта района {E(n)}: улицы, станции, рельеф и источники загрязнения рядом"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>\n'
-            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261107b";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
+            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261110";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
     return head(title, desc, canon, 2, f'{BASE}/rayon/gerb/{sl}.png' if local_arms(sl) else None) + body
 
 def index_page():
@@ -343,7 +343,7 @@ RATINGS = [
 ]
 def col_val(c, f, pre):
     p = P(f); g = GREEN.get(p['n']) or {}
-    if c == 'price': return ('Цена м²', f'{round(p["hp"]/1000)}&nbsp;тыс.&nbsp;₽' if p.get('hp') else '—')
+    if c == 'price': return ('Цена м²', f'{num(p["hp"]/1000)}&nbsp;тыс.&nbsp;₽' if p.get('hp') else '—')
     if c == 'eco': return ('Экология', fmt(p['i']))
     if c == 'tr': return ('До центра', f'{p["tr"]["tmed"]} мин' if p.get('tr') else '—')
     if c == 'src': return ('Источники рядом', E(', '.join(x[1] for x in (p.get('s') or [])[:2])) or '—')
@@ -359,7 +359,7 @@ def metric_val(R, f):
     if 'w' in R: return fmt(combo(f, R['w']))
     if R['slug'] == 'ekologiya': return fmt(p['i'])
     if R['slug'] == 'zelenye-rayony': g = g_pct(f); return f'{g} %' if g is not None else '—'
-    if R['slug'] == 'deshevye-rayony': return f'{round(p["hp"]/1000)}' if p.get('hp') else '—'
+    if R['slug'] == 'deshevye-rayony': return f'{num(p["hp"]/1000)}' if p.get('hp') else '—'
     if R['slug'] == 'transport': return fmt(p['tr']['score']) if p.get('tr') else '—'
 
 RCSS = '''<style>.rt{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums}
