@@ -28,7 +28,13 @@
 .topbar .tabs a.nm:before{content:"";position:absolute;left:-9px;top:6px;bottom:6px;width:1px;background:var(--nav-line)}
 @media (max-width:560px){.topbar .tabs{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);padding-right:24px}}
 .wrap .wrap{padding:0;max-width:none}
-/*TOPBAR-WIDE*/@media (min-width:1000px){.topbar .in{max-width:1140px}.topbar .tabs{justify-content:center}}
+/*TOPBAR-ONE*/.topbar .in{flex-direction:row;align-items:center;gap:12px}.topbar .brand{font-size:0;gap:0;flex:none}.topbar .brand i{width:32px;height:32px;border-radius:0;background:url("assets/logo.svg") center/contain no-repeat}.topbar .brand i:after{content:none}.topbar .tabs{margin-left:0}@media (min-width:1000px){.topbar .in{max-width:1140px}}
+/*FRAME-ONE: на всех вкладках заголовок и карта стоят на одном месте, пояснения и фильтры — под картой*/
+.wrap>header{display:contents}
+.wrap>header>h1{order:-3;text-align:center;font-size:clamp(32px,8.4vw,64px);letter-spacing:-.04em;line-height:1.05;margin:4px 0 0;white-space:nowrap}
+.wrap>.map,.wrap>.atlas-zoom-hint{order:-2}
+.wrap>.walks{order:-1}
+.wrap>.map>svg{max-height:calc(100vh - 170px);min-height:300px}
 </style>
 <style>
 /* Layout: one column, map is the page; district card, rankings, method below */
@@ -140,7 +146,7 @@ body.tr .ovl .ov-r1{stroke-opacity:.45}
 <div class="wrap">
   <h<div class="wrap">
   <header>
-    <h1>Транспортная доступность районов Москвы</h1>
+    <h1>Транспорт</h1>
     <p class="lede">Насколько далеко от метро, МЦК и МЦД живут в каждом районе и сколько ехать до центра. Шкала от 1 (до метро далеко, до центра долго) до 10 (метро рядом, центр близко). Метро здесь — это метро, МЦК и МЦД вместе. Наведите на район, чтобы увидеть цифры, нажмите, чтобы открыть его страницу.</p>
   </header>
   <section class="filt" id="flt" aria-label="Фильтр районов"></section>
