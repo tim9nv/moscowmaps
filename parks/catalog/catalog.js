@@ -55,7 +55,23 @@ async function renderPark(park) {
     features.push({ type: "Feature", properties: { kind },
       geometry: { type: "MultiLineString", coordinates: lines.map(line => line.map(([lat, lon]) => [lon, lat])) } });
   }
-  window.parkGuide = { parkName: park.name, parkBounds, places: [], routes: [] };
+  // Что есть в парке: tools/extract_park_places.py -> places.json (OpenStreetMap)
+  const LABELS = { sight: ["Достопримечательности", "★", "#8a3b2e"], museum: ["Музеи", "М", "#694477"], view: ["Смотровые", "◉", "#245f91"],
+    food: ["Кафе", "К", "#87491f"], play: ["Детские площадки", "Д", "#406428"], wc: ["Туалеты", "WC", "#4d5a5a"], water: ["Вода", "В", "#2f6fa8"] };
+  let places = [], placesDate = "";
+  try {
+    const all = await read("places.json", "json");
+    placesDate = all.date;
+    places = (all.parks[park.id] || []).map(([lat, lon, category, name], i) => ({ id: "p" + i, name, category, lat, lon }));
+  } catch (error) { /* карта троп работает и без объектов */ }
+  const categories = { all: ["Все", "", ""] };
+  for (const key of Object.keys(LABELS)) if (places.some(place => place.category === key)) categories[key] = LABELS[key];
+  if (places.length) {
+    getCatalogElement("park-tools").hidden = false;
+    getCatalogElement("places").hidden = false;
+    getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. Нажмите на значок на карте или на название в списке.`;
+  }
+  window.parkGuide = { parkName: park.name, parkBounds, places, routes: [], categories };
   const trailUrl = URL.createObjectURL(new Blob([JSON.stringify({ type: "FeatureCollection", features })], { type: "application/json" }));
   getCatalogElement("map").dataset.trails = trailUrl;
   getCatalogElement("trail-status").textContent = park.count

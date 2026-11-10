@@ -2,7 +2,7 @@
 
 const { places, routes, parkBounds, parkName } = window.parkGuide || window.vdnhGuide;
 const byId = new Map(places.map(place => [place.id, place]));
-const categories = {
+const categories = (window.parkGuide && window.parkGuide.categories) || {
   all: ["Все", "", ""],
   pavilion: ["Павильоны", "П", "#305a49"],
   museum: ["Музеи и развлечения", "М", "#694477"],
