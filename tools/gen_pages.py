@@ -42,7 +42,7 @@ sp_rank = sorted(sp_F, key=lambda f: -P(f)['sp']['s'])
 N = len(F)
 import sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import proscons
-zhit = proscons.zhit
+zhit = proscons.zhit; pl = proscons.pl; minut_rod = proscons.minut_rod
 GREEN = proscons.load_green(REPO)
 green_F = [f for f in F if (GREEN.get(P(f)['n']) or {}).get('pct') is not None]
 green_rank = sorted(green_F, key=lambda f: -GREEN[P(f)['n']]['pct'])
@@ -135,6 +135,8 @@ EXTRA_CSS = '''<style>
 
 def head(title, desc, canon, depth, img=None):
     h = head_src
+    # свои description, canonical и og у каждой страницы: убираем те, что пришли из шапки главной
+    h = re.sub(r'<meta name="description"[^>]*>\n?|<link rel="canonical"[^>]*>\n?|<meta property="og:[^>]*>\n?', '', h)
     h = re.sub(r'<title>.*?</title>', f'<title>{E(title)}</title>', h, count=1, flags=re.S)
     meta = (f'<meta name="description" content="{E(desc)}">\n<link rel="canonical" href="{canon}">\n'
             f'<meta property="og:type" content="website"><meta property="og:title" content="{E(title)}">'
@@ -153,17 +155,17 @@ def foot(depth):
             f'транспорт, школы, поликлиники, спорт и магазины — OpenStreetMap (ноябрь 2026), население — Росстат и Wikidata 2025, гербы — Викисклад. '
             f'Подробно о методике — на страницах <a href="{pre}ecology.html">экологии</a>, <a href="{pre}housing.html">цен</a>, '
             f'<a href="{pre}transport.html">транспорта</a>, <a href="{pre}social.html">городской среды</a> и <a href="{pre}climate.html">географии</a>. '
-            f'<a href="{pre}rayon/">Все районы Москвы</a> · <a href="{pre}reyting/">Рейтинги районов</a>: <a href="{pre}reyting/luchshie-rayony/">лучшие</a>, <a href="{pre}reyting/ekologiya/">экология</a>, <a href="{pre}reyting/zelenye-rayony/">зелёные</a>, <a href="{pre}reyting/deshevye-rayony/">дешёвые</a>, <a href="{pre}reyting/dlya-semi-s-detmi/">для семьи</a>.</p>')
+            f'<a href="{pre}rayon/">Все районы Москвы</a> · <a href="{pre}reyting/">Рейтинги районов</a>: <a href="{pre}reyting/luchshie-rayony/">лучшие</a>, <a href="{pre}reyting/ekologiya/">экология</a>, <a href="{pre}reyting/zelenye-rayony/">зелёные</a>, <a href="{pre}reyting/deshevye-rayony/">дешёвые</a>, <a href="{pre}reyting/transport/">транспорт</a>, <a href="{pre}reyting/dlya-semi-s-detmi/">для семьи</a>.</p>')
 
 def page(f):
     p = P(f); sl = p['slug']; n = p['n']; o = p['o']
     nbs = [BY[x] for x in (p.get('nb') or []) if x in BY]
     er = eco_rank.index(f) + 1
-    title = f'Район {n} ({o}): экология, цены на жильё, транспорт, школы — Атлас районов Москвы'
+    title = f'Район {n} ({o}): цены на квартиры, экология, транспорт, плюсы и минусы'
     bits = [f'{n} — район {o} Москвы' + (f', {num(p["pop"])} {zhit(p["pop"])}' if p.get('pop') else '')]
     if p.get('hp'): bits.append(f'метр жилья на вторичке около {num(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
-    bits.append(f'экология {fmt(p["i"])} из 10, {er}-е место по чистоте')
-    if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} минут')
+    bits.append(f'экологический балл {fmt(p["i"])} из 10 (чем меньше, тем чище), {er}-е место по чистоте')
+    if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} {minut_rod(p["tr"]["tmed"])}')
     desc = '; '.join(bits) + '. Школы, поликлиники, спорт, парки и микроклимат в сравнении со всеми районами Москвы.'
     lead = bits[0] + '. ' + '. '.join(x[0].upper() + x[1:] for x in bits[1:]) + '.' if len(bits) > 1 else bits[0] + '.'
     canon = f'{BASE}/rayon/{sl}/'
@@ -189,7 +191,7 @@ def page(f):
             ss = p['tr']['st']
             txt = ('Станции в районе: ' + '; '.join(E(x[0]) + ' (' + (', '.join(x[2]) if x[1] != 'mcc' else 'МЦК') + ')' for x in ss) + '.') if ss else 'Внутри района нет станций метро, МЦК и МЦД.'
             txt = f'<p class="small" style="margin-top:10px">{txt}</p>'
-        if p.get('hp'): txt += f'<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, {num(p.get("hcnt"))} объявлений в районе).</p>'
+        if p.get('hp'): txt += f'<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, {num(p.get("hcnt"))} {pl(p.get("hcnt") or 0,"объявление","объявления","объявлений")} в районе).</p>'
         sec.append(f'<section><h2>Жильё и транспорт</h2><div class="stats">{"".join(st)}</div>{txt}</section>')
     # ecology
     fac = [f'<div><span>База: EcoStandard и замеры воздуха<span class="note">EcoStandard {fmt(p["a"])} · замеры {p["b"]}</span></span><b>{fmt(0.6*p["a"]+0.4*p["b"])}</b></div>']
@@ -205,7 +207,7 @@ def page(f):
     if p.get('sp'):
         q = p['sp']; lv = p['lv']
         sec.append(f'<section><h2>Спорт и жизнь вокруг</h2><div class="stats">{stat("Бассейны",q["pool"],q["pp"],q["p10"])}{stat("Спортзалы и клубы",q["halls"],q["hp"],q["h10"])}{stat("Площадки и воркауты",q["grounds"],q["gp"],q["g10"])}'
-                   f'<div class="stat"><div class="l">Оживлённость</div><div class="v">{LV[lv["l"]]}</div><div class="s">{num(lv["f"])} кафе и ресторанов · {num(lv["h"])} магазинов · {num(lv["d"])} на км²</div></div></div>'
+                   f'<div class="stat"><div class="l">Оживлённость</div><div class="v">{LV[lv["l"]]}</div><div class="s">{num(lv["f"])} кафе и ресторанов · {num(lv["h"])} {pl(lv["h"],"магазин","магазина","магазинов")} · {num(lv["d"])} на км²</div></div></div>'
                    f'<p class="small" style="margin-top:10px">Спорт {fmt(q["s"])} из 10 · <a href="../../sport.html">карта спорта по районам</a>. Оживлённость — кафе, рестораны, бары и магазины на квадратный километр; это характеристика, а не оценка.</p></section>')
     if p.get('cl'):
         c = p['cl']
@@ -274,7 +276,7 @@ locs=[f'{BASE}/']+[f'{BASE}/{x}' for x in pages[1:]]+[f'{BASE}/rayon/']+[f'{BASE
 today=date.today().isoformat()
 sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in locs)+'</urlset>\n'
 open(f'{REPO}/sitemap.xml','w').write(sm)
-open(f'{REPO}/robots.txt','w').write(f'User-agent: *\nAllow: /\n\nHost: {BASE}\nSitemap: {BASE}/sitemap.xml\n')
+open(f'{REPO}/robots.txt','w').write(f'User-agent: *\nAllow: /\nClean-param: v\n\nHost: {BASE}\nSitemap: {BASE}/sitemap.xml\n')
 print('sitemap urls',len(locs))
 
 # ================= rating landing pages =================

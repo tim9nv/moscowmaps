@@ -135,7 +135,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
 <link rel="stylesheet" href="assets/map-controls.css">
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="index.html?v=202611071332"><i aria-hidden="true"></i>Карты районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html?v=202611071332">Районы</a><a href="housing.html?v=202611071332">Цены на жильё</a><a href="ecology.html?v=202611071332">Экология</a><a href="climate.html?v=202611071332" aria-current="page">География</a><a href="transport.html?v=202611071332">Транспорт</a><a href="social.html?v=202611071332">Городская среда</a><a href="new-moscow.html?v=202611071332" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
+<header class="topbar"><div class="in"><a class="brand" href="index.html"><i aria-hidden="true"></i>Атлас районов Москвы</a><nav class="tabs" aria-label="Разделы"><a href="index.html">Районы</a><a href="housing.html">Цены на жильё</a><a href="ecology.html">Экология</a><a href="climate.html" aria-current="page">География</a><a href="transport.html">Транспорт</a><a href="social.html">Городская среда</a><a href="new-moscow.html" class="nm">Новая Москва</a></nav></div></header><script>(function(){var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2})()</script>
 
 
 
@@ -358,7 +358,7 @@ function describe(s){
   const parts=[];
   if(s.rel>=25)parts.push("Район на возвышенности: днём чуть прохладнее, зато лучше продувается, холодный воздух и туманы не застаиваются.");
   else if(s.rel<=-20)parts.push("Район в низине: ночью сюда стекает холодный воздух, чаще туманы, заморозки и сырость, в безветрие дольше держатся выбросы.");
-  else parts.push("Район на среднем для Москвы уровне.");
+  else parts.push("По высоте район средний для Москвы: не возвышенность и не низина.");
   if(s.low>=30)parts.push(`Около ${Math.round(s.low)}% территории лежит ниже 135 м, почти на уровне поймы.`);
   if(s.uhi>=1.3)parts.push("Ближе к центру и плотно застроен: теплее и суше, особенно зимними ночами; летом здесь душнее всего.");
   else if(s.uhi<=0.4)parts.push("Остров тепла почти не чувствуется: по температуре район ближе к Подмосковью, зимой заметно холоднее центра.");
