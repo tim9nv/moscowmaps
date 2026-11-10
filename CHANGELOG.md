@@ -5,6 +5,8 @@
 
 ## 2026-11-10
 
+- **ChatGPT** — На карте Отрадного появился слой «Поликлиники» с адресами шести городских учреждений и филиалов (`assets/atlas.js`, `assets/otradnoe-clinics.json`, `handoff/district-cards.md`).
+
 - **ChatGPT** — На карте Отрадного появился отдельный слой «Детсады» с адресами 23 дошкольных корпусов. Его можно включать независимо от школ (`assets/atlas.js`, `assets/otradnoe-kindergartens.json`, `handoff/district-cards.md`).
 
 - **ChatGPT** — На карте Отрадного можно включить слой «Школы» и открыть адрес по метке. В пилоте 18 школьных корпусов (`assets/atlas.js`, `assets/otradnoe-schools.json`, `handoff/district-cards.md`).

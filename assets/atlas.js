@@ -422,7 +422,8 @@ function drawDMap(f){
   if (p.slug === "otradnoe") {
     [
       {id:"schools", title:"Школы", icon:"Ш", color:"#345ea8", prompt:"Выберите метку школы, чтобы увидеть адрес."},
-      {id:"kindergartens", title:"Детсады", icon:"Д", color:"#8a3c72", prompt:"Выберите метку детсада, чтобы увидеть адрес."}
+      {id:"kindergartens", title:"Детсады", icon:"Д", color:"#8a3c72", prompt:"Выберите метку детсада, чтобы увидеть адрес."},
+      {id:"clinics", title:"Поликлиники", icon:"+", color:"#9b4134", prompt:"Выберите метку поликлиники, чтобы увидеть адрес."}
     ].forEach(({id,title,icon,color,prompt}) => {
       const controls = d3.select("#dlg").append("div").attr("hidden","").style("flex-basis","100%");
       fetch(ATLAS_ROOT + "assets/otradnoe-" + id + ".json")
