@@ -2,7 +2,9 @@
 
 const getCatalogElement = id => document.getElementById(id);
 const displayName = name => name[0].toLocaleUpperCase("ru") + name.slice(1);
-const queryPark = new URLSearchParams(location.search).get("park");
+// Страница парка parks/<slug>/ задаёт window.PARK_ID и window.PARK_BASE ("../catalog/"); старый адрес ?park=<id> переадресуется на неё.
+const queryPark = window.PARK_ID || new URLSearchParams(location.search).get("park");
+const BASE = window.PARK_BASE || "";
 
 // Рисунок в шапке, как у ВДНХ: свой у десяти главных парков, у остальных — по типу места.
 const HERO_SUN = '<circle cx="242" cy="55" r="37" fill="#e6bc71"/>';
@@ -38,7 +40,7 @@ function drawHero(park) {
 }
 
 async function read(url, format) {
-  const response = await fetch(url);
+  const response = await fetch(BASE + url);
   if (!response.ok) throw new Error(`Не удалось загрузить ${url}`);
   return response[format]();
 }
@@ -52,7 +54,7 @@ function renderCatalog(parks) {
     const items = matches.map(park => {
       const li = document.createElement("li");
       const link = document.createElement("a");
-      link.href = `?park=${park.id}`;
+      link.href = park.url || `?park=${park.id}`;
       const sameName = parks.filter(other => other.name === park.name).length > 1;
       link.textContent = sameName ? `${displayName(park.name)} · ${park.center[1].toFixed(3)}, ${park.center[0].toFixed(3)}` : displayName(park.name);
       li.append(link);
@@ -68,9 +70,11 @@ function renderCatalog(parks) {
 }
 
 async function renderPark(park) {
-  document.title = `${displayName(park.name)}: карта троп — Атлас Москвы`;
-  getCatalogElement("title").textContent = displayName(park.name);
-  getCatalogElement("intro").textContent = park.count
+  if (!window.PARK_ID) {
+    document.title = `${displayName(park.name)}: карта троп — Атлас Москвы`;
+    getCatalogElement("title").textContent = displayName(park.name);
+  }
+  if (!window.PARK_ID) getCatalogElement("intro").textContent = park.count
     ? "Дорожки, тропы и граница территории на одной карте."
     : "Граница территории на карте. В выгрузке нет отдельных пешеходных дорожек.";
   const text = await read(`trails-${park.group}.txt`, "text");
@@ -100,7 +104,7 @@ async function renderPark(park) {
   const categories = { all: ["Все", "", ""] };
   for (const key of Object.keys(LABELS)) if (places.some(place => place.category === key)) categories[key] = LABELS[key];
   if (places.length) {
-    getCatalogElement("intro").textContent = "Что посмотреть, где поесть и куда идти: достопримечательности, кафе, площадки и тропы на одной карте.";
+    if (!window.PARK_ID) getCatalogElement("intro").textContent = "Что посмотреть, где поесть и куда идти: достопримечательности, кафе, площадки и тропы на одной карте.";
     getCatalogElement("park-tools").hidden = false;
     getCatalogElement("places").hidden = false;
     getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. Нажмите на значок на карте или на название в списке.`;
@@ -113,7 +117,7 @@ async function renderPark(park) {
     : "В выгрузке нет отдельных троп. Показана граница.";
   getCatalogElement("map-section").hidden = false;
   const script = document.createElement("script");
-  script.src = "../vdnh/guide.js";
+  script.src = BASE + "../vdnh/guide.js";
   script.addEventListener("error", () => { getCatalogElement("load-error").hidden = false; getCatalogElement("load-error").textContent = "Карта не загрузилась."; });
   document.body.append(script);
   window.addEventListener("pagehide", () => URL.revokeObjectURL(trailUrl), { once: true });
@@ -121,6 +125,7 @@ async function renderPark(park) {
 
 read("parks.json", "json").then(parks => {
   const park = parks.find(p => p.id === queryPark);
+  if (park && park.url && !window.PARK_ID) { location.replace(park.url); return; }
   drawHero(park);
   if (park) return renderPark(park);
   renderCatalog(parks);

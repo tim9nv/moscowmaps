@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Парк Сокольники: карта, тропы и что посмотреть — Атлас Москвы</title>
+<meta name="description" content="Парк Сокольники в Москве: карта с дорожками и тропами, 8 достопримечательностей, 5 музеев, 8 скульптур, 31 кафе. Геолокация «Я на карте».">
+<link rel="canonical" href="https://www.mskatlas.ru/parks/park-sokolniki/">
+<meta property="og:type" content="article"><meta property="og:title" content="Парк Сокольники: карта, тропы и что посмотреть — Атлас Москвы"><meta property="og:description" content="Парк Сокольники в Москве: карта с дорожками и тропами, 8 достопримечательностей, 5 музеев, 8 скульптур, 31 кафе. Геолокация «Я на карте»."><meta property="og:url" content="https://www.mskatlas.ru/parks/park-sokolniki/"><meta property="og:site_name" content="Атлас Москвы"><meta property="og:locale" content="ru_RU">
+<link rel="stylesheet" href="../vdnh/guide.css">
+<link rel="stylesheet" href="../catalog/catalog.css?v=20261110i">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>window.PARK_ID="7";window.PARK_BASE="../catalog/";</script>
+<script defer src="../catalog/catalog.js?v=20261110i"></script>
+</head>
+<body>
+<header class="bar"><div class="wrap"><a href="../../index.html"><img src="../../assets/logo.svg" alt="" width="32" height="32"> Атлас Москвы</a><a href="../../parks.html">Парки и прогулки</a></div></header>
+<main class="wrap">
+  <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / Сокольники</nav>
+  <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве · Сокольники</p><h1 id="title">Парк Сокольники</h1><p id="intro">Парк Сокольники находится в районах Сокольники, Алексеевский, площадь 4,6 км². На карте отмечено: 8 достопримечательностей, 5 музеев, 8 скульптур, 31 кафе, 20 детских площадок, 20 туалетов.</p><div class="actions"><a class="primary" href="#map-section">Открыть карту</a></div></div></header>
+  <p id="load-error" role="status" hidden></p>
+  <section id="map-section" aria-labelledby="map-title" hidden>
+    <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
+    <div class="tools" id="park-tools" hidden><label for="search">Что есть в парке</label><input type="search" id="search" placeholder="Например, кафе или памятник"><div id="filters" class="filters" aria-label="Категории"></div></div>
+    <div class="map-shell" id="map-shell">
+      <div class="map-toolbar" aria-label="Управление картой">
+        <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
+        <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
+      </div>
+      <div class="trail-controls">
+        <label><input id="trail-toggle" type="checkbox" checked disabled> Тропы и аллеи</label>
+        <div class="trail-legend" aria-label="Типы дорожек"><span class="paved">Твёрдое покрытие</span><span class="unpaved">Грунт и гравий</span><span class="boardwalk">Настил</span><span class="steps">Ступени</span><span class="unknown">Покрытие неизвестно</span></div>
+        <p id="trail-status" class="muted" role="status"></p>
+      </div>
+      <div id="map" aria-label="Интерактивная карта парка"></div>
+      <p id="status" role="status"></p>
+    </div>
+    <details id="places" hidden><summary>Объекты списком <span id="count"></span></summary><p class="muted" id="places-note"></p><ul id="place-list"></ul></details>
+    <div hidden><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>
+  </section>
+<section class="park-sec"><h2>Достопримечательности</h2><ul class="park-names"><li>Дача Лямина</li><li>Девушка с кувшином</li><li>Девушка с чашей</li><li>ДЗОТ 1941-1945</li><li>Ленин с детьми</li><li>Памятник В. И. Ленину</li><li>Памятник Павлу Петель</li><li>Фонтан &quot;Сокольники&quot;</li></ul></section>
+<section class="park-sec"><h2>Музеи и театры</h2><ul class="park-names"><li>Альпака парк</li><li>Капибара кафе</li><li>Музей истории русского шоколада</li><li>Орнитарий</li><li>Планета Сокольники</li></ul></section>
+<section class="park-sec"><h2>Скульптуры</h2><ul class="park-names"><li>А. С. Пушкину</li><li>Альпаки</li><li>Мать и Дитя</li><li>Мойдодыр</li><li>Позвони родителям</li><li>Фея Главбух</li><li>ШахМат вязович</li><li>Экваториальные солнечные часы</li></ul></section>
+<section class="park-sec"><h2>Кафе и рестораны</h2><ul class="park-names"><li>Bradu bar</li><li>Casa Picassa Врубель</li><li>Crafted Grill Bar</li><li>Green Park Sokolniki</li><li>Julius Meinl</li><li>Norme</li><li>Palla</li><li>Subway</li><li>Блиннарий</li><li>Вкусный терем</li><li>Дон Кофеон</li><li>Дубки</li><li>Кофетема</li><li>Малиновка</li><li>Меркато</li><li>Мос Кофе</li><li>Папина паста</li><li>Римская пицца</li><li>Сирень</li><li>Соколиная охота</li><li>Спорт кафе</li><li>Трдельник</li><li>Ура! Шаурма</li><li>Фиалка</li><li>ЧаЕ</li><li>Чешские колбаски</li><li>Чешский трдельник</li><li>Чешский Трдельник</li><li>Шашлычная 1957</li></ul></section>
+  <nav class="park-links" aria-label="Районы рядом"><a href="../../rayon/sokolniki/">Район Сокольники</a><a href="../../rayon/alekseevskiy/">Район Алексеевский</a></nav>
+  <footer>Карта, дорожки и объекты — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>, выгрузка 10.11.2026. Площадь — по контуру парка на карте Атласа. Проходы и ограничения могут меняться. Сверяйтесь с указателями на месте.</footer>
+</main>
+</body>
+</html>

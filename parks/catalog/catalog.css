@@ -9,3 +9,5 @@
 
 .hero.has-art{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
 @media(max-width:580px){.hero.has-art{grid-template-columns:1fr}}
+.park-sec{margin-top:26px}.park-sec h2{margin:0 0 10px}.park-names{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:6px 18px}.park-names li{padding:5px 0;border-bottom:1px solid var(--border);font-size:15px}
+.park-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}.park-links a{padding:9px 14px;border:1px solid var(--border);border-radius:999px;text-decoration:none;color:inherit;background:var(--surface)}
