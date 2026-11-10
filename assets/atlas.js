@@ -348,7 +348,11 @@ function drawDMap(f){
   const cc=proj(d3.geoCentroid(mp)); let nameY=cc[1];
   if(SRC.some(s=>{const q=proj([s.lon,s.lat]);return Math.abs(q[0]-cc[0])<short(p.n).length*6&&Math.abs(q[1]-cc[1])<16})) nameY=cc[1]-24;
   boxes.push([cc[0],nameY,short(p.n).length*9,18]);
-  const add=(x,y,make)=>{const el=make(over.append("g"));pts.push([el,x,y]);el.attr("transform",`translate(${x},${y})`)};
+  const add=(x,y,make,layer=over)=>{
+    const el=make(layer.append("g")), t=d3.zoomTransform(svg.node());
+    pts.push([el,x,y]);
+    el.attr("transform",`translate(${t.applyX(x)},${t.applyY(y)})`);
+  };
   add(cc[0],nameY,g=>{g.append("text").attr("class","lbl").attr("text-anchor","middle").attr("dy",5).style("font-weight","600").style("fill","var(--fg)").style("font-size","15px").text(short(p.n));return g});
   const used=new Set();
   SRC.forEach(s=>{let [x,y]=proj([s.lon,s.lat]);const isNear=near.includes(s);const inside=x>6&&x<W-6&&y>6&&y<H-6;
@@ -386,6 +390,90 @@ function drawDMap(f){
   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
   zb.querySelector("[data-z='reset']").onclick=()=>svg.transition().duration(250).call(zoom.transform,d3.zoomIdentity);
   document.getElementById("dlg").innerHTML=`<span><svg width="30" height="14" viewBox="0 0 30 14"><line x1="1" y1="7" x2="29" y2="7" stroke="#d6083b" stroke-width="3.5"/><circle cx="15" cy="7" r="4.5" fill="#fff" stroke="#d6083b" stroke-width="2.6"/></svg>Метро и МЦК</span><span><svg width="30" height="14" viewBox="0 0 30 14"><line x1="1" y1="7" x2="29" y2="7" stroke="#f6a600" stroke-width="2.5" stroke-dasharray="7 4"/></svg>МЦД</span><span><svg width="22" height="14" viewBox="0 0 22 14"><rect x="1" y="3" width="20" height="8" rx="3" style="fill:#8ec5ef;stroke:#3f8fd2"/></svg>Реки и пруды</span>`+(relInfo?`<span><svg width="40" height="12" viewBox="0 0 40 12"><defs><linearGradient id="rlg"><stop offset="0" stop-color="#a9d39c"/><stop offset=".4" stop-color="#e3eab0"/><stop offset=".7" stop-color="#ecc98f"/><stop offset="1" stop-color="#c9925c"/></linearGradient></defs><rect width="40" height="12" rx="2" fill="url(#rlg)"/></svg>Рельеф на карте: от ${relInfo.lo} м (зелёное, низины) до ${relInfo.hi} м (коричневое), горизонтали через ${relInfo.step} м</span>`:"")+roadLegend(true)+[...used].map(t=>`<span>${iconSvg(t)}${TYPES[t][0]}</span>`).join("")+(near.length?`<span><svg width="14" height="14" viewBox="-8 -8 16 16"><circle r="6" style="fill:none;stroke:var(--muted);stroke-dasharray:3 2"/></svg>Зона 3 км вокруг источника</span>`:"")+(used.size?"":`<span>Крупных источников загрязнения рядом нет</span>`);
+  // Park links reuse the catalogue IDs and the same projection as the district map.
+  fetch(ATLAS_ROOT + "parks/catalog/parks.json")
+    .then(response => response.ok ? response.json() : [])
+    .then(parks => {
+      if (!svg.node().isConnected) return;
+      const local = parks.filter(park => d3.geoContains(f, park.center));
+      const adjacent = p.n === "Отрадное" ? parks.filter(park => park.id === "86" && !local.includes(park)) : [];
+      if (!local.length && !adjacent.length) return;
+      const link = park => ATLAS_ROOT + "parks/catalog/?park=" + encodeURIComponent(park.id);
+      const legend = d3.select("#dlg").append("div").style("flex-basis", "100%");
+      legend.append("b").text("Карты парков и троп");
+      [...local, ...adjacent].forEach(park => {
+        legend.append("span").style("display", "inline-block").style("margin-inline-start", "10px")
+          .append("a").attr("href", link(park)).text(park.name + (adjacent.includes(park) ? " (рядом)" : ""));
+      });
+      local.forEach(park => {
+        const [x,y] = proj(park.center);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        add(x,y,g=>{
+          const a = g.append("a").attr("href", link(park)).attr("aria-label", "Карта троп: " + park.name);
+          a.append("title").text(park.name);
+          a.append("circle").attr("r",8).style("fill","#22614c").style("stroke","#fff").style("stroke-width",2);
+          a.append("text").attr("text-anchor","middle").attr("dy","0.35em")
+            .style("fill","#fff").style("font","700 9px system-ui").text("П");
+          return g;
+        });
+      });
+    })
+    .catch(() => { /* The district map remains usable if the catalogue is unavailable. */ });
+  // Школы, детские сады, поликлиники: слои для каждого района, выключены при открытии.
+  // Данные: assets/places/<slug>.json (tools/extract_social.py, OpenStreetMap; Отрадное сверено с городскими перечнями).
+  fetch(ATLAS_ROOT + "assets/places/" + p.slug + ".json")
+    .then(response => response.ok ? response.json() : null)
+    .then(data => {
+      if (!data || !svg.node().isConnected) return;
+      const kinds = [
+        {id:"schools", title:"Школы", icon:"Ш", color:"#345ea8"},
+        {id:"kindergartens", title:"Детские сады", icon:"Д", color:"#8a3c72"},
+        {id:"clinics", title:"Поликлиники и больницы", icon:"+", color:"#9b4134"}
+      ].filter(k => (data[k.id] || []).length);
+      if (!kinds.length) return;
+      svg.attr("role","group");
+      const box = d3.select("#dlg").append("div").style("flex-basis","100%").style("display","flex").style("flex-wrap","wrap").style("gap","8px").style("align-items","center");
+      box.append("b").text("Показать на карте:");
+      const detail = d3.select("#dlg").append("div").attr("role","status").style("flex-basis","100%").style("min-height","1.4em");
+      d3.select("#dlg").append("div").style("flex-basis","100%").style("font-size","12px").style("color","var(--muted)")
+        .html('Объекты — по данным <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> на ' + data.date + '. Нажмите на значок, чтобы увидеть название и адрес.');
+      kinds.forEach(({id,title,icon,color}) => {
+        const places = data[id];
+        const layerId = "district-" + id;
+        const layer = over.append("g").attr("id",layerId).attr("display","none");
+        const toggle = box.append("button").attr("type","button").attr("class","chip")
+          .attr("aria-controls",layerId).attr("aria-pressed","false");
+        toggle.append("i").style("background",color);
+        toggle.append("span").text(title + " · " + places.length);
+        toggle.on("click", () => {
+          const show = toggle.attr("aria-pressed") === "false";
+          toggle.attr("aria-pressed",String(show));
+          layer.attr("display",show ? null : "none").raise();
+          detail.text("");
+        });
+        const t0 = d3.zoomTransform(svg.node());
+        places.forEach(([lon,lat,name,address]) => {
+          const [x,y] = proj([lon,lat]);
+          if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+          const label = address ? name + " · " + address : name;
+          const select = () => detail.text(label);
+          add(x,y,g => {
+            g.attr("role","button").attr("tabindex","0").attr("aria-label",label)
+              .style("cursor","pointer").on("click",select).on("keydown",event => {
+                if (event.key === "Enter" || event.key === " ") { event.preventDefault(); select(); }
+              });
+            g.append("title").text(label);
+            g.append("rect").attr("x",-8).attr("y",-8).attr("width",16).attr("height",16)
+              .attr("rx",4).attr("fill",color).attr("stroke","#fff").attr("stroke-width",1.5);
+            g.append("text").attr("text-anchor","middle").attr("dy","0.35em")
+              .attr("fill","#fff").style("font","700 10px system-ui").text(icon);
+            return g;
+          },layer);
+          pts[pts.length-1][0].attr("transform",`translate(${t0.applyX(x)},${t0.applyY(y)})`);
+        });
+      });
+    })
+    .catch(() => { /* Карта района работает и без слоёв. */ });
   if(!window.ATLAS_DISTRICT)window.scrollTo(0,0);
 }
 
