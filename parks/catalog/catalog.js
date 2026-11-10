@@ -56,7 +56,7 @@ async function renderPark(park) {
       geometry: { type: "MultiLineString", coordinates: lines.map(line => line.map(([lat, lon]) => [lon, lat])) } });
   }
   // Что есть в парке: tools/extract_park_places.py -> places.json (OpenStreetMap)
-  const LABELS = { sight: ["Достопримечательности", "★", "#8a3b2e"], museum: ["Музеи", "М", "#694477"], view: ["Смотровые", "◉", "#245f91"],
+  const LABELS = { sight: ["Достопримечательности", "★", "#8a3b2e"], museum: ["Музеи", "М", "#694477"], view: ["Смотровые", "◉", "#245f91"], art: ["Скульптуры", "С", "#7a5a2e"],
     food: ["Кафе", "К", "#87491f"], play: ["Детские площадки", "Д", "#406428"], wc: ["Туалеты", "WC", "#4d5a5a"], water: ["Вода", "В", "#2f6fa8"] };
   let places = [], placesDate = "";
   try {
@@ -67,6 +67,7 @@ async function renderPark(park) {
   const categories = { all: ["Все", "", ""] };
   for (const key of Object.keys(LABELS)) if (places.some(place => place.category === key)) categories[key] = LABELS[key];
   if (places.length) {
+    getCatalogElement("intro").textContent = "Что посмотреть, где поесть и куда идти: достопримечательности, кафе, площадки и тропы на одной карте.";
     getCatalogElement("park-tools").hidden = false;
     getCatalogElement("places").hidden = false;
     getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. Нажмите на значок на карте или на название в списке.`;
