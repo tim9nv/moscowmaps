@@ -327,3 +327,89 @@ locate.addEventListener("click", () => {
   }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 });
 });
 window.addEventListener("pagehide", stopLocation);
+
+
+const expandMap = get("map-expand");
+const mapShell = get("map-shell");
+if (expandMap && map) {
+  let expanded = false;
+  function setExpanded(value) {
+    expanded = value;
+    mapShell.classList.toggle("map-expanded", expanded);
+    document.body.classList.toggle("map-view-open", expanded);
+    expandMap.setAttribute("aria-pressed", String(expanded));
+    expandMap.textContent = expanded ? "⤡ Свернуть карту" : "⛶ На весь экран";
+    requestAnimationFrame(() => map.invalidateSize({ animate: false }));
+  }
+
+  expandMap.addEventListener("click", async () => {
+    if (expanded) {
+      if (document.fullscreenElement === mapShell) await document.exitFullscreen();
+      setExpanded(false);
+      return;
+    }
+    setExpanded(true);
+    if (mapShell.requestFullscreen) {
+      try {
+        await mapShell.requestFullscreen();
+      } catch {
+        // The fixed layout also works where the browser restricts fullscreen.
+      }
+    }
+  });
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) setExpanded(false);
+    else if (document.fullscreenElement === mapShell) setExpanded(true);
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && expanded && !document.fullscreenElement) {
+      setExpanded(false);
+      expandMap.focus();
+    }
+  });
+} else if (expandMap) {
+  expandMap.disabled = true;
+}
+
+const trailSource = get("map").dataset.trails;
+if (map && trailSource) {
+  const toggle = get("trail-toggle");
+  const trailStatus = get("trail-status");
+  const trailStyles = {
+    boundary: { color: "#397460", weight: 2, opacity: 0.6, fill: false, dashArray: "5 6" },
+    excluded: { color: "#807365", weight: 1, opacity: 0.5, fillColor: "#807365", fillOpacity: 0.13 },
+    paved: { color: "#007466", weight: 3 },
+    unpaved: { color: "#884921", weight: 3, dashArray: "7 5" },
+    boardwalk: { color: "#1966a0", weight: 4, dashArray: "11 3" },
+    steps: { color: "#a32646", weight: 4, dashArray: "1 5" },
+    unknown: { color: "#515c63", weight: 2.5, dashArray: "2 4" },
+  };
+  const pane = map.createPane("park-trails");
+  pane.style.zIndex = "350";
+  pane.style.pointerEvents = "none";
+  const renderer = L.canvas({ pane: "park-trails" });
+  fetch(trailSource)
+    .then(response => {
+      if (!response.ok) throw new Error("Trail data unavailable");
+      return response.json();
+    })
+    .then(data => {
+      const layer = L.geoJSON(data, {
+        renderer,
+        interactive: false,
+        style: feature => trailStyles[feature.properties.kind],
+      }).addTo(map);
+      const kinds = new Set(data.features.map(feature => feature.properties.kind));
+      for (const item of document.querySelectorAll(".trail-legend span")) {
+        item.hidden = !kinds.has(item.className);
+      }
+      toggle.disabled = false;
+      toggle.addEventListener("change", () => {
+        if (toggle.checked) layer.addTo(map);
+        else layer.remove();
+      });
+    })
+    .catch(() => {
+      trailStatus.textContent = "Слой троп не загрузился. Обновите страницу.";
+    });
+}

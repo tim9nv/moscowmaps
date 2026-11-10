@@ -31,12 +31,21 @@
     </svg>
   </header>
   <section id="map-section" aria-labelledby="map-title">
-    <div class="section-head"><h2 id="map-title" tabindex="-1">Карта сада</h2><button id="locate" type="button" aria-pressed="false">◎ Я на карте</button></div>
-    <div class="map-shell">
+    <div class="section-head"><h2 id="map-title" tabindex="-1">Карта сада</h2></div>
+    <div class="map-shell" id="map-shell">
+      <div class="map-toolbar" aria-label="Управление картой">
+        <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
+        <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
+      </div>
       <div class="tools" hidden><input type="search" id="search" aria-label="Найти место"><div id="filters"></div></div>
       <div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div>
       <div id="route-tools" class="route-tools" hidden><label for="route-leg">Участок прогулки</label><select id="route-leg"></select></div>
-      <div id="map" aria-label="Интерактивная карта Ботанического сада"></div>
+      <div class="trail-controls">
+        <label><input id="trail-toggle" type="checkbox" checked disabled> Тропы и аллеи</label>
+        <div class="trail-legend" aria-label="Типы дорожек"><span class="paved">Твёрдое покрытие</span><span class="unpaved">Грунт и гравий</span><span class="boardwalk">Настил</span><span class="steps">Ступени</span><span class="unknown">Покрытие неизвестно</span></div>
+        <p id="trail-status" class="muted" role="status">Сверяйтесь с указателями на месте.</p>
+      </div>
+      <div id="map" data-trails="trails.geojson" aria-label="Интерактивная карта Ботанического сада"></div>
       <p id="status" role="status"></p>
     </div>
     <details id="places"><summary>Входы и места <span id="count"></span></summary><ul id="place-list"></ul></details>
