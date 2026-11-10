@@ -6,3 +6,6 @@
 #park-search{margin:5px 0 10px;padding:9px 12px;width:min(100%,480px);height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink)}
 #park-list{padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,245px),1fr));gap:8px}
 #park-list a{display:block;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}
+
+.hero.has-art{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+@media(max-width:580px){.hero.has-art{grid-template-columns:1fr}}
