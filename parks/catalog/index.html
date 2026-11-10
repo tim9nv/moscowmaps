@@ -19,7 +19,7 @@
   <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве</p><h1 id="title">Карты парков Москвы</h1><p id="intro">Выберите парк, чтобы открыть границу и пешеходные дорожки.</p></div></header>
   <p id="load-error" role="status" hidden></p>
   <section id="catalog" hidden>
-    <div class="catalog-featured"><a href="../vdnh/">ВДНХ: павильоны и прогулки</a><a href="../botanicheskiy-sad/">Ботанический сад имени Цицина</a></div>
+    <div class="catalog-featured"><a href="../vdnh/">ВДНХ</a><a href="../botanicheskiy-sad/">Ботанический сад</a><a href="?park=48">Парк Горького</a><a href="?park=7">Сокольники</a><a href="?park=8">Царицыно</a><a href="?park=19">Коломенское</a><a href="?park=5">Измайловский парк</a><a href="?park=1">Лосиный остров</a><a href="?park=41">Воробьёвы горы</a><a href="?park=135">Зарядье</a></div>
     <label for="park-search">Найти парк</label>
     <input id="park-search" type="search" placeholder="Например, Сокольники или Яуза">
     <p class="muted" id="park-count" role="status"></p>
@@ -27,6 +27,7 @@
   </section>
   <section id="map-section" aria-labelledby="map-title" hidden>
     <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
+    <div class="tools" id="park-tools" hidden><label for="search">Что есть в парке</label><input type="search" id="search" placeholder="Например, кафе или памятник"><div id="filters" class="filters" aria-label="Категории"></div></div>
     <div class="map-shell" id="map-shell">
       <div class="map-toolbar" aria-label="Управление картой">
         <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
@@ -40,7 +41,8 @@
       <div id="map" aria-label="Интерактивная карта парка"></div>
       <p id="status" role="status"></p>
     </div>
-    <div hidden><input id="search"><div id="filters"></div><div id="count"></div><ul id="place-list"></ul><div id="places"></div><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>
+    <details id="places" hidden><summary>Объекты списком <span id="count"></span></summary><p class="muted" id="places-note"></p><ul id="place-list"></ul></details>
+    <div hidden><div id="routes"></div><div id="selected-route"></div><button id="clear-route"></button><select id="route-leg"></select></div>
   </section>
   <footer>Карта и дорожки — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>. Проходы и ограничения могут меняться. Сверяйтесь с указателями на месте.</footer>
 </main>
