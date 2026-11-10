@@ -31,8 +31,12 @@
     </svg>
   </header>
   <section id="map-section" aria-labelledby="map-title">
-    <div class="section-head"><div><p class="eyebrow">Ориентиры на территории</p><h2 id="map-title" tabindex="-1">Карта ВДНХ</h2></div><button id="locate" type="button" aria-pressed="false">◎ Я на карте</button></div>
-    <div class="map-shell">
+    <div class="section-head"><div><p class="eyebrow">Ориентиры на территории</p><h2 id="map-title" tabindex="-1">Карта ВДНХ</h2></div></div>
+    <div class="map-shell" id="map-shell">
+      <div class="map-toolbar" aria-label="Управление картой">
+        <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
+        <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
+      </div>
       <div class="tools"><label for="search">Найти место</label><input type="search" id="search" placeholder="Например, Космос или № 34"><div id="filters" class="filters" aria-label="Категории"></div></div>
       <div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div>
       <div id="route-tools" class="route-tools" hidden>
