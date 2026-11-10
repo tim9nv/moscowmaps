@@ -348,7 +348,11 @@ function drawDMap(f){
   const cc=proj(d3.geoCentroid(mp)); let nameY=cc[1];
   if(SRC.some(s=>{const q=proj([s.lon,s.lat]);return Math.abs(q[0]-cc[0])<short(p.n).length*6&&Math.abs(q[1]-cc[1])<16})) nameY=cc[1]-24;
   boxes.push([cc[0],nameY,short(p.n).length*9,18]);
-  const add=(x,y,make)=>{const el=make(over.append("g"));pts.push([el,x,y]);el.attr("transform",`translate(${x},${y})`)};
+  const add=(x,y,make,layer=over)=>{
+    const el=make(layer.append("g")), t=d3.zoomTransform(svg.node());
+    pts.push([el,x,y]);
+    el.attr("transform",`translate(${t.applyX(x)},${t.applyY(y)})`);
+  };
   add(cc[0],nameY,g=>{g.append("text").attr("class","lbl").attr("text-anchor","middle").attr("dy",5).style("font-weight","600").style("fill","var(--fg)").style("font-size","15px").text(short(p.n));return g});
   const used=new Set();
   SRC.forEach(s=>{let [x,y]=proj([s.lon,s.lat]);const isNear=near.includes(s);const inside=x>6&&x<W-6&&y>6&&y<H-6;
@@ -401,7 +405,6 @@ function drawDMap(f){
         legend.append("span").style("display", "inline-block").style("margin-inline-start", "10px")
           .append("a").attr("href", link(park)).text(park.name + (adjacent.includes(park) ? " (рядом)" : ""));
       });
-      const transform = d3.zoomTransform(svg.node());
       local.forEach(park => {
         const [x,y] = proj(park.center);
         if (!Number.isFinite(x) || !Number.isFinite(y)) return;
@@ -413,11 +416,53 @@ function drawDMap(f){
             .style("fill","#fff").style("font","700 9px system-ui").text("П");
           return g;
         });
-        const [marker] = pts[pts.length-1];
-        marker.attr("transform", `translate(${transform.applyX(x)},${transform.applyY(y)})`);
       });
     })
     .catch(() => { /* The district map remains usable if the catalogue is unavailable. */ });
+  if (p.slug === "otradnoe") {
+    fetch(ATLAS_ROOT + "assets/otradnoe-schools.json")
+      .then(response => response.ok ? response.json() : [])
+      .then(schools => {
+        if (!svg.node().isConnected || !schools.length) return;
+        svg.attr("role","group");
+        const layer = over.append("g").attr("id","district-schools").attr("display","none");
+        const controls = d3.select("#dlg").append("div").style("flex-basis","100%");
+        const toggle = controls.append("button").attr("type","button").attr("class","chip")
+          .attr("aria-controls","district-schools").attr("aria-pressed","false").text("Школы");
+        controls.append("span").style("display","inline").style("margin-inline-start","8px")
+          .text("Пилотный слой · " + schools.length + " корпусов · ")
+          .append("a").attr("href","https://www.openstreetmap.org/copyright").text("© OpenStreetMap");
+        const detail = controls.append("div").attr("role","status");
+        const prompt = "Выберите метку школы, чтобы увидеть адрес.";
+        toggle.on("click", () => {
+          const show = toggle.attr("aria-pressed") === "false";
+          toggle.attr("aria-pressed",String(show));
+          layer.attr("display",show ? null : "none").raise();
+          detail.text(show ? prompt : "");
+        });
+        schools.forEach(school => {
+          const [x,y] = proj(school.coordinates);
+          const label = school.name + " · " + school.address;
+          const select = () => detail.text(label);
+          add(x,y,g => {
+            g.attr("role","button").attr("tabindex","0").attr("aria-label",label)
+              .style("cursor","pointer").on("click",select).on("keydown",event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  select();
+                }
+              });
+            g.append("title").text(label);
+            g.append("rect").attr("x",-10).attr("y",-10).attr("width",20).attr("height",20)
+              .attr("rx",4).attr("fill","#345ea8").attr("stroke","#fff").attr("stroke-width",2);
+            g.append("text").attr("text-anchor","middle").attr("dy","0.35em")
+              .attr("fill","#fff").style("font","700 11px system-ui").text("Ш");
+            return g;
+          },layer);
+        });
+      })
+      .catch(() => { /* The pilot layer is optional. */ });
+  }
   if(!window.ATLAS_DISTRICT)window.scrollTo(0,0);
 }
 
