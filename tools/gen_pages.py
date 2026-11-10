@@ -141,7 +141,7 @@ def head(title, desc, canon, depth, img=None):
     meta = (f'<meta name="description" content="{E(desc)}">\n<link rel="canonical" href="{canon}">\n'
             f'<meta property="og:type" content="website"><meta property="og:title" content="{E(title)}">'
             f'<meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{canon}">'
-            + (f'<meta property="og:image" content="{img}">' if img else '') + f'<meta property="og:locale" content="ru_RU"><meta property="og:site_name" content="Атлас районов Москвы">\n')
+            + (f'<meta property="og:image" content="{img}">' if img else '') + f'<meta property="og:locale" content="ru_RU"><meta property="og:site_name" content="Атлас Москвы">\n')
     h = h.replace('</title>', '</title>\n' + meta, 1)
     return h.replace('</head>', EXTRA_CSS + '\n</head>')
 
@@ -243,7 +243,7 @@ def page(f):
             f'<h1>Район {E(n)}</h1></div></div><p class="lead">{E(lead)}</p>' + (f'<p class="hist">{E(p["hist"])}</p>' if p.get('hist') else '') + '</header>\n'
             f'<section class="scores">{"".join(tiles)}</section>\n' + pc + '\n'
             f'<section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Карта района {E(n)}: улицы, станции, рельеф и источники загрязнения рядом"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>\n'
-            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261110c";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
+            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261110d";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
     return head(title, desc, canon, 2, f'{BASE}/rayon/gerb/{sl}.png' if local_arms(sl) else None) + body
 
 def index_page():
@@ -254,7 +254,7 @@ def index_page():
         fs = sorted(by[o], key=lambda f: P(f)['n'])
         blocks.append(f'<section class="okr" id="{slug(o)}"><h2>{E(okr_full(o))}</h2><div class="chips">' +
                       ''.join(f'<a href="{P(f)["slug"]}/">' + (f'<img src="{arms_src(P(f)["slug"],"")}" alt="" loading="lazy" onerror="this.remove()">' if arms(P(f)["slug"]) else '') + f'{E(P(f)["n"])}</a>' for f in fs) + '</div></section>')
-    title = 'Все районы Москвы по округам — экология, цены, транспорт, школы | Атлас районов Москвы'
+    title = 'Все районы Москвы по округам — экология, цены, транспорт, школы | Атлас Москвы'
     desc = f'Список всех {N} районов Москвы по административным округам. У каждого района своя страница: цена метра, экология, транспорт, школы и поликлиники, спорт, рельеф и микроклимат.'
     body = (f'<body>\n{fix_links(topbar,1)}\n<main class="wrap">\n<header><h1>Все районы Москвы</h1><p class="lead">{N} районов по административным округам. '
             f'У каждого — страница с ценой метра, экологией, транспортом, школами и поликлиниками, спортом и микроклиматом. '
@@ -298,6 +298,7 @@ PR = {
   'edu': pr_map(F, lambda f: P(f).get('edu')),
   'green': pr_map(F, g_pct),
   'sport': pr_map(F, lambda f: P(f)['sp']['s'] if P(f).get('sp') else None),
+  'live': pr_map(F, lambda f: P(f)['lv']['d'] if P(f).get('lv') else None),   # кафе и магазины на км²
   'cheap': pr_map(F, lambda f: -P(f)['hp'] if P(f).get('hp') else None),
 }
 def combo(f, w):
@@ -311,12 +312,14 @@ def cell_dist(f, pre):
     img = f'<img src="{arms_src(sl, pre)}" alt="" loading="lazy" onerror="this.remove()">' if arms(sl) else ''
     return f'<a href="{pre}{sl}/">{img}{E(P(f)["n"])}</a>'
 
+# Балл «лучшие для жизни»: один и тот же в рейтинге и на карте главной (const LIFE в assets/atlas.js)
+LIFE_W = {'tr':25,'eco':25,'soc':20,'green':15,'live':10,'sport':5}
 RATINGS = [
  dict(slug='luchshie-rayony', h1='Лучшие районы Москвы для жизни: рейтинг 2026',
       title='Лучшие районы Москвы для жизни — рейтинг всех 125 районов 2026',
-      desc='Рейтинг районов Москвы для жизни: экология, транспорт, школы и поликлиники, зелень и спорт. Все 125 районов с оценками и ценами на жильё.',
-      intro='Общий рейтинг районов для жизни. Учитывает экологию (25 %), транспорт (20 %), школы, сады и поликлиники (20 %), долю зелени (20 %) и спорт (15 %). Цена жилья в балл не входит — она показана рядом, чтобы было видно, где хорошо и недорого.',
-      w={'eco':25,'tr':20,'soc':20,'green':20,'sport':15}, metric='Балл', cols=['price','eco','tr']),
+      desc='Рейтинг районов Москвы для жизни: транспорт, экология, школы и поликлиники, зелень, магазины рядом и спорт. Все 125 районов с оценками и ценами на жильё.',
+      intro='Общий рейтинг районов для жизни: 10 — лучше, 1 — хуже. Учитывает транспорт (25 %), экологию (25 %), школы, сады и поликлиники (20 %), долю зелени (15 %), кафе и магазины рядом (10 %) и спорт (5 %). Цена жилья в балл не входит — она показана рядом, чтобы было видно, где хорошо и недорого.',
+      w=LIFE_W, metric='Балл', cols=['price','eco','tr']),
  dict(slug='ekologiya', h1='Экология районов Москвы: самые чистые и самые грязные районы',
       title='Экология районов Москвы 2026 — рейтинг самых чистых и грязных районов',
       desc='Экологический рейтинг всех 125 районов Москвы: где чище воздух, где рядом ТЭЦ, НПЗ, заводы и мусорные полигоны. Карта и оценки 2026 года.',
@@ -402,6 +405,12 @@ def rating_hub():
             f'{rating_links("")}\n{items}\n{foot(1)}\n</main>\n</body>\n</html>\n')
     return head('Рейтинги районов Москвы 2026 — лучшие, экологичные, зелёные, дешёвые', 'Рейтинги всех 125 районов Москвы: лучшие для жизни и для семьи с детьми, экология, зелень, цены на жильё и транспорт.', f'{BASE}/reyting/', 1).replace('</head>', RCSS + '\n</head>') + body
 
+_lf = [(combo(f, LIFE_W), P(f)['slug']) for f in sorted([f for f in F if combo(f, LIFE_W) is not None], key=lambda f: -combo(f, LIFE_W))]   # тот же порядок, что в рейтинге
+_life = {sl: [v, k + 1] for k, (v, sl) in enumerate(_lf)}   # slug -> [балл, место]
+_js = open(f'{REPO}/assets/atlas.js', encoding='utf-8').read()
+_line = 'const LIFE = ' + json.dumps(_life, ensure_ascii=False, separators=(',', ':')) + ';'
+_js = re.sub(r'^const LIFE = .*$', lambda m: _line, _js, count=1, flags=re.M) if re.search(r'^const LIFE = ', _js, flags=re.M) else _js.replace('const F = DATA.features', _line + '\nconst F = DATA.features', 1)
+open(f'{REPO}/assets/atlas.js', 'w', encoding='utf-8').write(_js)
 os.makedirs(f'{REPO}/reyting', exist_ok=True)
 open(f'{REPO}/reyting/index.html', 'w', encoding='utf-8').write(rating_hub())
 for R in RATINGS:

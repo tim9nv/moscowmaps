@@ -35,7 +35,7 @@ function renderCatalog(parks) {
 }
 
 async function renderPark(park) {
-  document.title = `${displayName(park.name)}: карта троп — Атлас районов Москвы`;
+  document.title = `${displayName(park.name)}: карта троп — Атлас Москвы`;
   getCatalogElement("title").textContent = displayName(park.name);
   getCatalogElement("intro").textContent = park.count
     ? "Дорожки, тропы и граница территории на одной карте."
