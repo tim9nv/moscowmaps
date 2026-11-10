@@ -420,48 +420,54 @@ function drawDMap(f){
     })
     .catch(() => { /* The district map remains usable if the catalogue is unavailable. */ });
   if (p.slug === "otradnoe") {
-    fetch(ATLAS_ROOT + "assets/otradnoe-schools.json")
-      .then(response => response.ok ? response.json() : [])
-      .then(schools => {
-        if (!svg.node().isConnected || !schools.length) return;
-        svg.attr("role","group");
-        const layer = over.append("g").attr("id","district-schools").attr("display","none");
-        const controls = d3.select("#dlg").append("div").style("flex-basis","100%");
-        const toggle = controls.append("button").attr("type","button").attr("class","chip")
-          .attr("aria-controls","district-schools").attr("aria-pressed","false").text("Школы");
-        controls.append("span").style("display","inline").style("margin-inline-start","8px")
-          .text("Пилотный слой · " + schools.length + " корпусов · ")
-          .append("a").attr("href","https://www.openstreetmap.org/copyright").text("© OpenStreetMap");
-        const detail = controls.append("div").attr("role","status");
-        const prompt = "Выберите метку школы, чтобы увидеть адрес.";
-        toggle.on("click", () => {
-          const show = toggle.attr("aria-pressed") === "false";
-          toggle.attr("aria-pressed",String(show));
-          layer.attr("display",show ? null : "none").raise();
-          detail.text(show ? prompt : "");
-        });
-        schools.forEach(school => {
-          const [x,y] = proj(school.coordinates);
-          const label = school.name + " · " + school.address;
-          const select = () => detail.text(label);
-          add(x,y,g => {
-            g.attr("role","button").attr("tabindex","0").attr("aria-label",label)
-              .style("cursor","pointer").on("click",select).on("keydown",event => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  select();
-                }
-              });
-            g.append("title").text(label);
-            g.append("rect").attr("x",-10).attr("y",-10).attr("width",20).attr("height",20)
-              .attr("rx",4).attr("fill","#345ea8").attr("stroke","#fff").attr("stroke-width",2);
-            g.append("text").attr("text-anchor","middle").attr("dy","0.35em")
-              .attr("fill","#fff").style("font","700 11px system-ui").text("Ш");
-            return g;
-          },layer);
-        });
-      })
-      .catch(() => { /* The pilot layer is optional. */ });
+    [
+      {id:"schools", title:"Школы", icon:"Ш", color:"#345ea8", prompt:"Выберите метку школы, чтобы увидеть адрес."},
+      {id:"kindergartens", title:"Детсады", icon:"Д", color:"#8a3c72", prompt:"Выберите метку детсада, чтобы увидеть адрес."}
+    ].forEach(({id,title,icon,color,prompt}) => {
+      const controls = d3.select("#dlg").append("div").attr("hidden","").style("flex-basis","100%");
+      fetch(ATLAS_ROOT + "assets/otradnoe-" + id + ".json")
+        .then(response => response.ok ? response.json() : [])
+        .then(places => {
+          if (!svg.node().isConnected || !places.length) return;
+          svg.attr("role","group");
+          const layerId = "district-" + id;
+          const layer = over.append("g").attr("id",layerId).attr("display","none");
+          const toggle = controls.append("button").attr("type","button").attr("class","chip")
+            .attr("aria-controls",layerId).attr("aria-pressed","false").text(title);
+          controls.append("span").style("display","inline").style("margin-inline-start","8px")
+            .text("Пилотный слой · зданий: " + places.length + " · ")
+            .append("a").attr("href","https://www.openstreetmap.org/copyright").text("© OpenStreetMap");
+          const detail = controls.append("div").attr("role","status");
+          toggle.on("click", () => {
+            const show = toggle.attr("aria-pressed") === "false";
+            toggle.attr("aria-pressed",String(show));
+            layer.attr("display",show ? null : "none").raise();
+            detail.text(show ? prompt : "");
+          });
+          places.forEach(place => {
+            const [x,y] = proj(place.coordinates);
+            const label = place.name + " · " + place.address;
+            const select = () => detail.text(label);
+            add(x,y,g => {
+              g.attr("role","button").attr("tabindex","0").attr("aria-label",label)
+                .style("cursor","pointer").on("click",select).on("keydown",event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    select();
+                  }
+                });
+              g.append("title").text(label);
+              g.append("rect").attr("x",-10).attr("y",-10).attr("width",20).attr("height",20)
+                .attr("rx",4).attr("fill",color).attr("stroke","#fff").attr("stroke-width",2);
+              g.append("text").attr("text-anchor","middle").attr("dy","0.35em")
+                .attr("fill","#fff").style("font","700 11px system-ui").text(icon);
+              return g;
+            },layer);
+          });
+          controls.attr("hidden",null);
+        })
+        .catch(() => { /* The pilot layer is optional. */ });
+    });
   }
   if(!window.ATLAS_DISTRICT)window.scrollTo(0,0);
 }
