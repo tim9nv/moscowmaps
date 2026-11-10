@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ботанический сад имени Цицина: входы и прогулка — Атлас Москвы</title>
+<meta name="description" content="Главный ботанический сад РАН в Москве. Вход со стороны Владыкина, подход от ВДНХ и короткая прогулка к пруду.">
+<link rel="canonical" href="https://www.mskatlas.ru/parks/botanicheskiy-sad/">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="../vdnh/guide.css">
+<link rel="stylesheet" href="garden.css">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script defer src="data.js"></script>
+<script defer src="../vdnh/guide.js"></script>
+</head>
+<body>
+<header class="bar"><div class="wrap"><a href="../../index.html"><img src="../../assets/logo.svg" alt="" width="32" height="32"> Атлас районов Москвы</a><a href="../vdnh/">ВДНХ</a></div></header>
+<main class="wrap">
+  <nav class="crumb" aria-label="Навигация"><a href="../../parks.html">Парки Москвы</a> / Ботанический сад</nav>
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Москва · рядом с ВДНХ</p>
+      <h1>Ботанический сад</h1>
+      <p>Главный ботанический сад имени Цицина. Начните у Владыкина, если хотите к пруду, или подойдите от Каменских прудов, если уже гуляете по ВДНХ.</p>
+      <div class="actions"><a class="primary" href="#map-section" data-place="main-gate">От Владыкина</a><a href="#map-section" data-place="vdnh-approach">От ВДНХ</a></div>
+    </div>
+    <svg class="hero-art" viewBox="0 0 320 210" aria-hidden="true" fill="none">
+      <circle cx="237" cy="54" r="29" fill="#e6bc71"/>
+      <path d="M10 170Q89 143 154 169T310 167M32 186Q102 166 155 185T286 183M58 161V83m-25 31 25-52 25 52m-37 19 12-25 13 25M255 161V96m-24 30 24-54 24 54M108 155V108h97v47m-105-47 56-41 57 41m-76 46v-40m40 40v-40" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </header>
+  <section id="map-section" aria-labelledby="map-title">
+    <div class="section-head"><h2 id="map-title" tabindex="-1">Карта сада</h2><button id="locate" type="button" aria-pressed="false">◎ Я на карте</button></div>
+    <div class="map-shell">
+      <div class="tools" hidden><input type="search" id="search" aria-label="Найти место"><div id="filters"></div></div>
+      <div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div>
+      <div id="route-tools" class="route-tools" hidden><label for="route-leg">Участок прогулки</label><select id="route-leg"></select></div>
+      <div id="map" aria-label="Интерактивная карта Ботанического сада"></div>
+      <p id="status" role="status"></p>
+    </div>
+    <details id="places"><summary>Входы и места <span id="count"></span></summary><ul id="place-list"></ul></details>
+  </section>
+  <section id="walks"><h2>Прогулка Атласа</h2><p class="muted">Длина по пешеходным дорожкам, время без остановок.</p><div id="routes" class="routes"></div></section>
+  <section class="district">
+    <h2>Перед выходом</h2>
+    <p>У Японского сада и оранжерей свой режим посещения. Если идёте ради них, проверьте расписание и билеты заранее.</p>
+    <div class="actions"><a href="https://www.gbsad.ru/">Режим на сайте сада ↗</a><a href="../vdnh/">Продолжить на ВДНХ →</a></div>
+  </section>
+  <footer>Ориентиры и дорожки — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>. Идеи прогулок — <a href="https://ru.wikiloc.com/marshruty-pokhod/botanicheskii-sad-102618137">запись посетителя</a> и <a href="https://babiki.ru/blog/Nines-D-Onil/474203.html">фотоотчёт</a>.</footer>
+</main>
+</body>
+</html>
