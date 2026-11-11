@@ -8,7 +8,7 @@ import json, re, os, gzip, base64, math, html, datetime
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAT = f'{REPO}/parks/catalog'
 BASE = 'https://www.mskatlas.ru'
-V = datetime.date.today().strftime("%Y%m%d") + "n"
+V = datetime.date.today().strftime("%Y%m%d") + "q"
 GUIDES = {'14': '../botanicheskiy-sad/'}          # у этих парков уже есть свой путеводитель
 RESERVED = {'catalog', 'vdnh', 'botanicheskiy-sad'}
 TR = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя', ['a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','h','ts','ch','sh','sch','','y','','e','yu','ya']))
@@ -108,7 +108,7 @@ for p in parks:
 <script defer src="../catalog/catalog.js?v={V}"></script>
 </head>
 <body>
-<header class="topbar"><div class="in"><a class="brand" href="../../index.html" aria-label="Атлас Москвы, на главную"><i aria-hidden="true"></i>Атлас Москвы</a><nav class="tabs" aria-label="Разделы"><a href="../../index.html">Районы</a><a href="../../housing.html">Цены</a><a href="../../ecology.html">Экология</a><a href="../../transport.html">Транспорт</a><a href="../../social.html">Школы и поликлиники</a><a href="../../parks.html" aria-current="page">Парки и прогулки</a><a href="../../zagorod/">За город</a><a href="../../reyting/">Рейтинги</a><a href="../../new-moscow.html">Новая Москва</a><a href="../../climate.html">Климат и рельеф</a></nav></div></header><script>(function(){{var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2}})()</script>
+<header class="topbar"><div class="in"><a class="brand" href="../../index.html" aria-label="Атлас Москвы, на главную"><i aria-hidden="true"></i>Атлас Москвы</a><nav class="tabs" aria-label="Разделы"><a href="../../index.html">Районы</a><a href="../../housing.html">Цены</a><a href="../../ecology.html">Экология</a><a href="../../transport.html">Транспорт</a><a href="../../social.html">Школы и поликлиники</a><a href="../../parks.html" aria-current="page">Парки и прогулки</a><a href="../../reyting/">Рейтинги</a><a href="../../new-moscow.html">Новая Москва</a><a href="../../climate.html">Климат и рельеф</a></nav></div></header><script>(function(){{var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2}})()</script>
 <main class="wrap">
   <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / {E(cap(p["short"]))}</nav>
   <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве{(" · " + E(dist[0])) if dist else ""}</p><h1 id="title">{E(name)}</h1><p id="intro">{E(lead)}</p><div class="actions"><a class="primary" href="#map-section">Открыть карту</a></div></div></header>

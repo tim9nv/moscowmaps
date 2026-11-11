@@ -95,7 +95,7 @@ function home(){
   <header><h1>Атлас Москвы</h1>
   <p class="lede">Все 125 районов на одной карте. Чем зеленее район, тем лучше в нём жить. Выбирайте, где хотите жить и гулять: нажмите на район, чтобы увидеть цены, парки, школы и поликлиники рядом.</p></header>
   <div class="L hsearch"><label for="q">Найти район</label><input class="search" id="q" type="search" placeholder="Например, Марьино" autocomplete="off"></div>
-  <section class="L top6" aria-labelledby="top6-h"><h2 id="top6-h">Лучшие для жизни</h2><ol>${top}</ol><a class="allr" href="reyting/luchshie-rayony/">Весь рейтинг районов</a></section>
+  <section class="L top6" aria-labelledby="top6-h"><h2 id="top6-h">Лучшие для жизни</h2><ol>${top}</ol><a class="allr" href="reyting/luchshie-rayony/">Весь рейтинг районов</a></section><a class="L zg-promo" href="zagorod/"><svg viewBox="0 0 120 70" aria-hidden="true" fill="none"><circle cx="88" cy="20" r="11" fill="#e6bc71"/><path d="M2 62c20-18 38-18 56-6 16-12 38-14 60 6M30 62l10-28 10 28M40 34v-8m-3 3h6" stroke="#e7dcb9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>За город на выходные</b><small>Сергиев Посад, Коломна, усадьбы: как доехать и что посмотреть за день</small></span><i aria-hidden="true">→</i></a>
   <section class="map" aria-label="Карта районов Москвы">
     <svg id="hm" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы: чем зеленее, тем лучше для жизни"></svg>
     <div class="legend" id="lg"></div>
