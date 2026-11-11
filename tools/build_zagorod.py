@@ -6,7 +6,7 @@
 import os, re, glob, html, datetime
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'https://www.mskatlas.ru'
-V = '20261111r'
+V = '20261111s'
 CHECKED = '11 ноября 2026'
 E = lambda s: html.escape(str(s), quote=True)
 METRIKA = open(f'{REPO}/tools/metrika.html', encoding='utf-8').read().strip()
@@ -287,6 +287,7 @@ ART.update({
  'kochevnik': svg(f'<path d="M0 190h320M40 190v-34c0-30 100-30 100 0v34M40 156h100M78 190v-26h24v26M90 132v-14M190 190l50-90 50 90m-62-70 12-22 12 22m-34 70 22-40 22 40" {S3}/><path d="M165 190v-22c0-8 12-8 12 0 4-10 14-10 16 0v22m-28-22-8-10v-10" {S2}/>', (70, 50, 22)),
  'vorobi': svg(f'<path d="M0 190h320M130 150c0-34 60-44 80-10l30-6-22 20c2 30-30 44-58 36-18-4-30-20-30-40zm50-14v.5M160 186v4m24-6v6M40 190c0-40 30-60 30-100m0 0c-14 4-22 14-24 26m24-26c14 2 24 10 28 22m-28-22c-4-14-14-20-26-20m26 20c6-12 16-18 28-16" {S3}/>', (264, 50, 24)),
 })
+LONG = {'kolomna': [('Что посмотреть подробно', [('Коломенский кремль', 'По площади он почти не уступает московскому: 24 гектара против 28. От стен XVI века уцелел участок в несколько сотен метров с Маринкиной и Грановитой башнями; внутри — Соборная площадь с храмами. На стены и башни водят двухчасовую экскурсию.'), ('Смотровая «Блюдечко»', 'Площадка в кремле над местом, где Коломенка впадает в Москву-реку.'), ('Музей «Коломенская пастила»', 'Пастилу в Коломне делают с XVIII века. В музее — экскурсия с чаепитием и дегустацией; есть и программа на музейной фабрике. Музеев с таким названием два, они в трёхстах метрах друг от друга.'), ('Музей «Калачная»', 'У Пятницких ворот: театрализованная экскурсия и чай с калачом по старинному рецепту. В лавке продают калачи, кулебяку с гусем, крендели.'), ('Музей «Кузнечная слобода»', 'Около семи тысяч кованых вещей, которые собирали больше двадцати лет. Можно самому выковать подкову.'), ('Музей любимой игрушки', 'Игрушки от XVIII века до советских; в часть игр разрешают поиграть.'), ('Старо-Голутвин монастырь', 'Основан в XIV веке, стоит у слияния Москвы-реки и Оки. Узнаётся по псевдоготическим башенкам 1778 года. Вход свободный; от центра 12–14 минут на такси.'), ('Шкала паводков', 'На берегу Москвы-реки отмечено, как высоко поднималась вода в разные годы — на 6–7 метров выше обычного.')]), ('Немного о городе', [('', 'Коломне больше восьмисот лет. В 1380 году Дмитрий Донской собирал здесь войско перед Куликовской битвой. В Великую Отечественную город почти не пострадал, поэтому старая застройка посада сохранилась целыми улицами.'), ('Трамвай', 'Коломна — единственный город Подмосковья, где ходит трамвай: десять маршрутов, три из них идут через вокзал. В кремле есть и музей трамвая.')]), ('Что попробовать и привезти', [('', 'Пастилу — её продают почти в каждом магазине, и в обычных магазинах она дешевле, чем в туристических лавках. Калач и кулебяку с гусем из «Калачной». Кованые кольца и броши из Кузнечной слободы.')]), ('Сколько стоит день', [('', 'Автор путеводителя Т—Ж в 2026 году уложился примерно в 3200 ₽ на человека без дороги и обеда: экскурсия в музее пастилы — 1150 ₽ в выходной, калач и кулебяка — 640 ₽, набор пастилы — 550 ₽, музей игрушки — 400 ₽, такси по городу — 450 ₽. Электричка из Москвы стоит 490 ₽, экспресс — 620 ₽.')]), ('Советы', [('', 'Экскурсии в музеи пастилы, «Калачную» и на стены кремля бронируйте заранее, особенно на выходные: многие музеи работают в основном по выходным, а летом у «Калачной» очереди. В кремле мало тени и скамеек — в жару берите воду. Посетители советуют идти сначала к калачам, потом на пастилу.')])], 'sergiev-posad': [('Что посмотреть в Лавре', [('Святые ворота и надвратная церковь', 'Вход в монастырь — под Красной башней середины XVI века; в проезде ворот росписи о жизни Сергия Радонежского. Сразу за ними — церковь Иоанна Предтечи конца XVII века, построенная на деньги Строгановых.'), ('Троицкий собор', '1422 год, самое старое здание Лавры. Большую часть икон пятиярусного иконостаса написали в начале XV века Андрей Рублёв и мастера его круга.'), ('Успенский собор', 'Самый большой храм монастыря, строился с 1559 по 1585 год. У его стены похоронены Борис Годунов и его семья.'), ('Колокольня', '88 метров, строилась с 1741 по 1768 год. В 1930 году колокола разбили; новый Царь-колокол весом 72 тонны отлили в 2003-м.'), ('Трапезная с церковью Сергия', 'Конец XVII века; зимой здесь идут главные службы монастыря.'), ('Успенский кладезь', 'Часовня над источником — воду можно набрать с собой.'), ('Ризница', 'Здание 1782 года, где показывают церковное искусство XIV–XVIII веков.')]), ('Что посмотреть в городе', [('Красногорская часовня', 'На холме напротив главного входа — отсюда хороший вид на Лавру.'), ('Пятницкий колодец', 'Круглая часовня над родником у Введенской и Пятницкой церквей 1547 года.'), ('Торговые ряды', 'Построены Лаврой в 1902–1903 годах в псевдорусском стиле.'), ('Музей игрушки', 'Больше 30 тысяч игрушек разных народов. Сергиев Посад считается столицей игрушечного промысла: резную богородскую игрушку здесь делают с XVI века.'), ('Конный двор', 'Бывшие монастырские конюшни 1790 года у Белого пруда, сейчас музей: история края, Лавры и народных промыслов.')])], 'zvenigorod': [('Что посмотреть подробно', [('Саввино-Сторожевский монастырь', 'Основан в 1398 году. Около пяти вечера звонит большой Благовестный колокол — стоит задержаться.'), ('Успенский собор на Городке', 'Один из старейших каменных храмов Подмосковья. Внутри уцелели фрагменты росписей начала XV века — Андрея Рублёва и Даниила Чёрного.'), ('Скит преподобного Саввы', 'Деревянная часовня над святым источником, примерно в получасе ходьбы от монастыря.'), ('Чеховские места', 'В 1884 году в Звенигороде жил и работал врачом Антон Чехов. Здание земской больницы и дом, который он снимал, стоят на улице Лермонтова — их можно увидеть снаружи.'), ('Купчий двор', 'Квартал на Московской улице в купеческом стиле: кафе, сувениры, фермерские лавки.'), ('Малиновый овраг', 'Городской овраг с подвесными мостиками; рядом парк на высоком холме и набережная Москвы-реки.')]), ('Что попробовать и привезти', [('', 'Монастырский хлеб, калачи и пряники с мёдом — их пекут в Провиантской башне монастыря. Пряники и коврижки с черёмухой, звенигородский творожный крендель. И сытень — безалкогольный напиток из иван-чая, мёда и родниковой воды.')]), ('Когда ехать', [('', 'Удобнее всего с мая по сентябрь. В сентябре леса вокруг золотые, на Пасху и Троицу в монастыре торжественные службы, а в новогодние каникулы украшен весь город.')])], 'abramtsevo': [('Что посмотреть подробно', [('Главный дом', 'Деревянный классицизм конца XVIII века. Внутрь пускают только с экскурсией. В Красной гостиной Гоголь впервые читал главы второго тома «Мёртвых душ»; здесь же секретер Мамонтова и скатерть с вышитыми автографами гостей.'), ('Студия-мастерская', 'Флигель 1873 года, где начались абрамцевские столярный и изразцовый промыслы. Сейчас здесь майолика и живопись Врубеля. А в кабинете Мамонтова Серов написал «Девочку с персиками» — позировала двенадцатилетняя Вера Мамонтова.'), ('Баня-теремок', 'Построена в 1877–1878 годах по проекту Ивана Ропета. Задумывалась как баня, но стала гостевым домиком; внутри — работы столярной мастерской.'), ('Церковь Спаса Нерукотворного', 'Домашний храм по проекту Васнецова и Поленова; иконостас расписывали в том числе Репин и Врубель.'), ('Избушка на курьих ножках', 'Бревенчатую беседку для детских игр придумал Виктор Васнецов.'), ('Скамья Врубеля и каменные бабы', 'Скамья облицована врубелевскими изразцами и укрыта стеклянным павильоном. Половецкие каменные изваяния Мамонтов привёз из южных степей. Рядом — дуб, которому больше 250 лет.')]), ('Немного цифр', [('', 'Мамонтов купил имение в 1870 году. Музеем усадьба стала в 1918-м, заповедником — в 1977-м. Сейчас это около 50 гектаров и больше 25 тысяч экспонатов. При Аксакове здесь была написана сказка «Аленький цветочек».')]), ('Сколько стоит', [('', 'По данным Т—Ж (2026), вход в парк стоит 60 ₽, комплексный билет во все здания — 500 ₽. Проверьте прайс на сайте музея: он мог измениться.')])]}
 
 NAV = [('index.html', 'Районы'), ('housing.html', 'Цены'), ('ecology.html', 'Экология'), ('transport.html', 'Транспорт'), ('social.html', 'Школы и поликлиники'),
        ('parks.html', 'Парки и прогулки'), ('zagorod/', 'За город'), ('reyting/', 'Рейтинги'), ('new-moscow.html', 'Новая Москва'), ('climate.html', 'Климат и рельеф')]
@@ -318,8 +319,8 @@ def head(title, desc, url, pre):
 .zg-plan{{list-style:none;padding:0;margin:0;counter-reset:s}}.zg-plan li{{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}}
 .zg-plan li::before{{content:counter(s);width:28px;height:28px;border-radius:50%;background:#22614c;color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;border:2px solid #fff;box-sizing:border-box}}
 .zg-plan b{{display:block}}.zg-plan .when{{color:#FFD86B;font-size:13px;font-weight:600;text-transform:none}}.zg-plan p{{margin:4px 0 0;line-height:1.55;max-width:72ch}}
-.zg-p{{line-height:1.6;max-width:72ch;margin:0 0 10px}}.zg-note{{color:var(--muted);font-size:14px;margin:-4px 0 12px}}.zg-food .zg-card h3{{font-size:18px}}.zg-go{{color:#FFD86B;font-size:14px;margin-top:8px!important}}.zg-tips li{{margin:6px 0;line-height:1.55;max-width:72ch}}
-#zgmap .route-pin{{--pin:#22614c;font-size:12px}}#zgmap .route-pin.st{{--pin:#4d5a5a}}#zgmap{{height:clamp(320px,52vh,520px);border-radius:14px;border:1px solid var(--border);background:#dce8da}}
+.zg-p{{line-height:1.6;max-width:72ch;margin:0 0 10px}}.zg-note{{color:var(--muted);font-size:14px;margin:-4px 0 12px}}.zg-food .zg-card h3{{font-size:18px}}.zg-go{{color:#FFD86B;font-size:14px;margin-top:8px!important}}.zg-long h3{{margin:16px 0 4px}}.zg-long .zg-p{{margin-bottom:6px}}.zg-filters{{margin:0 0 10px}}.zg-sec h3{{font-size:17px;margin:18px 0 8px}}.zg-sec h3 span{{color:var(--muted);font-weight:500;font-size:14px}}.zg-near{{list-style:none;margin:0;padding:0;columns:3 220px;column-gap:28px}}.zg-near li{{padding:6px 0;border-bottom:1px solid var(--border);break-inside:avoid;font-size:15px}}.zg-tips li{{margin:6px 0;line-height:1.55;max-width:72ch}}
+#zgmap .route-pin{{--pin:#22614c;font-size:12px}}#zgmap .route-pin.st{{--pin:#4d5a5a}}#zgmap{{height:clamp(380px,62vh,620px);border-radius:14px;border:1px solid var(--border);background:#dce8da}}
 .zg-src{{font-size:14px;color:var(--muted)}}.zg-src a{{color:var(--muted)}}
 </style>
 </head>
@@ -327,14 +328,36 @@ def head(title, desc, url, pre):
 <header class="topbar"><div class="in"><a class="brand" href="{pre}index.html" aria-label="Атлас Москвы, на главную"><i aria-hidden="true"></i>Атлас Москвы</a>{nav(pre, 'zagorod/')}</div></header><script>(function(){{var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2}})()</script>
 '''
 
-def map_js(points, numbered):
+def map_js(points, numbered, places=''):
     pts = ','.join('[%s,%s,%s,%s,%s,%s]' % (q[1], q[2], js(q[0]), js(q[3]), js(q[4] if len(q) > 4 else ''), js(q[5] if len(q) > 5 else '')) for q in points)
-    num = 'p[5]||String(i+1)' if numbered else '"★"'
-    return f'''<script>addEventListener("load",function(){{if(!window.L)return;var P=[{pts}];var m=L.map("zgmap",{{scrollWheelZoom:false,zoomSnap:0.25}});m.attributionControl.setPrefix(false);
-L.tileLayer("https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png",{{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}}).addTo(m);
-var b=[];P.forEach(function(p,i){{var ic=L.divIcon({{className:"poi-icon route-pin",html:{num},iconSize:[p[5]&&p[5].length>2?40:29,29]}});var d=document.createElement("div"),h=document.createElement("strong"),t=document.createElement("p");h.textContent=p[2];t.textContent=p[3];d.append(h,t);if(p[4]){{var a=document.createElement("a");a.href=p[4];a.textContent="Подробнее →";d.append(a)}}L.marker([p[0],p[1]],{{icon:ic,title:p[2]}}).addTo(m).bindPopup(d);b.push([p[0],p[1]])}});
-m.fitBounds(b,{{padding:[40,40],maxZoom:16}})}})</script>'''
+    pre = '' if not numbered else '../'
+    return f'<script>window.ZG={{points:[{pts}],numbered:{"true" if numbered else "false"},places:{js(places)}}}</script><script defer src="{pre}zg.js?v={V}"></script>'
 def js(s): return '"' + str(s).replace('\\', '\\\\').replace('"', '\\"') + '"'
+
+import json as _json
+NEAR = {}
+for _p in glob.glob(f'{REPO}/zagorod/*/places.json'):
+    NEAR[_p.split('/')[-2]] = _json.load(open(_p, encoding='utf-8'))
+NEAR_T = [('sight', 'Достопримечательности'), ('museum', 'Музеи и театры'), ('church', 'Храмы и монастыри'), ('art', 'Арт-объекты и скульптуры'), ('view', 'Смотровые площадки'), ('hotel', 'Где переночевать')]
+MON = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
+def near_html(p):
+    d = NEAR.get(p['slug'])
+    if not d: return ''
+    out = ''
+    for c, title in NEAR_T:
+        names = sorted({x[3] for x in d['places'] if x[2] == c and x[3]})
+        if len(names) < (1 if c == 'hotel' else 2): continue
+        out += f'<h3>{title} <span>{len(names)}</span></h3><ul class="zg-near">' + ''.join(f'<li>{E(n)}</li>' for n in names) + '</ul>'
+    if not out: return ''
+    y, mo, _ = d['date'].split('-')
+    return (f'  <section class="zg-sec"><h2>Всё, что есть рядом</h2><p class="zg-note">Объекты из OpenStreetMap в пешей доступности от маршрута ({MON[int(mo)-1]} {y}). Все они отмечены на карте выше — включайте нужный слой кнопками над картой.</p>{out}</section>\n')
+
+def long_html(p):
+    out = ''
+    for title, items in LONG.get(p['slug'], []):
+        body = ''.join((f'<h3>{E(h)}</h3>' if h else '') + f'<p class="zg-p">{E(t)}</p>' for h, t in items)
+        out += f'  <section class="zg-sec zg-long"><h2>{E(title)}</h2>{body}</section>\n'
+    return out
 
 def more_html(p):
     m = MORE[p["slug"]]; out = ''
@@ -353,14 +376,14 @@ def place_page(p):
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">За город · {E(p["kind"])}</p><h1>{E(p["name"])}</h1><p>{E(p["lead"])}</p>
   <ul class="zg-facts"><li>{E(p["km"])}</li><li>{E(p["kind"])}</li></ul></div>{ART[p["slug"]]}</header>
   <section class="zg-sec"><h2>Как добраться</h2><dl class="zg-get">{''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a, b in p['get'])}</dl></section>
-  <section class="zg-sec"><h2>Маршрут на день</h2><div id="zgmap" aria-label="Карта маршрута"></div>
+  <section class="zg-sec"><h2>Маршрут на день</h2><div class="filters zg-filters" id="zgfilters" hidden aria-label="Что показать на карте"></div><div id="zgmap" aria-label="Карта маршрута"></div>
   <ol class="zg-plan">{''.join(f'<li><div>{f"<span class=when>{E(w)}</span>" if w else ""}<b>{E(n)}</b><p>{E(t)}</p></div></li>' for w, n, t in p['plan'])}</ol></section>
-{more_html(p)}
-  <section class="zg-sec"><h2>Что учесть</h2><ul class="zg-tips">{''.join(f'<li>{E(t)}</li>' for t in p['tips'])}</ul></section>
+{long_html(p)}{more_html(p)}
+{near_html(p)}  <section class="zg-sec"><h2>Что учесть</h2><ul class="zg-tips">{''.join(f'<li>{E(t)}</li>' for t in p['tips'])}</ul></section>
   <section class="zg-sec"><h2>Ещё за город</h2><div class="zg-grid">{''.join(card(q, '../') for q in [x for x in PLACES if x is not p and bool(x.get('fun')) == bool(p.get('fun'))][:4])}</div></section>
   <footer class="zg-src">Проверено {CHECKED}. Часы работы, цены и расписания меняются — перед поездкой загляните на сайт места. Источники: {' · '.join(f'<a href="{E(u)}" rel="nofollow noopener">{E(t)}</a>' for t, u in p['sources'] + MORE[p['slug']]['hsrc'])}. Карта — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>.</footer>
 </main>
-{map_js(p['points'], True)}
+{map_js(p['points'], True, 'places.json?v=' + V if NEAR.get(p['slug']) else '')}
 {METRIKA}
 </body>
 </html>
