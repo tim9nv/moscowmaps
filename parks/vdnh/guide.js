@@ -17,6 +17,8 @@ const normalize = text => text.toLocaleLowerCase("ru").replace(/ё/g, "е").repl
 const status = get("status");
 const locate = get("locate");
 const map = window.L ? L.map("map", { scrollWheelZoom: false }) : null;
+// Подпись в углу без флажка Leaflet: ссылку на OpenStreetMap (её требует лицензия карты) добавляет слой подложки.
+if (map) map.attributionControl.setPrefix('<a href="https://leafletjs.com" title="Библиотека карт">Leaflet</a>');
 const bounds = parkBounds || [[55.824, 37.608], [55.844, 37.648]];
 const routeBanner = get("selected-route");
 let category = "all";
