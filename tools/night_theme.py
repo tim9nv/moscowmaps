@@ -16,7 +16,7 @@ NIGHT = ('/*NIGHT-THEME*/:root[data-theme="dark"]{--bg:#070D22;--surface:#0F1A3C
          '::selection{background:#FFD86B;color:#0B1330}'
          'input,select,textarea{color-scheme:dark}'
          '.map .atlas-zoom{left:auto;right:12px}'   # кнопки масштаба справа: слева вверху вставка «ЗелАО» с подписью
-         '/*NIGHT-THEME-END*/')
+         '.topbar .go-out{flex:none;display:inline-flex;align-items:center;gap:7px;margin-left:6px;padding:8px 14px;border:1.5px solid #FFD86B;border-radius:999px;color:#FFD86B;font:600 14px/1 "Golos Text",system-ui,sans-serif;text-decoration:none;white-space:nowrap;transition:background .15s ease,color .15s ease,transform .12s ease}.topbar .go-out svg{flex:none}@media (hover:hover){.topbar .go-out:hover{background:#FFD86B;color:#0B1330}}.topbar .go-out:active{transform:scale(.97)}.topbar .go-out[aria-current]{background:#FFD86B;color:#0B1330}@media (max-width:600px){.topbar .go-out{padding:7px 10px;font-size:13px;gap:5px}}/*NIGHT-THEME-END*/')
 WIDE = ('/*WIDE-LAYOUT*/@media (min-width:1000px){'
         '.topbar .in{max-width:1240px}'
         '.wrap{max-width:1240px;display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);grid-template-rows:repeat(11,auto) 1fr;column-gap:44px;row-gap:0;align-items:start}'
