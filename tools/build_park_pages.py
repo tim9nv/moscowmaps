@@ -30,6 +30,10 @@ places = json.load(open(f'{CAT}/places.json', encoding='utf-8'))
 PARKS = json.loads(re.search(r'const PARKS = (.*?);\n', open(f'{REPO}/parks.html', encoding='utf-8').read()).group(1))
 dslug = {n: (s, o) for s, n, o in json.load(open(f'{REPO}/tools/data/districts_list.json', encoding='utf-8'))}
 walks = json.load(open(f'{CAT}/walks.json', encoding='utf-8')) if os.path.exists(f'{CAT}/walks.json') else {}
+METRIKA = open(f'{REPO}/tools/metrika.html', encoding='utf-8').read().strip()
+by_district = {}
+for q in parks:
+    for d in PARKS[int(q['id']) - 1].get('d', []): by_district.setdefault(d, []).append(q)
 trails = {}
 for g in sorted({p['group'] for p in parks}):
     trails.update(json.loads(gzip.decompress(base64.b64decode(open(f'{CAT}/trails-{g}.txt').read()))))
@@ -39,12 +43,15 @@ CATS = [('sight', 'Достопримечательности', ('достопр
         ('art', 'Скульптуры', ('скульптура', 'скульптуры', 'скульптур')), ('food', 'Кафе и рестораны', ('кафе', 'кафе', 'кафе')),
         ('play', 'Детские площадки', ('детская площадка', 'детские площадки', 'детских площадок')), ('wc', 'Туалеты', ('туалет', 'туалета', 'туалетов'))]
 used = set(RESERVED); urls = []
+for p in parks:   # первый проход: адреса
+    if p['id'] in GUIDES: p['url'] = GUIDES[p['id']]; continue
+    sl = slugify(p['name']) or f'park-{p["id"]}'
+    if sl in used: sl = f'{sl}-{p["id"]}'
+    used.add(sl); p['url'] = f'../{sl}/'; p['slug'] = sl
 for p in parks:
     pid = p['id']
     if pid in GUIDES: p['url'] = GUIDES[pid]; continue
-    sl = slugify(p['name']) or f'park-{pid}'
-    if sl in used: sl = f'{sl}-{pid}'
-    used.add(sl); p['url'] = f'../{sl}/'; p['slug'] = sl
+    sl = p['slug']
     src = PARKS[int(pid) - 1]; name = cap(p['name'])
     pls = places['parks'].get(pid, [])
     t = trails.get(pid, {}).get('t', {})
@@ -59,7 +66,8 @@ for p in parks:
     kind = KIND.get(src.get('k'), 'парк')
     lead = (f'{name} находится {where}' if re.search('парк|сад|лес|заповедник|заказник|роща|бульвар|сквер', name.lower()) else f'{name} — {kind} {where}') + (', ' + ', '.join(facts) if facts else '') + '.'
     if cnt: lead += ' На карте отмечено: ' + ', '.join(cnt) + '.'
-    title = f'{name}: карта, тропы и что посмотреть — Атлас Москвы'
+    title = f'{name} ({dist[0]}) — карта и что посмотреть' if dist else f'{name} — карта и что посмотреть'
+    empty = not pls and total < 0.3      # ни объектов, ни троп: в поиск не отдаём, пока не дописана
     desc = (f'{name} в Москве: карта с дорожками и тропами' + (', ' + ', '.join(cnt[:4]) if cnt else '') + '. Геолокация «Я на карте».')
     secs = ''
     for c, h, _ in CATS[:5]:
@@ -77,6 +85,11 @@ for p in parks:
         route_ui = ''
         lead += f' Есть готовая прогулка: «{r["name"]}», {kmr} км.'
         desc = desc.replace(' Геолокация «Я на карте».', f' Готовая прогулка на {kmr} км.')
+    others = []
+    for d in dist:
+        for q in by_district.get(d, []):
+            if q['id'] != pid and q not in others: others.append(q)
+    others_html = ('<section class="park-sec"><h2>Другие парки рядом</h2><ul class="park-names">' + ''.join(f'<li><a href="{E(q.get("url") or "../" + q.get("slug", "") + "/")}">{E(cap(q["name"]))}</a></li>' for q in others[:12]) + '</ul></section>\n') if others else ''
     links = ''.join(f'<a href="../../rayon/{dslug[d][0]}/">Район {E(d)}</a>' for d in dist)
     page = f'''<!doctype html>
 <html lang="ru">
@@ -85,7 +98,7 @@ for p in parks:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{E(title)}</title>
 <meta name="description" content="{E(desc)}">
-<link rel="canonical" href="{BASE}/parks/{sl}/">
+<link rel="canonical" href="{BASE}/parks/{sl}/">{'<meta name="robots" content="noindex, follow">' if empty else ''}
 <meta property="og:type" content="article"><meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{BASE}/parks/{sl}/"><meta property="og:site_name" content="Атлас Москвы"><meta property="og:locale" content="ru_RU">
 <link rel="stylesheet" href="../vdnh/guide.css?v={V}">
 <link rel="stylesheet" href="../catalog/catalog.css?v={V}">
@@ -120,15 +133,16 @@ for p in parks:
     <details id="places" hidden><summary>Объекты списком <span id="count"></span></summary><p class="muted" id="places-note"></p><ul id="place-list"></ul></details>
     {route_ui}
   </section>
-{walk_html}{secs}  {f'<nav class="park-links" aria-label="Районы рядом">{links}</nav>' if links else ''}
+{walk_html}{secs}{others_html}  {f'<nav class="park-links" aria-label="Районы рядом">{links}</nav>' if links else ''}
   <footer>Карта, дорожки и объекты — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>, выгрузка {places["date"]}. Площадь — по контуру парка на карте Атласа. Проходы и ограничения могут меняться. Сверяйтесь с указателями на месте.</footer>
 </main>
+{METRIKA}
 </body>
 </html>
 '''
     os.makedirs(f'{REPO}/parks/{sl}', exist_ok=True)
     open(f'{REPO}/parks/{sl}/index.html', 'w', encoding='utf-8').write(page)
-    urls.append(f'{BASE}/parks/{sl}/')
+    if not empty: urls.append(f'{BASE}/parks/{sl}/')
 json.dump(parks, open(f'{CAT}/parks.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 sm = open(f'{REPO}/sitemap.xml', encoding='utf-8').read()
 sm = re.sub(r'  <url><loc>' + re.escape(BASE) + r'/parks/(?!catalog/|vdnh/|botanicheskiy-sad/)[^<]*</loc>.*?</url>\n', '', sm)
@@ -136,3 +150,37 @@ today = datetime.date.today().isoformat()
 sm = sm.replace('</urlset>', ''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in urls) + '</urlset>')
 open(f'{REPO}/sitemap.xml', 'w', encoding='utf-8').write(sm)
 print(len(urls), 'страниц парков')
+
+# Каталог: обычный список ссылок на все парки по округам (раньше ссылки строил только скрипт — поисковик их не видел)
+OKR = ['ЦАО', 'САО', 'СВАО', 'ВАО', 'ЮВАО', 'ЮАО', 'ЮЗАО', 'ЗАО', 'СЗАО', 'ЗелАО', 'НАО', 'ТАО']
+groups = {}
+for q in parks:
+    d = PARKS[int(q['id']) - 1].get('d', [])
+    o = dslug[d[0]][1] if d and d[0] in dslug else 'Новая Москва'
+    groups.setdefault(o, []).append(q)
+lst = '<!--PARK-LIST--><section class="park-sec" aria-labelledby="all-parks"><h2 id="all-parks">Все парки по округам</h2>' + ''.join(
+    f'<h3>{E(o)}</h3><ul class="park-names">' + ''.join(f'<li><a href="{E(q["url"].replace("../", "../", 1))}">{E(cap(q["name"]))}</a></li>' for q in sorted(groups[o], key=lambda q: q['name'].lower())) + '</ul>'
+    for o in sorted(groups, key=lambda o: OKR.index(o) if o in OKR else 99)) + '</section><!--PARK-LIST-END-->'
+c = open(f'{CAT}/index.html', encoding='utf-8').read()
+c = re.sub(r'<!--PARK-LIST-->.*?<!--PARK-LIST-END-->', '', c, flags=re.S)
+c = c.replace('</main>', lst + '\n</main>', 1)
+if 'Yandex.Metrika counter' not in c: c = c.replace('</body>', METRIKA + '\n</body>', 1)
+open(f'{CAT}/index.html', 'w', encoding='utf-8').write(c)
+for g in ('vdnh', 'botanicheskiy-sad'):
+    f = f'{REPO}/parks/{g}/index.html'; t = open(f, encoding='utf-8').read()
+    if 'Yandex.Metrika counter' not in t: open(f, 'w', encoding='utf-8').write(t.replace('</body>', METRIKA + '\n</body>', 1))
+# Страницы районов: блок «Парки района» со ссылками (перед «Частыми вопросами»)
+n = 0
+for d, (dsl, o) in dslug.items():
+    f = f'{REPO}/rayon/{dsl}/index.html'
+    if not os.path.exists(f): continue
+    t = open(f, encoding='utf-8').read()
+    t = re.sub(r'<!--DISTRICT-PARKS-->.*?<!--DISTRICT-PARKS-END-->', '', t, flags=re.S)
+    qs = sorted(by_district.get(d, []), key=lambda q: -(PARKS[int(q['id']) - 1].get('a') or 0))
+    if qs:
+        blk = (f'<!--DISTRICT-PARKS--><section><h2>Парки района {E(d)}</h2><p>Карты с дорожками, что посмотреть, кафе и туалеты:</p><ul>'
+               + ''.join(f'<li><a href="../../parks/{q["url"][3:] if q["url"].startswith("../") else q["url"]}">{E(cap(q["name"]))}</a></li>' for q in qs[:15]) + '</ul></section><!--DISTRICT-PARKS-END-->')
+        i = t.find('<section class="faq">')
+        if i > 0: t = t[:i] + blk + t[i:]; n += 1
+    open(f, 'w', encoding='utf-8').write(t)
+print('районов с парками:', n)

@@ -351,7 +351,7 @@ function drawDMap(f){
       box.append("b").text("Показать на карте:");
       const detail = d3.select("#dlg").append("div").attr("role","status").style("flex-basis","100%").style("min-height","1.4em");
       d3.select("#dlg").append("div").style("flex-basis","100%").style("font-size","12px").style("color","var(--muted)")
-        .html('Объекты — по данным <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> на ' + data.date + '. Нажмите на значок, чтобы увидеть название и адрес.');
+        .html('Объекты — по данным <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> на ' + data.date + '. На карте отмечены и частные клиники; цифры в тексте страницы посчитаны по другой выгрузке (real-stats.ru), поэтому могут не совпадать с числом значков. Нажмите на значок, чтобы увидеть название и адрес.');
       kinds.forEach(({id,title,icon,color}) => {
         const places = data[id];
         const layerId = "district-" + id;
