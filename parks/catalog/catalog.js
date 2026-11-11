@@ -129,7 +129,7 @@ async function renderPark(park) {
     : "В выгрузке нет отдельных троп. Показана граница.";
   getCatalogElement("map-section").hidden = false;
   const script = document.createElement("script");
-  script.src = BASE + "../vdnh/guide.js?v=20261111d";
+  script.src = BASE + "../vdnh/guide.js?v=20261111e";
   script.addEventListener("error", () => { getCatalogElement("load-error").hidden = false; getCatalogElement("load-error").textContent = "Карта не загрузилась."; });
   document.body.append(script);
   window.addEventListener("pagehide", () => URL.revokeObjectURL(trailUrl), { once: true });
