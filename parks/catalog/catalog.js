@@ -107,7 +107,7 @@ async function renderPark(park) {
     if (!window.PARK_ID) getCatalogElement("intro").textContent = "Что посмотреть, где поесть и куда идти: достопримечательности, кафе, площадки и тропы на одной карте.";
     getCatalogElement("park-tools").hidden = false;
     getCatalogElement("places").hidden = false;
-    getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. Нажмите на значок на карте или на название в списке.`;
+    getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. На общем виде карты — достопримечательности, музеи и смотровые; кафе, туалеты, площадки и скульптуры появляются, если приблизить карту или выбрать их кнопкой выше. Нажмите на значок на карте или на название в списке.`;
   }
   // Прогулка Атласа, если она собрана для этого парка: tools/build_park_walks.py -> walks.json
   let routes = [];
@@ -129,7 +129,7 @@ async function renderPark(park) {
     : "В выгрузке нет отдельных троп. Показана граница.";
   getCatalogElement("map-section").hidden = false;
   const script = document.createElement("script");
-  script.src = BASE + "../vdnh/guide.js";
+  script.src = BASE + "../vdnh/guide.js?v=20261111";
   script.addEventListener("error", () => { getCatalogElement("load-error").hidden = false; getCatalogElement("load-error").textContent = "Карта не загрузилась."; });
   document.body.append(script);
   window.addEventListener("pagehide", () => URL.revokeObjectURL(trailUrl), { once: true });
