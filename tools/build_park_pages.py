@@ -87,7 +87,7 @@ for p in parks:
 <meta name="description" content="{E(desc)}">
 <link rel="canonical" href="{BASE}/parks/{sl}/">
 <meta property="og:type" content="article"><meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}"><meta property="og:url" content="{BASE}/parks/{sl}/"><meta property="og:site_name" content="Атлас Москвы"><meta property="og:locale" content="ru_RU">
-<link rel="stylesheet" href="../vdnh/guide.css">
+<link rel="stylesheet" href="../vdnh/guide.css?v={V}">
 <link rel="stylesheet" href="../catalog/catalog.css?v={V}">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

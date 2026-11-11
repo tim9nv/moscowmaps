@@ -25,6 +25,8 @@ let watch = null;
 let userLayer = null;
 let firstFix = true;
 const markers = new Map();
+const MINOR = new Set(["food", "wc", "water", "play", "art"]);
+const MINOR_ZOOM = 17;
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -80,7 +82,11 @@ function renderPlaces() {
     || (category === "pavilion" && place.name.startsWith("Павильон")))
     && (normalize(place.name).includes(query) || (place.aliases || []).some(alias => normalize(alias).includes(query))));
   const showContext = !activeRoute || category !== "all" || Boolean(query);
-  const visible = new Set(showContext ? filtered.map(place => place.id) : []);
+  // На общем виде парка мелочь (кафе, туалеты, вода, площадки, скульптуры) не показываем: значки слипаются в кучу.
+  // Она появляется при приближении, при выборе своего фильтра или в поиске; в списке ниже есть всегда.
+  const close = map && map.getZoom() >= MINOR_ZOOM;
+  const onMap = filtered.filter(place => close || category !== "all" || query || !MINOR.has(place.category));
+  const visible = new Set(showContext ? onMap.map(place => place.id) : []);
   for (const [id, marker] of markers) {
     if (visible.has(id)) marker.addTo(map);
     else marker.remove();
@@ -227,7 +233,7 @@ function showRoute(route) {
   get("clear-route").focus({ preventScroll: true });
 }
 
-if (map) map.on("zoomend", drawArrows);
+if (map) map.on("zoomend", () => { drawArrows(); renderPlaces(); });
 routeLeg.addEventListener("change", () => {
   if (activeRoute) drawRoute(routes.find(route => route.id === activeRoute));
 });
