@@ -8,7 +8,7 @@ import json, re, os, gzip, base64, math, html, datetime
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAT = f'{REPO}/parks/catalog'
 BASE = 'https://www.mskatlas.ru'
-V = datetime.date.today().strftime("%Y%m%d") + "q"
+V = datetime.date.today().strftime("%Y%m%d") + "r"
 GUIDES = {'14': '../botanicheskiy-sad/'}          # у этих парков уже есть свой путеводитель
 RESERVED = {'catalog', 'vdnh', 'botanicheskiy-sad'}
 TR = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя', ['a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','h','ts','ch','sh','sch','','y','','e','yu','ya']))
