@@ -39,13 +39,14 @@ pages = [p for p in glob.glob(f'{REPO}/*.html') + glob.glob(f'{REPO}/rayon/**/in
 for p in pages:
     s = open(p, encoding='utf-8').read(); o = s
     s = re.sub(r'<html lang="ru"[^>]*>', '<html lang="ru" data-theme="dark">', s, count=1)
-    s = strip(s, '/*NIGHT-THEME*/', '/*NIGHT-THEME-END*/'); s = strip(s, '/*WIDE-LAYOUT*/', '/*WIDE-LAYOUT-END*/')
+    s = strip(s, '/*NIGHT-THEME*/', '/*NIGHT-THEME-END*/'); s = strip(s, '/*WIDE-LAYOUT*/', '/*WIDE-LAYOUT-END*/'); s = strip(s, '/*STARS*/', '/*STARS-END*/')
+    s = re.sub(r"\n?body\{background:#070D22 url\('data:image/svg\+xml,[^']*'\) repeat\}", '', s)   # старые строки без меток
     GOOD = ['#EC5B4C', '#F5A04E', '#F4D76E', '#3DB88F', '#8BEAB5']   # плохо → хорошо, яркие под синий фон
     base = os.path.basename(p) if os.path.dirname(p) == REPO else ''
     sc = GOOD[::-1] if base == 'ecology.html' else GOOD               # в экологии 1 = чисто
     scale = ':root[data-theme="dark"]{' + ''.join(f'--c{i+1}:{c};' for i, c in enumerate(sc)) + ''.join(f'--e{i+1}:{c};' for i, c in enumerate(GOOD[::-1])) + '}'
     tab = os.path.basename(p) in TABS and os.path.dirname(p) == REPO
-    add = NIGHT.replace('/*NIGHT-THEME-END*/', scale + '/*NIGHT-THEME-END*/') + (WIDE + f'body{{background:#070D22 {STARS} repeat}}' if tab else '')   # звёзды только на страницах с картой: под длинным текстом они мешают читать
+    add = NIGHT.replace('/*NIGHT-THEME-END*/', scale + '/*NIGHT-THEME-END*/') + (WIDE + f'/*STARS*/body{{background:#070D22 {STARS} repeat}}/*STARS-END*/' if tab else '')   # звёзды только на страницах с картой: под длинным текстом они мешают читать
     i = s.rindex('</style>'); s = s[:i] + add + '\n' + s[i:]
     if s != o: open(p, 'w', encoding='utf-8').write(s); n += 1
 # парки: свой стиль guide.css
