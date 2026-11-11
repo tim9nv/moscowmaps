@@ -75,6 +75,21 @@ PLACES = [
            ('Москвич Mag: дорога до Архангельского', 'https://moskvichmag.ru/?p=102730')]),
 ]
 
+
+# Рисунки в шапках — в стиле парков (линия currentColor, жёлтое солнце), viewBox 320×210
+def svg(body, sun):
+    return ('<svg class="hero-art" viewBox="0 0 320 210" aria-hidden="true" fill="none">'
+            f'<circle cx="{sun[0]}" cy="{sun[1]}" r="{sun[2]}" fill="#e6bc71"/>' + body + '</svg>')
+merl = ''.join(f'M{x + 4} 135v-8h9v8' for x in range(10, 300, 20))   # зубцы кремлёвской стены
+S3 = 'stroke="currentColor" stroke-width="3" stroke-linejoin="round"'
+S2 = 'stroke="currentColor" stroke-width="2" stroke-linejoin="round"'
+ART = {
+ 'sergiev-posad': svg(f'<path d="M0 180h320M20 180v-40h280v40M20 140v-18h20v18m240 0v-18h20v18M17 122l13-15 13 15m234 0 13-15 13 15M110 140V95h80v45m-48 0v-14a8 8 0 0 1 16 0v14M140 95V78h20v17m-20-17c0-10 10-14 10-23 0 9 10 13 10 23m-10-23v-9m-4 4h8M116 95V84h12v11m-12-11c0-6 6-8 6-13 0 5 6 7 6 13m44 11V84h12v11m-12-11c0-6 6-8 6-13 0 5 6 7 6 13M228 140v-35h24v35m-21-35V80h18v25m-15-25V62h12v18m-10-18V50h8v12m-8-12c0-6 4-8 4-12 0 4 4 6 4 12m-4-12v-9" {S3}/>', (70, 50, 30)),
+ 'kolomna': svg(f'<path d="M0 185h320M10 185v-50h300v50{merl}M40 185V100h40v85M36 100h48L60 60zm24-40V48M210 185V95h50v90m-38 0v-26a13 13 0 0 1 26 0v26M206 95h58l-29-38zm29-38V45M120 135v-30h40v30m-30-30c0-12 10-14 10-24 0 10 10 12 10 24m-10-24V70m-4 4h8" {S3}/>', (285, 42, 28)),
+ 'arhangelskoe': svg(f'<path d="M0 190h320M30 176h260M50 162h220M70 162v-57h180v57m-120 0v-50m15 50v-50m15 50v-50m15 50v-50m15 50v-50m-68 0h76l-38-20zm18-20V72h40v20m-40-20a20 14 0 0 1 40 0m-20-14V48M84 122h22m-22 20h22m108-20h22m-22 20h22" {S3}/><path d="M22 176v-30m278 30v-30" {S2}/><circle cx="22" cy="134" r="13" {S2}/><circle cx="300" cy="134" r="13" {S2}/>', (268, 44, 26)),
+ 'hub': svg(f'<path d="M0 160c60-26 120-26 170-6s110 15 150 0M120 210l32-52m58 52-30-52m-20 47v-9m0-14v-7m0-12v-4M60 140v-20h18v20m-16-20c0-8 7-9 7-15 0 6 7 7 7 15m-7-15v-8" {S3}/><path d="M250 152v-22m-8 10 8-18 8 18m17 15v-26m-9 12 9-20 9 20M110 52q6-6 12 0 6-6 12 0m14 14q5-5 10 0 5-5 10 0" {S2}/>', (240, 55, 32)),
+}
+
 NAV = [('index.html', 'Районы'), ('housing.html', 'Цены'), ('ecology.html', 'Экология'), ('transport.html', 'Транспорт'), ('social.html', 'Школы и поликлиники'),
        ('parks.html', 'Парки и прогулки'), ('zagorod/', 'За город'), ('reyting/', 'Рейтинги'), ('new-moscow.html', 'Новая Москва'), ('climate.html', 'Климат и рельеф')]
 def nav(pre, active):
@@ -129,8 +144,8 @@ def place_page(p):
     out = head(p['title'], desc, url, '../../')
     out += f'''<main class="wrap">
   <nav class="crumb" aria-label="Навигация"><a href="../">За город</a> / {E(p["name"])}</nav>
-  <header class="hero"><div class="hero-copy"><p class="eyebrow">За город · {E(p["kind"])}</p><h1>{E(p["name"])}</h1><p>{E(p["lead"])}</p>
-  <ul class="zg-facts"><li>{E(p["km"])}</li><li>{E(p["kind"])}</li></ul></div></header>
+  <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">За город · {E(p["kind"])}</p><h1>{E(p["name"])}</h1><p>{E(p["lead"])}</p>
+  <ul class="zg-facts"><li>{E(p["km"])}</li><li>{E(p["kind"])}</li></ul></div>{ART[p["slug"]]}</header>
   <section class="zg-sec"><h2>Как добраться</h2><dl class="zg-get">{''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a, b in p['get'])}</dl></section>
   <section class="zg-sec"><h2>Маршрут на день</h2><div id="zgmap" aria-label="Карта маршрута"></div>
   <ol class="zg-plan">{''.join(f'<li><div>{f"<span class=when>{E(w)}</span>" if w else ""}<b>{E(n)}</b><p>{E(t)}</p></div></li>' for w, n, t in p['plan'])}</ol></section>
@@ -154,7 +169,7 @@ def hub():
     desc = 'Места в пределах дня пути от Москвы: как добраться на электричке и машине, маршрут на день, где поесть. Сергиев Посад, Коломна, Архангельское.'
     out = head(title, desc, f'{BASE}/zagorod/', '../')
     out += f'''<main class="wrap">
-  <header class="hero"><div class="hero-copy"><p class="eyebrow">Атлас Москвы · выезд на день</p><h1>За город</h1><p>Куда съездить из Москвы на день или на выходные: как добраться, что посмотреть по порядку, где поесть. Раздел только начат — места будут добавляться.</p></div></header>
+  <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">Атлас Москвы · выезд на день</p><h1>За город</h1><p>Куда съездить из Москвы на день или на выходные: как добраться, что посмотреть по порядку, где поесть. Раздел только начат — места будут добавляться.</p></div>{ART["hub"]}</header>
   <section class="zg-sec"><h2>На карте</h2><div id="zgmap" aria-label="Карта мест за городом"></div></section>
   <section class="zg-sec"><h2>Куда поехать</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES)}</div></section>
   <footer class="zg-src">Проверено {CHECKED}. У каждого места — источники фактов. Карта — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>.</footer>
