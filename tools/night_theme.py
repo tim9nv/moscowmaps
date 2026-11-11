@@ -47,7 +47,8 @@ for p in pages:
     scale = ':root[data-theme="dark"]{' + ''.join(f'--c{i+1}:{c};' for i, c in enumerate(sc)) + ''.join(f'--e{i+1}:{c};' for i, c in enumerate(GOOD[::-1])) + '}'
     tab = os.path.basename(p) in TABS and os.path.dirname(p) == REPO
     add = NIGHT.replace('/*NIGHT-THEME-END*/', scale + '/*NIGHT-THEME-END*/') + (WIDE + f'/*STARS*/body{{background:#070D22 {STARS} repeat}}/*STARS-END*/' if tab else '')   # звёзды только на страницах с картой: под длинным текстом они мешают читать
-    i = s.rindex('</style>', 0, s.index('</head>')) if '</head>' in s and '</style>' in s[:s.index('</head>')] else s.rindex('</style>')   # стили темы — в шапке, не в блоках внутри страницы; s = s[:i] + add + '\n' + s[i:]
+    i = s.rindex('</style>', 0, s.index('</head>')) if '</head>' in s and '</style>' in s[:s.index('</head>')] else s.rindex('</style>')   # стили темы — в шапке, не в блоках внутри страницы
+    s = s[:i] + add + '\n' + s[i:]
     h = s.find('</head>'); s = re.sub(r'\n{2,}', '\n', s[:h]) + s[h:] if h > 0 else s   # пустые строки от прошлых запусков
     if s != o: open(p, 'w', encoding='utf-8').write(s); n += 1
 # парки: свой стиль guide.css
