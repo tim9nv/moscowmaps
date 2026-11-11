@@ -8,7 +8,7 @@ import json, re, os, gzip, base64, math, html, datetime
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAT = f'{REPO}/parks/catalog'
 BASE = 'https://www.mskatlas.ru'
-V = datetime.date.today().strftime("%Y%m%d") + "k"
+V = datetime.date.today().strftime("%Y%m%d") + "m"
 GUIDES = {'14': '../botanicheskiy-sad/'}          # у этих парков уже есть свой путеводитель
 RESERVED = {'catalog', 'vdnh', 'botanicheskiy-sad'}
 TR = dict(zip('абвгдеёжзийклмнопрстуфхцчшщъыьэюя', ['a','b','v','g','d','e','e','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','h','ts','ch','sh','sch','','y','','e','yu','ya']))
@@ -115,12 +115,12 @@ for p in parks:
   <p id="load-error" role="status" hidden></p>
   <section id="map-section" aria-labelledby="map-title" hidden>
     <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
-    <div class="tools" id="park-tools" hidden><label for="search">Что есть в парке</label><input type="search" id="search" placeholder="Например, кафе или памятник"><div id="filters" class="filters" aria-label="Категории"></div></div>
     <div class="map-shell" id="map-shell">
       <div class="map-toolbar" aria-label="Управление картой">
         <button id="locate" type="button" aria-pressed="false">◎ Я на карте</button>
         <button id="map-expand" type="button" aria-pressed="false">⛶ На весь экран</button>
       </div>
+      <div class="tools" id="park-tools" hidden><label for="search">Найти в парке</label><input type="search" id="search" placeholder="Например, кафе или памятник"><div id="filters" class="filters" aria-label="Категории"></div></div>
       {'<div id="selected-route" class="selected-route" hidden><strong id="selected-route-name"></strong><button id="clear-route" type="button">Скрыть маршрут</button></div><div id="route-tools" class="route-tools" hidden><label for="route-leg">Участок прогулки</label><select id="route-leg"></select></div>' if wk else ''}
       <div class="trail-controls">
         <label><input id="trail-toggle" type="checkbox" checked disabled> Тропы и аллеи</label>

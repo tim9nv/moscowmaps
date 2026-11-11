@@ -16,7 +16,7 @@ const get = id => document.getElementById(id);
 const normalize = text => text.toLocaleLowerCase("ru").replace(/ё/g, "е").replace(/[№\s]+/g, "");
 const status = get("status");
 const locate = get("locate");
-const map = window.L ? L.map("map", { scrollWheelZoom: false }) : null;
+const map = window.L ? L.map("map", { scrollWheelZoom: false, zoomSnap: 0.25 }) : null;
 // В углу карты только «© OpenStreetMap»: её требует лицензия карты. Упоминание Leaflet убрано по просьбе владельца (лицензия Leaflet подписи на карте не требует).
 if (map) map.attributionControl.setPrefix(false);
 const bounds = parkBounds || [[55.824, 37.608], [55.844, 37.648]];
@@ -30,6 +30,45 @@ const markers = new Map();
 const MINOR = new Set(["food", "wc", "water", "play", "art"]);
 const MINOR_ZOOM = 17;
 
+// Значки вместо букв: простые контуры 24×24 в одну толщину линии, рисуются белым на цветном кружке.
+const ICONS = {
+  sight: "M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z",
+  museum: "M3 20h18M5 20v-9M9.7 20v-9M14.3 20v-9M19 20v-9M2.5 10.5 12 4l9.5 6.5z",
+  view: "M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12zM12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z",
+  art: "M12 3.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM7 16c0-3 2.2-5 5-5s5 2 5 5M6 20.5h12M8 20.5V16h8v4.5",
+  food: "M4 9h12v4.5A4.5 4.5 0 0 1 11.5 18h-3A4.5 4.5 0 0 1 4 13.5zM16 10.5h1.8a2 2 0 0 1 0 4H16M7 3.5c-.8 1 .8 2 0 3M11 3.5c-.8 1 .8 2 0 3M3 21h14",
+  play: "M3.5 21 7 4h10l3.5 17M5.8 11h12.4M10 11v6.5M14 11v6.5M9 17.5h6",
+  water: "M12 3.5s6 6.8 6 10.8a6 6 0 0 1-12 0c0-4 6-10.8 6-10.8z",
+  pavilion: "M3 11 12 4l9 7M5.5 9.5V20h13V9.5M10 20v-5h4v5",
+  fountain: "M12 13V5M12 5c-2.5 0-4.5 1.5-5 4M12 5c2.5 0 4.5 1.5 5 4M4 15h16M5.5 15v4.5h13V15",
+  entrance: "M11 3.5h8v17h-8M3 12h11M10.5 8.5 14 12l-3.5 3.5",
+  service: "M12 10.5v7M12 6.5v.5",
+  green: "M12 21v-4.5M12 3 6.5 10h3L5 16.5h14L14.5 10h3z",
+  stop: "M6 21V4M6 4.5h11l-2.2 4 2.2 4H6",
+  transport: "M5.5 4h13a1 1 0 0 1 1 1v12h-15V5a1 1 0 0 1 1-1zM4.5 11.5h15M7.5 20v-3M16.5 20v-3M8 14.2v.1M16 14.2v.1",
+};
+function iconSvg(key, size) {
+  const d = ICONS[key];
+  if (!d) return null;
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("width", size); svg.setAttribute("height", size);
+  svg.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS(ns, "path");
+  path.setAttribute("d", d); path.setAttribute("fill", "none"); path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-width", "2"); path.setAttribute("stroke-linecap", "round"); path.setAttribute("stroke-linejoin", "round");
+  svg.append(path);
+  return svg;
+}
+// Кружок со значком: на карте, в кнопках фильтров и в списке.
+function badge(key, size) {
+  const [, letter, color] = categories[key] || ["", "", "#295b49"];
+  const span = element("span", null, "cat-badge");
+  span.style.setProperty("--pin", color || "#295b49");
+  const svg = iconSvg(key, size);
+  if (svg) span.append(svg); else span.textContent = letter;
+  return span;
+}
 function element(tag, text, className) {
   const node = document.createElement(tag);
   if (text) node.textContent = text;
@@ -51,7 +90,7 @@ function popup(place, isApproach = false) {
 }
 
 if (map) {
-  map.fitBounds(bounds, { padding: [12, 12] });
+  map.fitBounds(bounds, { padding: [12, 12] }); farClass();
   const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -61,9 +100,9 @@ if (map) {
   });
   L.control.scale({ imperial: false }).addTo(map);
   for (const place of places) {
-    const [, letter, color] = categories[place.category];
-    const pin = element("span", letter);
-    const icon = L.divIcon({ className: "poi-icon", html: pin, iconSize: [25, 25] });
+    const color = categories[place.category][2];
+    const pin = badge(place.category, 15);
+    const icon = L.divIcon({ className: "poi-icon", html: pin, iconSize: [28, 28] });
     const marker = L.marker([place.lat, place.lon], { icon, title: place.name, alt: place.name })
       .bindPopup(popup(place));
     marker.on("add", () => {
@@ -78,6 +117,7 @@ if (map) {
   locate.disabled = true;
 }
 
+function farClass() { if (map) map.getContainer().classList.toggle("far", map.getZoom() < 16); }
 function renderPlaces() {
   const query = normalize(get("search").value);
   const filtered = places.filter(place => (category === "all" || place.category === category
@@ -102,7 +142,8 @@ function renderPlaces() {
       li.append(link);
       return li;
     }
-    const button = element("button", place.name);
+    const button = element("button");
+    button.append(badge(place.category, 12), place.name);
     button.type = "button";
     button.addEventListener("click", () => {
       map.setView([place.lat, place.lon], Math.max(17, map.getZoom()));
@@ -116,7 +157,9 @@ function renderPlaces() {
 }
 
 for (const [key, [label]] of Object.entries(categories)) {
-  const button = element("button", label);
+  const button = element("button");
+  if (key !== "all") button.append(badge(key, 13));
+  button.append(label);
   button.type = "button";
   button.dataset.category = key;
   button.setAttribute("aria-pressed", String(key === category));
@@ -235,7 +278,7 @@ function showRoute(route) {
   get("clear-route").focus({ preventScroll: true });
 }
 
-if (map) map.on("zoomend", () => { drawArrows(); renderPlaces(); });
+if (map) map.on("zoomend", () => { drawArrows(); renderPlaces(); farClass(); });
 routeLeg.addEventListener("change", () => {
   if (activeRoute) drawRoute(routes.find(route => route.id === activeRoute));
 });
