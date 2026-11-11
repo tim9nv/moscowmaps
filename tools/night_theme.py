@@ -12,7 +12,7 @@ NIGHT = ('/*NIGHT-THEME*/:root[data-theme="dark"]{--bg:#070D22;--surface:#0F1A3C
          '--s1:#EC5B4C;--s2:#F5A04E;--s3:#F4D76E;--s4:#3DB88F;--s5:#8BEAB5;color-scheme:dark}'
          'body{background:#070D22}'
          '.topbar{background:rgb(10 18 48 / 92%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}'
-         '.topbar .tabs a[aria-current="page"]{background:#FFD86B;color:#0B1330}'
+         '.topbar .tabs a[aria-current="page"]{background:#FFD86B;color:#0B1330}@media (min-width:1000px){.topbar .in{max-width:1240px}}'
          '::selection{background:#FFD86B;color:#0B1330}'
          'input,select,textarea{color-scheme:dark}'
          '.map .atlas-zoom{left:auto;right:12px}'   # кнопки масштаба справа: слева вверху вставка «ЗелАО» с подписью
@@ -31,7 +31,7 @@ WIDE = ('/*WIDE-LAYOUT*/@media (min-width:1000px){'
         '.wrap>.card{grid-template-columns:minmax(0,1fr)}.wrap>.card>*{min-width:0;grid-row:auto;grid-column:1/-1}.wrap>.card .score{grid-row:auto}'
         '.wrap:has(>.wrap){display:block}.wrap>.wrap{margin:0}'   # «Цены» и «Транспорт»: обёртка в обёртке
         '}/*WIDE-LAYOUT-END*/')
-TABS = {'index.html', 'housing.html', 'ecology.html', 'transport.html', 'social.html', 'parks.html', 'sport.html', 'climate.html'}
+TABS = {'index.html', 'housing.html', 'ecology.html', 'transport.html', 'social.html', 'parks.html', 'sport.html', 'climate.html', 'new-moscow.html'}
 def strip(s, a, b): return re.sub(re.escape(a) + r'.*?' + re.escape(b), '', s, flags=re.S)
 n = 0
 pages = [p for p in glob.glob(f'{REPO}/*.html') + glob.glob(f'{REPO}/rayon/**/index.html', recursive=True) + glob.glob(f'{REPO}/reyting/**/index.html', recursive=True)
