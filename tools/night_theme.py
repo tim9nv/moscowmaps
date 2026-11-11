@@ -15,6 +15,7 @@ NIGHT = ('/*NIGHT-THEME*/:root[data-theme="dark"]{--bg:#070D22;--surface:#0F1A3C
          '.topbar .tabs a[aria-current="page"]{background:#FFD86B;color:#0B1330}'
          '::selection{background:#FFD86B;color:#0B1330}'
          'input,select,textarea{color-scheme:dark}'
+         '.map .atlas-zoom{left:auto;right:12px}'   # кнопки масштаба справа: слева вверху вставка «ЗелАО» с подписью
          '/*NIGHT-THEME-END*/')
 WIDE = ('/*WIDE-LAYOUT*/@media (min-width:1000px){'
         '.topbar .in{max-width:1240px}'
@@ -27,7 +28,7 @@ WIDE = ('/*WIDE-LAYOUT*/@media (min-width:1000px){'
         '.wrap>header>.lede{margin:0 0 20px;font-size:17px}'
         '.wrap>.map{grid-column:2;grid-row:1/span 12;order:1;position:sticky;top:76px}'
         '.wrap>.map>svg{max-height:calc(100vh - 150px)}'
-        '.wrap>.card{grid-template-columns:minmax(0,1fr)}.wrap>.card>*{min-width:0;grid-row:auto}.wrap>.card .score{grid-row:auto}'
+        '.wrap>.card{grid-template-columns:minmax(0,1fr)}.wrap>.card>*{min-width:0;grid-row:auto;grid-column:1/-1}.wrap>.card .score{grid-row:auto}'
         '.wrap:has(>.wrap){display:block}.wrap>.wrap{margin:0}'   # «Цены» и «Транспорт»: обёртка в обёртке
         '}/*WIDE-LAYOUT-END*/')
 TABS = {'index.html', 'housing.html', 'ecology.html', 'transport.html', 'social.html', 'parks.html', 'sport.html', 'climate.html'}
@@ -39,14 +40,18 @@ for p in pages:
     s = open(p, encoding='utf-8').read(); o = s
     s = re.sub(r'<html lang="ru"[^>]*>', '<html lang="ru" data-theme="dark">', s, count=1)
     s = strip(s, '/*NIGHT-THEME*/', '/*NIGHT-THEME-END*/'); s = strip(s, '/*WIDE-LAYOUT*/', '/*WIDE-LAYOUT-END*/')
+    GOOD = ['#EC5B4C', '#F5A04E', '#F4D76E', '#3DB88F', '#8BEAB5']   # плохо → хорошо, яркие под синий фон
+    base = os.path.basename(p) if os.path.dirname(p) == REPO else ''
+    sc = GOOD[::-1] if base == 'ecology.html' else GOOD               # в экологии 1 = чисто
+    scale = ':root[data-theme="dark"]{' + ''.join(f'--c{i+1}:{c};' for i, c in enumerate(sc)) + ''.join(f'--e{i+1}:{c};' for i, c in enumerate(GOOD[::-1])) + '}'
     tab = os.path.basename(p) in TABS and os.path.dirname(p) == REPO
-    add = NIGHT + (WIDE + f'body{{background:#070D22 {STARS} repeat}}' if tab else '')   # звёзды только на страницах с картой: под длинным текстом они мешают читать
+    add = NIGHT.replace('/*NIGHT-THEME-END*/', scale + '/*NIGHT-THEME-END*/') + (WIDE + f'body{{background:#070D22 {STARS} repeat}}' if tab else '')   # звёзды только на страницах с картой: под длинным текстом они мешают читать
     i = s.rindex('</style>'); s = s[:i] + add + '\n' + s[i:]
     if s != o: open(p, 'w', encoding='utf-8').write(s); n += 1
 # парки: свой стиль guide.css
 g = f'{REPO}/parks/vdnh/guide.css'; s = open(g, encoding='utf-8').read()
 s = strip(s, '/*NIGHT-THEME*/', '/*NIGHT-THEME-END*/')
 s += ('\n/*NIGHT-THEME*/:root{color-scheme:dark;--bg:#070D22;--surface:#0F1A3C;--ink:#F2F5FF;--muted:#B4C1E4;--border:#27376B;--green:#8BEAB5;--hero:#13235A;--onhero:#F2F5FF;--focus:#FFD86B}'
-      'body{background:#070D22}.bar{background:#0A1230}::selection{{background:#FFD86B;color:#0B1330}}/*NIGHT-THEME-END*/\n')
+      'body{background:#070D22}.bar{background:#0A1230}.leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.7)}.leaflet-container{background:#0A1230}::selection{{background:#FFD86B;color:#0B1330}}/*NIGHT-THEME-END*/\n')
 open(g, 'w', encoding='utf-8').write(s)
 print(n, 'страниц')
