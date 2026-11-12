@@ -71,9 +71,9 @@ svg .lbl.okr{font-weight:600!important;font-size:13px!important;text-transform:u
 section.map svg{overflow:hidden}
 .atlas-home .wrap>header>.where,.atlas-home .wrap>.where{grid-column:1}
 
-/* главная на компьютере: сверху заголовок и крупный переключатель, ниже поиск и рейтинг слева, карта справа; карта не «едет» при прокрутке */
+/* карта не «едет» при прокрутке — ни на главной, ни на вкладках (владелец, 12.11.2026). Главная на компьютере: сверху заголовок и крупный переключатель, ниже поиск и рейтинг слева, карта справа */
 @media (min-width:1000px){
-.atlas-home .wrap>.map{position:relative!important;top:auto!important}
+.wrap>.map{position:relative!important;top:auto!important}
 .atlas-home .wrap>header>h1{grid-column:1;grid-row:1;margin-bottom:12px!important}
 .atlas-home .wrap>header>.lede{grid-column:1;grid-row:2}
 .atlas-home .wrap>.where{grid-column:2;grid-row:1/span 2;align-self:center;margin:0 0 8px;justify-self:stretch}
