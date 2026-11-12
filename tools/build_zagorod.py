@@ -643,6 +643,8 @@ for _p in glob.glob(f'{REPO}/zagorod/*/places.json'):
 # Общие рисунки для новых мест без своего (монастырь, усадьба) — выбираются по типу в place_page
 ART.update({
  '_holy': svg(f'<path d="M0 188h320M14 188v-46h292v46M14 142v-26h22v26m248 0v-26h22v26M10 116l15-18 15 18m240 0 15-18 15 18{_bx(120, 142, 70, 46)}M116 96h78M128 96V76h54v20{_bx(146, 76, 18, 14)}{_bx(224, 142, 24, 74)}M220 68l16-26 16 26zm16-26v-12m-5 5h10M146 142v-22a9 9 0 0 1 18 0v22" {S3}/><path d="{_dm(145, 62, 20, 24)}M126 76c0-8 4-12 6-16 2 4 6 8 6 16m34 0c0-8 4-12 6-16 2 4 6 8 6 16" {S2}/><path d="M50 166v-10m20 10v-10m20 10v-10m150 10v-10m20 10v-10m20 10v-10" {S2}/>', (66, 50, 26)),
+ '_city': svg(f'<path d="M0 186h320{_bx(20, 186, 70, 40)}M14 146l41-26 41 26{_bx(104, 186, 40, 96)}M100 90l24-34 24 34zm24-34V44m-5 5h10{_bx(160, 186, 64, 54)}{_bx(234, 186, 66, 34)}M228 152h78l-39-20z" {S3}/><path d="{_dm(182, 132, 20, 24)}M36 172v-14m18 14v-14m18 14v-14M116 120v-10m16 10v-10M176 172v-16m16 16v-16m16 16v-16M250 172v-12m18 12v-12m18 12v-12" {S2}/>', (276, 52, 24)),
+ '_museum': svg(f'<path d="M0 188h320M40 188v-8h240v8M52 180v-6h216v6M60 174V102m28 72V102m28 72V102m28 72V102m28 72V102m28 72V102m28 72V102m28 72V102M48 102h224v-12H48zM56 90l104-44 104 44" {S3}/><path d="M146 76a14 14 0 0 1 28 0" {S2}/>', (60, 46, 24)),
  '_estate': svg(f'<path d="M0 182h320{_bx(70, 182, 180, 58)}M64 124h192M120 124v-26h80v26M114 98h92l-46-24zM132 182v-58m18 58v-58m20 58v-58m18 58v-58M146 108a14 10 0 0 1 28 0" {S3}/><path d="M86 160v-18h18v18zm130 0v-18h18v18zM24 182v-40m272 40v-40" {S2}/><circle cx="24" cy="126" r="18" {S2}/><circle cx="296" cy="126" r="18" {S2}/><path d="{_W}" {S2}/>', (262, 44, 24)),
 })
 NEAR_T = [('sight', 'Достопримечательности'), ('museum', 'Музеи и театры'), ('church', 'Храмы и монастыри'), ('art', 'Арт-объекты и скульптуры'), ('view', 'Смотровые площадки'), ('hotel', 'Где переночевать')]
@@ -753,7 +755,7 @@ if os.path.exists(_NEWF):
     for q in json.load(open(_NEWF, encoding='utf-8')):
         if any(x['slug'] == q['slug'] for x in PLACES):
             continue
-        PLACES.append({k: q[k] for k in ('slug', 'name', 'kind', 'km', 'lead', 'title', 'get', 'plan', 'tips', 'points', 'sources', 'type') if k in q})
+        PLACES.append({k: q[k] for k in ('slug', 'name', 'short', 'kind', 'km', 'lead', 'title', 'get', 'plan', 'tips', 'points', 'sources', 'type') if k in q})
         MORE[q['slug']] = {'hist': q.get('hist', []), 'extra': q.get('extra', []), 'food': q.get('food', []), 'hsrc': []}
         main = next(t for t in q['points'] if t[5] != 'Ст')
         HUBPT[q['slug']] = (main[1], main[2])
