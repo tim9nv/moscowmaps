@@ -94,7 +94,7 @@ function home(){
   app.innerHTML=`
   <header><h1>Атлас Москвы</h1>
   <p class="lede">Все 125 районов на одной карте. Чем зеленее район, тем лучше в нём жить. Выбирайте, где хотите жить и гулять: нажмите на район, чтобы увидеть цены, парки, школы и поликлиники рядом.</p></header>
-  <nav class="L where" aria-label="Где остаёмся"><p class="q">Где остаёмся?</p><div class="wsg"><a aria-current="page" href="./"><b>В Москве</b><span>125 районов: цены, экология, школы</span></a><a href="zagorod/"><b>За городом</b><span>30 мест на день и выходные</span></a></div></nav>
+  <nav class="L where" aria-label="Где остаёмся"><p class="q">Где остаёмся?</p><div class="wsg"><a aria-current="page" href="./"><b>В Москве</b><span>125 районов: цены, экология, школы</span></a><a href="zagorod/"><b>За городом</b><span>46 мест на день и выходные</span></a></div></nav>
   <div class="L hsearch"><label for="q">Найти район</label><input class="search" id="q" type="search" placeholder="Например, Марьино" autocomplete="off"></div>
   <section class="L top6" aria-labelledby="top6-h"><h2 id="top6-h">Лучшие для жизни</h2><ol>${top}</ol><a class="allr" href="reyting/luchshie-rayony/">Весь рейтинг районов</a></section><a class="L zg-promo" href="zagorod/"><svg viewBox="0 0 120 70" aria-hidden="true" fill="none"><circle cx="88" cy="20" r="11" fill="#e6bc71"/><path d="M2 62c20-18 38-18 56-6 16-12 38-14 60 6M30 62l10-28 10 28M40 34v-8m-3 3h6" stroke="#e7dcb9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>За город на выходные</b><small>Сергиев Посад, Коломна, усадьбы: как доехать и что посмотреть за день</small></span><i aria-hidden="true">→</i></a>
   <section class="map" aria-label="Карта районов Москвы">
