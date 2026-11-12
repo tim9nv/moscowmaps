@@ -110,6 +110,21 @@ def where(pre, here):
             '</div></nav><!--WHERE-END-->')
 
 
+# Порядок вкладок (владелец, 12.11.2026): районы и рейтинги — главное; климат рядом с экологией;
+# «Новая Москва» из меню убрана — ссылка на неё в разделе «За город».
+NAV_ORDER = ['Районы', 'Рейтинги', 'Цены', 'Экология', 'Климат и рельеф', 'Транспорт', 'Школы и поликлиники', 'Парки и прогулки']
+
+
+def nav_fix(s):
+    m = re.search(r'(<nav class="tabs"[^>]*>)(.*?)(</nav>)', s, re.S)
+    if not m:
+        return s
+    links = {re.sub('<[^>]+>', '', a): a for a in re.findall(r'<a[^>]*>.*?</a>', m.group(2), re.S)}
+    if not all(k in links for k in NAV_ORDER):
+        return s
+    return s[:m.start(2)] + ''.join(links[k] for k in NAV_ORDER) + s[m.end(2):]
+
+
 def main():
     n = 0
     files = sorted(set(glob.glob('*.html') + glob.glob('*/index.html') + glob.glob('*/*/index.html')))
@@ -120,6 +135,7 @@ def main():
         if '</head>' not in s:
             continue
         pre = '../' * f.count('/')
+        s = nav_fix(s)
         s = re.sub(r'<!--ATLAS-STYLE-->.*?<!--ATLAS-STYLE-END-->', '', s, flags=re.S)
         # старые шрифты больше не грузим
         s = re.sub(r'<link[^>]*fonts\.googleapis\.com/css2\?family=Unbounded[^>]*>\s*', '', s)

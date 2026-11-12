@@ -6,7 +6,7 @@
 import os, re, glob, html, datetime, json
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'https://www.mskatlas.ru'
-V = '20261112g'
+V = '20261112h'
 CHECKED = '12 ноября 2026'
 E = lambda s: html.escape(str(s), quote=True)
 METRIKA = open(f'{REPO}/tools/metrika.html', encoding='utf-8').read().strip()
@@ -750,6 +750,7 @@ def hub():
   <section class="zg-sec zg-winter"><h2>Зимой и на новогодние</h2><p class="zg-note">В декабре темнеет около четырёх часов дня: гулять лучше с утра, музеи оставить на вторую половину дня. Часы работы на праздники меняются — проверяйте на сайтах мест.</p><div class="zg-grid">{''.join(f'<a class="zg-card" href="{k}/"><h3>{E(n)}</h3><p>{E(t)}</p></a>' for k, n, t in WINTER)}</div></section>
   <section class="zg-sec"><h2>Модное и с детьми</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if p.get('fun'))}</div></section>
   <section class="zg-sec"><h2>Города, монастыри и усадьбы</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'near')}</div></section>
+  <section class="zg-sec zg-nm"><h2>Новая Москва</h2><a class="zg-card" href="../new-moscow.html"><h3>Поселения Новой Москвы на карте</h3><p>Формально это Москва, по сути — Подмосковье за МКАД: Новомосковский и Троицкий округа. Рельеф, экология и транспорт по каждому поселению.</p></a></section>
   <section class="zg-sec"><h2>Подальше: Золотое кольцо на выходные</h2><p class="zg-note">Это уже не сто километров, а 140–230: Переславль, Ростов и Углич лучше смотреть с ночёвкой.</p><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'far')}</div></section>
   <footer class="zg-src">Проверено {CHECKED}. У каждого места — источники фактов. Карта — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>.</footer>
 </main>
