@@ -31,7 +31,7 @@ TYPE_OF = {
     'etnomir': 'kids', 'kochevnik': 'kids', 'vorobi': 'kids', 'fermy': 'kids', 'nikola-lenivets': 'kids',
 }
 # направление вокзала — по городу на этой линии, к которому мы и так даём «как добраться»
-RAYS = [('Ленинградское', 'klin'), ('Савёловское', 'dmitrov'), ('Ярославское', 'sergiev-posad'),
+RAYS = [('Ленинградское', 'klin'), ('Савёловское', 'dmitrov'), ('Ярославское', 'sergiev-posad'), ('Ярославское: на Монино', 'monino'),
         ('Казанское', 'kolomna'), ('Павелецкое', 'gorki-leninskie'), ('Курское', 'serpuhov'),
         ('Киевское', 'borovsk'), ('Белорусское', 'mozhaysk-borodino'), ('Рижское', 'novyy-ierusalim')]
 E = lambda s: html.escape(str(s), quote=True)

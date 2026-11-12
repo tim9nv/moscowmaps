@@ -16,6 +16,12 @@ AREAS = {  # slug: [(lat, lon, радиус м), ...]
  'monino': [(55.8328, 38.1860, 900)], 'senezh': [(56.1930, 36.9800, 1500)], 'gorki-leninskie': [(55.5060, 37.7690, 1200)],
  'pereslavl-zalesskiy': [(56.7364, 38.8529, 1500), (56.7225, 38.7900, 1800), (56.7612, 38.8589, 600)], 'rostov-velikiy': [(57.1850, 39.4150, 1500), (57.1743, 39.3924, 600)], 'uglich': [(57.5280, 38.3180, 1500)],
 }
+# новые места из tools/data/zagorod_new.json: круги по 1 км вокруг их точек (кроме станций)
+import json as _j, os as _o
+_nf = _o.path.join(_o.path.dirname(_o.path.abspath(__file__)), 'data', 'zagorod_new.json')
+if _o.path.exists(_nf):
+    for _q in _j.load(open(_nf, encoding='utf-8')):
+        AREAS.setdefault(_q['slug'], [(t[1], t[2], 1000) for t in _q['points'] if t[5] != 'Ст'][:3])
 CAP = {'food': 24, 'hotel': 12, 'parking': 8, 'wc': 8}
 def dist(a, b, c, d):
     k = math.cos(math.radians(a)); return math.hypot((a - c) * 111320, (b - d) * 111320 * k)
@@ -64,5 +70,5 @@ for s, items in res.items():
         seen.add(k); cnt[it[2]] = cnt.get(it[2], 0) + 1
         if cnt[it[2]] > CAP.get(it[2], 60): continue
         out.append(it)
-    json.dump({'date': datetime.date.today().isoformat(), 'places': out}, open(f'{REPO}/zagorod/{s}/places.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    os.makedirs(f'{REPO}/zagorod/{s}', exist_ok=True); json.dump({'date': datetime.date.today().isoformat(), 'places': out}, open(f'{REPO}/zagorod/{s}/places.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     print(s, len(out), {c: sum(1 for o in out if o[2] == c) for c in sorted({o[2] for o in out})})
