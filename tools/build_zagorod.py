@@ -759,7 +759,7 @@ if os.path.exists(_NEWF):
         HUBPT[q['slug']] = (main[1], main[2])
         ZTYPE_OF[q['slug']] = q['type']
 def catalog_html():
-    """Каталог всех мест: фильтры по типу (те же кнопки, что у схемы) и по расстоянию, сортировка."""
+    """Каталог всех мест: поиск, общие со схемой фильтры и сортировка."""
     col = {k: (l, c) for k, l, c in ZTYPES}
     rows = []
     for p in PLACES:
@@ -776,20 +776,17 @@ def catalog_html():
         f'<p class="zc-t"><i style="background:{col[t][1]}"></i>{E(col[t][0].split(" и ")[0])}<span>~{d} км по прямой</span></p>'
         f'<h3>{E(p["name"])}</h3><p class="meta">{E(p["kind"])}{" · лучше с ночёвкой" if p.get("far") else ""}</p><p>{E(p["lead"])}</p></a>'
         for d, p, t in rows)
-    return (f'<div class="zc-bar"><div class="zs-legend" role="group" aria-label="Тип места">{chips}</div>'
+    return ('<link rel="stylesheet" href="catalog.css?v=20261112-search">'
+            '<div class="zc-bar"><div class="zc-search-row"><label class="zc-search" for="zc-search">Найти место'
+            '<input id="zc-search" type="search" placeholder="Название или что хочется посмотреть" aria-controls="zc-results" autocomplete="off"></label>'
+            '<button type="button" id="zc-reset" hidden>Сбросить фильтры</button></div>'
+            f'<div class="zs-legend" role="group" aria-label="Тип места">{chips}</div>'
             f'<div class="zc-row"><div class="zc-dist" role="group" aria-label="Расстояние">{dist}</div>'
             f'<label class="zc-sort">Порядок <select id="zc-sort"><option value="km">ближе сначала</option><option value="n">по алфавиту</option></select></label></div>'
             f'<p class="zg-note zc-count" aria-live="polite">Показано мест: <b id="zc-n">{len(rows)}</b> из {len(rows)}</p></div>'
-            f'<div class="zg-grid zc-grid">{cards}</div><p class="zg-note zc-empty" hidden>Под такие условия мест нет — снимите часть фильтров.</p>'
-            '<script>(function(){var g=document.querySelector(".zc-grid");if(!g)return;var R="all";'
-            'function on(t){var b=document.querySelector(\'.zs-f[data-t="\'+t+\'"]\');return !b||b.getAttribute("aria-pressed")==="true"}'
-            'function upd(){var n=0;g.querySelectorAll(".zc").forEach(function(c){var k=+c.dataset.km,r=R==="all"||(k>=+R.split("-")[0]&&k<+R.split("-")[1]);var v=r&&on(c.dataset.t);c.hidden=!v;if(v)n++});'
-            'document.getElementById("zc-n").textContent=n;document.querySelector(".zc-empty").hidden=n>0}'
-            'document.querySelectorAll(".zs-f").forEach(function(x){x.addEventListener("click",function(){if(x.closest(".zc-bar"))x.setAttribute("aria-pressed",x.getAttribute("aria-pressed")!=="true");setTimeout(function(){var v=x.getAttribute("aria-pressed");'
-            'document.querySelectorAll(\'.zs-f[data-t="\'+x.dataset.t+\'"]\').forEach(function(y){y.setAttribute("aria-pressed",v)});'
-            'document.querySelectorAll(\'.zp[data-t="\'+x.dataset.t+\'"]\').forEach(function(p){p.classList.toggle("off",v!=="true")});upd()},0)})});'
-            'document.querySelectorAll(".zc-d").forEach(function(x){x.addEventListener("click",function(){R=x.dataset.r;document.querySelectorAll(".zc-d").forEach(function(y){y.setAttribute("aria-pressed",y===x)});upd()})});'
-            'document.getElementById("zc-sort").addEventListener("change",function(e){var a=[].slice.call(g.children);a.sort(function(p,q){return e.target.value==="n"?p.dataset.n.localeCompare(q.dataset.n,"ru"):p.dataset.km-q.dataset.km});a.forEach(function(c){g.appendChild(c)})})})();</script>')
+            f'<div class="zg-grid zc-grid" id="zc-results">{cards}</div><p class="zg-note zc-empty" hidden>Ничего не найдено. Измените запрос или сбросьте фильтры.</p>'
+            '<script defer src="catalog.js?v=20261112-search"></script>')
+
 def hub():
     title = 'За город: куда поехать из Москвы на день или выходные'
     desc = f'{len(PLACES)} мест для поездки из Москвы на день или выходные: как добраться на электричке и машине, маршрут, где поесть. Города, усадьбы, парки с детьми.'
