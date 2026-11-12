@@ -10,8 +10,14 @@ from zg_scheme import scheme_items, km
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = lambda s: html.escape(str(s), quote=True)
 
-DIFF = [('novice', 'учебные', '#8BEAB5'), ('easy', 'простые', '#6EA8FF'), ('intermediate', 'средние', '#FF6B6B'),
-        ('advanced', 'сложные', '#F2F5FF'), ('expert', 'очень сложные', '#FFD86B'), ('freeride', 'фрирайд', '#FFD86B')]
+# цвета как на схемах курортов (по ним же красим линии поверх карты OpenStreetMap)
+DIFF = [('novice', 'учебные', '#2ca25f'), ('easy', 'простые', '#1f6feb'), ('intermediate', 'средние', '#e03131'),
+        ('advanced', 'сложные', '#111111'), ('expert', 'очень сложные', '#f08c00'), ('freeride', 'фрирайд', '#f08c00')]
+MAPD = {}  # данные карт карточек: ключ -> {'l': [[цвет, точки]], 'f': [точки подъёмников], 'e': [точки начала и конца]}
+def map_div(key, lines, lifts=(), ends=()):
+    MAPD[key] = {'l': [[DCOL.get(d, '#1f6feb'), [[round(a, 5), round(b, 5)] for a, b in g]] for d, g in lines],
+                 'f': [[[round(a, 5), round(b, 5)] for a, b in g] for _, g in lifts], 'e': list(ends)}
+    return f'<div class="zw-map" data-k="{key}" role="img" aria-label="Карта: трассы на карте OpenStreetMap"></div>'
 DCOL = {k: c for k, _, c in DIFF}
 LIFT = {'chair_lift': 'кресельных', 't-bar': 'бугельных', 'j-bar': 'бугельных', 'platter': 'тарелочных',
         'drag_lift': 'бугельных', 'rope_tow': 'верёвочных', 'magic_carpet': 'ленточных', 'mixed_lift': 'кресельно-кабинных',
@@ -80,6 +86,7 @@ def fact(label, v):
 
 
 def zima_page(head, METRIKA, hubpt):
+    MAPD.clear()
     O = json.load(open(os.path.join(ROOT, 'tools/data/winter_osm.json'), encoding='utf-8'))
     M = manual()
     man = M.get('resorts', [])
@@ -126,7 +133,7 @@ def zima_page(head, METRIKA, hubpt):
                    + (f', подъёмники: {lifts}' if lifts else '') + '.')
         return (f'<article class="zw" id="{pre}{i}"><div class="zw-h"><h3>{E(x["name"])}</h3>'
                 f'<p class="meta">около {round(r["msk_km"] / 5) * 5} км от центра Москвы по прямой</p></div>'
-                f'<div class="zw-b">{mini(r["pistes"], r["lifts"])}<div>'
+                f'<div class="zw-b">{map_div(pre + str(i), r["pistes"], r["lifts"])}<div>'
                 f'<dl class="zw-f">{facts}</dl>' + get + price +
                 f'<p class="zw-osm">{E(osmline)}</p>' + (f'<p class="zw-src">{links}' + (f' · проверено {E(M.get("checked"))}' if m else '') + '</p>' if links else '') +
                 '</div></div></article>')
@@ -134,7 +141,7 @@ def zima_page(head, METRIKA, hubpt):
     def route_card(i, r):
         fr = f' от {E(r["frm"])} до {E(r["to"])}' if r.get('frm') and r.get('to') else ''
         return (f'<article class="zw" id="l{i}"><div class="zw-h"><h3>{E(r["name"])}</h3><p class="meta">{str(r["km"]).replace(".", ",")} км{fr}</p></div>'
-                f'<div class="zw-b">{route_svg(r["g"])}<div><p class="zw-osm">Лыжный маршрут, размеченный туристами в OpenStreetMap '
+                f'<div class="zw-b">{map_div("l" + str(i), [("", g) for g in r["g"]], (), [r["g"][0][0], r["g"][-1][-1]])}<div><p class="zw-osm">Лыжный маршрут, размеченный туристами в OpenStreetMap '
                 f'(<a href="https://www.openstreetmap.org/relation/{r["id"]}" rel="noopener" target="_blank">открыть на карте</a>). '
                 'Прокладывают ли лыжню этой зимой — не знаем: это маршрут для похода, а не ухоженная трасса.</p></div></div></article>')
 
@@ -148,7 +155,7 @@ def zima_page(head, METRIKA, hubpt):
         + '</div></article>' for b in xc)
 
     css = ('<style>.zw-grid{display:grid;gap:16px}.zw{border-top:1px solid #27376B;padding:18px 0}.zw-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}'
-           '.zw-h h3{margin:0}.zw-h .meta{margin:0;color:var(--muted);font-size:14px}.zw-b{display:grid;grid-template-columns:280px 1fr;gap:20px;margin-top:10px;align-items:start}'
+           '.zw-h h3{margin:0}.zw-h .meta{margin:0;color:var(--muted);font-size:14px}.zw-b{display:grid;grid-template-columns:380px 1fr;gap:22px;margin-top:10px;align-items:start}'
            '.zm{width:280px;height:auto;background:#0A1230;border:1px solid #27376B}.zm path{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}'
            '.zm path.lf{stroke:#B4C1E4;stroke-width:1.3;stroke-dasharray:4 3}.zm path.sb{stroke:#6f80b3;stroke-width:2}.zm text{fill:#6f80b3;font:500 11px var(--label,sans-serif)}'
            '.zw-f{display:flex;flex-wrap:wrap;gap:8px 22px;margin:0 0 8px}.zw-f div{min-width:120px}.zw-f dt{font:500 12px/1.2 var(--label,sans-serif);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}'
@@ -157,8 +164,8 @@ def zima_page(head, METRIKA, hubpt):
            '.season{display:inline-grid;grid-template-columns:auto auto;border:1px solid #3a4a80;border-radius:2px;overflow:hidden;margin:4px 0 14px}'
            '.season a{padding:10px 18px;font:500 15px/1 var(--label,sans-serif);text-transform:uppercase;letter-spacing:.1em;color:var(--fg);text-decoration:none}'
            '.season a[aria-current]{background:#FFD86B;color:#0B1330}'
-           '@media (max-width:700px){.zw-b{grid-template-columns:1fr}.zm{width:100%}}</style>')
-    leg = '<div class="zw-leg">' + ''.join(f'<span><i style="background:{c}"></i>{E(n)}</span>' for k, n, c in DIFF[:5]) + '<span><i style="background:repeating-linear-gradient(90deg,#B4C1E4 0 4px,transparent 4px 7px)"></i>подъёмники</span></div>'
+           '.zw-map{height:260px;border:1px solid #3a4a80;outline:1px solid #27376B;outline-offset:4px;background:#0A1230}.zw-leg i.adv{outline:1px solid #6f80b3}''@media (max-width:700px){.zw-b{grid-template-columns:1fr}.zw-map{height:240px}}</style>')
+    leg = '<div class="zw-leg">' + ''.join(f'<span><i{" class=adv" if k == "advanced" else ""} style="background:{c}"></i>{E(n)}</span>' for k, n, c in DIFF[:5]) + '<span><i style="background:repeating-linear-gradient(90deg,#B4C1E4 0 4px,transparent 4px 7px)"></i>подъёмники (пунктир)</span></div>'
     title = 'Зима за городом: горнолыжные склоны и лыжные трассы у Москвы'
     desc = f'Горнолыжные склоны Подмосковья на схеме, лыжные маршруты от станции до станции и лыжные базы: где кататься зимой рядом с Москвой.'
     url = 'https://www.mskatlas.ru/zagorod/zima/'
@@ -178,4 +185,16 @@ def zima_page(head, METRIKA, hubpt):
 </body>
 </html>
 '''
+    js = ('<script>window.ZW=' + json.dumps(MAPD, ensure_ascii=False, separators=(',', ':')) + ';</script>'
+          '<script>addEventListener("load",function(){if(!window.L)return;'
+          'function draw(el){var d=ZW[el.dataset.k];if(!d||el._m)return;var m=L.map(el,{scrollWheelZoom:false,zoomSnap:0.25});el._m=m;m.attributionControl.setPrefix(false);'
+          'L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:\'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>\'}).addTo(m);'
+          'var g=L.featureGroup().addTo(m);'
+          'd.l.forEach(function(x){L.polyline(x[1],{color:"#fff",weight:7,opacity:.85}).addTo(g);L.polyline(x[1],{color:x[0],weight:4}).addTo(g)});'
+          'd.f.forEach(function(x){L.polyline(x,{color:"#333",weight:2,dashArray:"5 4"}).addTo(g)});'
+          'd.e.forEach(function(x,i){L.circleMarker(x,{radius:7,color:"#fff",weight:2,fillColor:i?"#e03131":"#2ca25f",fillOpacity:1}).bindTooltip(i?"конец":"начало").addTo(g)});'
+          'm.fitBounds(g.getBounds(),{padding:[16,16],maxZoom:16})}'
+          'var els=document.querySelectorAll(".zw-map");'
+          'if("IntersectionObserver" in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);draw(e.target)}})},{rootMargin:"300px"});els.forEach(function(e){io.observe(e)})}else els.forEach(draw)});</script>')
+    body = body.replace('</main>', '</main>\n' + js, 1)
     return h.replace('</head>', css + '</head>', 1) + body
