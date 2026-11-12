@@ -610,6 +610,7 @@ def head(title, desc, url, pre):
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
 .season{{display:inline-grid;grid-template-columns:auto auto;border:1px solid #3a4a80;border-radius:2px;overflow:hidden;margin:4px 0 14px}}.season a{{padding:10px 18px;font:500 15px/1 var(--label,sans-serif);text-transform:uppercase;letter-spacing:.1em;color:var(--fg);text-decoration:none}}.season a[aria-current]{{background:#FFD86B;color:#0B1330}}
+.zc-bar{{position:relative}}.zc-row{{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:0 0 10px}}.zc-dist{{display:flex;flex-wrap:wrap;gap:6px}}.zc-d{{min-height:36px;padding:0 12px;border:1px solid #3a4a80;border-radius:3px;background:transparent;color:#E6EBFA;font:500 14px/1 var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}}.zc-d[aria-pressed=true]{{border-color:#FFD86B;color:#FFD86B}}.zc-sort{{font:500 14px var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}}.zc-sort select{{margin-left:6px;background:#0F1A3C;color:#E6EBFA;border:1px solid #3a4a80;border-radius:3px;padding:6px 8px;font:inherit;text-transform:none;letter-spacing:0}}.zc-t{{display:flex;align-items:center;gap:7px;margin:0 0 6px!important;font:500 13px var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}}.zc-t i{{width:9px;height:9px;border-radius:50%;display:inline-block}}.zc-t span{{margin-left:auto;text-transform:none;letter-spacing:0;white-space:nowrap}}.zc[hidden]{{display:none!important}}
 .zg-grid{{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
 .zg-card{{display:block;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;color:var(--ink);text-decoration:none;transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s ease}}
 @media (hover:hover){{.zg-card:hover{{transform:translateY(-2px);border-color:#FFD86B}}}}
@@ -639,6 +640,11 @@ import json as _json
 NEAR = {}
 for _p in glob.glob(f'{REPO}/zagorod/*/places.json'):
     NEAR[_p.split('/')[-2]] = _json.load(open(_p, encoding='utf-8'))
+# Общие рисунки для новых мест без своего (монастырь, усадьба) — выбираются по типу в place_page
+ART.update({
+ '_holy': svg(f'<path d="M0 188h320M14 188v-46h292v46M14 142v-26h22v26m248 0v-26h22v26M10 116l15-18 15 18m240 0 15-18 15 18{_bx(120, 142, 70, 46)}M116 96h78M128 96V76h54v20{_bx(146, 76, 18, 14)}{_bx(224, 142, 24, 74)}M220 68l16-26 16 26zm16-26v-12m-5 5h10M146 142v-22a9 9 0 0 1 18 0v22" {S3}/><path d="{_dm(145, 62, 20, 24)}M126 76c0-8 4-12 6-16 2 4 6 8 6 16m34 0c0-8 4-12 6-16 2 4 6 8 6 16" {S2}/><path d="M50 166v-10m20 10v-10m20 10v-10m150 10v-10m20 10v-10m20 10v-10" {S2}/>', (66, 50, 26)),
+ '_estate': svg(f'<path d="M0 182h320{_bx(70, 182, 180, 58)}M64 124h192M120 124v-26h80v26M114 98h92l-46-24zM132 182v-58m18 58v-58m20 58v-58m18 58v-58M146 108a14 10 0 0 1 28 0" {S3}/><path d="M86 160v-18h18v18zm130 0v-18h18v18zM24 182v-40m272 40v-40" {S2}/><circle cx="24" cy="126" r="18" {S2}/><circle cx="296" cy="126" r="18" {S2}/><path d="{_W}" {S2}/>', (262, 44, 24)),
+})
 NEAR_T = [('sight', 'Достопримечательности'), ('museum', 'Музеи и театры'), ('church', 'Храмы и монастыри'), ('art', 'Арт-объекты и скульптуры'), ('view', 'Смотровые площадки'), ('hotel', 'Где переночевать')]
 MON = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
 def near_html(p):
@@ -683,7 +689,7 @@ def place_page(p):
     out += f'''<main class="wrap">
   <nav class="crumb" aria-label="Навигация"><a href="../">За город</a> / {E(p["name"])}</nav>
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">За город · {E(p["kind"])}</p><h1>{E(p["name"])}</h1><p>{E(p["lead"])}</p>
-  <ul class="zg-facts"><li>{E(p["km"])}</li><li>{E(p["kind"])}</li></ul></div>{ART[p["slug"]]}</header>
+  <ul class="zg-facts"><li>{E(p["km"])}</li><li>{E(p["kind"])}</li></ul></div>{ART.get(p["slug"]) or ART["_" + (p.get("type") or "estate")]}</header>
   <section class="zg-sec"><h2>Как добраться</h2><dl class="zg-get">{''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a, b in p['get'])}</dl></section>
   <section class="zg-sec"><h2>{"Маршрут на выходные" if p.get("far") else "Маршрут на день"}</h2><div class="filters zg-filters" id="zgfilters" hidden aria-label="Что показать на карте"></div><div id="zgmap" aria-label="Карта маршрута"></div>
   <ol class="zg-plan">{''.join(f'<li><div>{f"<span class=when>{E(w)}</span>" if w else ""}<b>{E(n)}</b><p>{E(t)}</p></div></li>' for w, n, t in p['plan'])}</ol></section>
@@ -740,20 +746,61 @@ def card(p, pre):
     return f'<a class="zg-card" href="{pre}{p["slug"]}/"><h3>{E(p["name"])}</h3><p class="meta">{E(p["km"])} · {E(p["kind"])}</p><p>{E(p["lead"])}</p></a>'
 
 import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from zg_scheme import scheme_html
+from zg_scheme import scheme_html, TYPES as ZTYPES, TYPE_OF as ZTYPE_OF, km as zkm
+# Новые места порциями (монастыри, усадьбы, …) — данные в tools/data/zagorod_new.json (собраны агентами, сверены с источниками)
+_NEWF = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'zagorod_new.json')
+if os.path.exists(_NEWF):
+    for q in json.load(open(_NEWF, encoding='utf-8')):
+        if any(x['slug'] == q['slug'] for x in PLACES):
+            continue
+        PLACES.append({k: q[k] for k in ('slug', 'name', 'kind', 'km', 'lead', 'title', 'get', 'plan', 'tips', 'points', 'sources', 'type') if k in q})
+        MORE[q['slug']] = {'hist': q.get('hist', []), 'extra': q.get('extra', []), 'food': q.get('food', []), 'hsrc': []}
+        main = next(t for t in q['points'] if t[5] != 'Ст')
+        HUBPT[q['slug']] = (main[1], main[2])
+        ZTYPE_OF[q['slug']] = q['type']
+def catalog_html():
+    """Каталог всех мест: фильтры по типу (те же кнопки, что у схемы) и по расстоянию, сортировка."""
+    col = {k: (l, c) for k, l, c in ZTYPES}
+    rows = []
+    for p in PLACES:
+        t = ZTYPE_OF.get(p['slug'], 'city')
+        d = round(zkm(HUBPT[p['slug']]))
+        rows.append((d, p, t))
+    rows.sort(key=lambda r: r[0])
+    used = [k for k, _, _ in ZTYPES if any(r[2] == k for r in rows)]
+    chips = ''.join(f'<button type="button" class="zs-f" data-t="{k}" aria-pressed="true"><i style="background:{col[k][1]}"></i>{E(col[k][0])}</button>' for k in used)
+    dist = ''.join(f'<button type="button" class="zc-d" data-r="{r}" aria-pressed="{"true" if r == "all" else "false"}">{E(l)}</button>'
+                   for r, l in (('all', 'Любое'), ('0-60', 'До 60 км'), ('60-120', '60–120 км'), ('120-999', 'Дальше 120 км')))
+    cards = ''.join(
+        f'<a class="zg-card zc" href="{p["slug"]}/" data-t="{t}" data-km="{d}" data-n="{E(p["name"])}">'
+        f'<p class="zc-t"><i style="background:{col[t][1]}"></i>{E(col[t][0].split(" и ")[0])}<span>~{d} км по прямой</span></p>'
+        f'<h3>{E(p["name"])}</h3><p class="meta">{E(p["kind"])}{" · лучше с ночёвкой" if p.get("far") else ""}</p><p>{E(p["lead"])}</p></a>'
+        for d, p, t in rows)
+    return (f'<div class="zc-bar"><div class="zs-legend" role="group" aria-label="Тип места">{chips}</div>'
+            f'<div class="zc-row"><div class="zc-dist" role="group" aria-label="Расстояние">{dist}</div>'
+            f'<label class="zc-sort">Порядок <select id="zc-sort"><option value="km">ближе сначала</option><option value="n">по алфавиту</option></select></label></div>'
+            f'<p class="zg-note zc-count" aria-live="polite">Показано мест: <b id="zc-n">{len(rows)}</b> из {len(rows)}</p></div>'
+            f'<div class="zg-grid zc-grid">{cards}</div><p class="zg-note zc-empty" hidden>Под такие условия мест нет — снимите часть фильтров.</p>'
+            '<script>(function(){var g=document.querySelector(".zc-grid");if(!g)return;var R="all";'
+            'function on(t){var b=document.querySelector(\'.zs-f[data-t="\'+t+\'"]\');return !b||b.getAttribute("aria-pressed")==="true"}'
+            'function upd(){var n=0;g.querySelectorAll(".zc").forEach(function(c){var k=+c.dataset.km,r=R==="all"||(k>=+R.split("-")[0]&&k<+R.split("-")[1]);var v=r&&on(c.dataset.t);c.hidden=!v;if(v)n++});'
+            'document.getElementById("zc-n").textContent=n;document.querySelector(".zc-empty").hidden=n>0}'
+            'document.querySelectorAll(".zs-f").forEach(function(x){x.addEventListener("click",function(){if(x.closest(".zc-bar"))x.setAttribute("aria-pressed",x.getAttribute("aria-pressed")!=="true");setTimeout(function(){var v=x.getAttribute("aria-pressed");'
+            'document.querySelectorAll(\'.zs-f[data-t="\'+x.dataset.t+\'"]\').forEach(function(y){y.setAttribute("aria-pressed",v)});'
+            'document.querySelectorAll(\'.zp[data-t="\'+x.dataset.t+\'"]\').forEach(function(p){p.classList.toggle("off",v!=="true")});upd()},0)})});'
+            'document.querySelectorAll(".zc-d").forEach(function(x){x.addEventListener("click",function(){R=x.dataset.r;document.querySelectorAll(".zc-d").forEach(function(y){y.setAttribute("aria-pressed",y===x)});upd()})});'
+            'document.getElementById("zc-sort").addEventListener("change",function(e){var a=[].slice.call(g.children);a.sort(function(p,q){return e.target.value==="n"?p.dataset.n.localeCompare(q.dataset.n,"ru"):p.dataset.km-q.dataset.km});a.forEach(function(c){g.appendChild(c)})})})();</script>')
 def hub():
     title = 'За город: куда поехать из Москвы на день или выходные'
-    desc = '30 мест для поездки из Москвы на день или выходные: как добраться на электричке и машине, маршрут, где поесть. Города, усадьбы, парки с детьми.'
+    desc = f'{len(PLACES)} мест для поездки из Москвы на день или выходные: как добраться на электричке и машине, маршрут, где поесть. Города, усадьбы, парки с детьми.'
     out = head(title, desc, f'{BASE}/zagorod/', '../')
     out += f'''<main class="wrap">
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">Атлас Москвы · выезд на день</p><h1>За город</h1><p>Куда съездить из Москвы на день или на выходные: как добраться, что посмотреть по порядку, где поесть. Арт-парки, этнопарки, города и усадьбы в пределах дня пути, а для выходных с ночёвкой — три города Золотого кольца.</p></div>{ART["hub"]}</header>
   <nav class="season" aria-label="Сезон"><a aria-current="page" href="./">Лето</a><a href="zima/">Зима: лыжи и склоны</a></nav>
   <section class="zg-sec"><h2>Куда ехать: схема направлений</h2>{scheme_html(PLACES, HUBPT)}</section>
   <section class="zg-sec zg-winter"><h2>Зимой и на новогодние</h2><p class="zg-note"><a href="zima/"><b>Горнолыжные склоны, лыжные маршруты и базы — на странице «Зима» →</b></a> В декабре темнеет около четырёх часов дня: гулять лучше с утра, музеи оставить на вторую половину дня. Часы работы на праздники меняются — проверяйте на сайтах мест.</p><div class="zg-grid">{''.join(f'<a class="zg-card" href="{k}/"><h3>{E(n)}</h3><p>{E(t)}</p></a>' for k, n, t in WINTER)}</div></section>
-  <section class="zg-sec"><h2>Модное и с детьми</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if p.get('fun'))}</div></section>
-  <section class="zg-sec"><h2>Города, монастыри и усадьбы</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'near')}</div></section>
+  <section class="zg-sec zg-cat" id="all"><h2>Все места</h2>{catalog_html()}</section>
   <section class="zg-sec zg-nm"><h2>Новая Москва</h2><a class="zg-card" href="../new-moscow.html"><h3>Поселения Новой Москвы на карте</h3><p>Формально это Москва, по сути — Подмосковье за МКАД: Новомосковский и Троицкий округа. Рельеф, экология и транспорт по каждому поселению.</p></a></section>
-  <section class="zg-sec"><h2>Подальше: Золотое кольцо на выходные</h2><p class="zg-note">Это уже не сто километров, а 140–230: Переславль, Ростов и Углич лучше смотреть с ночёвкой.</p><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'far')}</div></section>
   <footer class="zg-src">Проверено {CHECKED}. У каждого места — источники фактов. Карта — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>.</footer>
 </main>
 {METRIKA}
