@@ -6,7 +6,7 @@
 import os, re, glob, html, datetime, json
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'https://www.mskatlas.ru'
-V = '20261112f'
+V = '20261112g'
 CHECKED = '12 ноября 2026'
 E = lambda s: html.escape(str(s), quote=True)
 METRIKA = open(f'{REPO}/tools/metrika.html', encoding='utf-8').read().strip()
@@ -738,20 +738,21 @@ def aff_html(p):
 def card(p, pre):
     return f'<a class="zg-card" href="{pre}{p["slug"]}/"><h3>{E(p["name"])}</h3><p class="meta">{E(p["km"])} · {E(p["kind"])}</p><p>{E(p["lead"])}</p></a>'
 
+import sys as _sys; _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from zg_scheme import scheme_html
 def hub():
     title = 'За город: куда поехать из Москвы на день или выходные'
     desc = '30 мест для поездки из Москвы на день или выходные: как добраться на электричке и машине, маршрут, где поесть. Города, усадьбы, парки с детьми.'
     out = head(title, desc, f'{BASE}/zagorod/', '../')
     out += f'''<main class="wrap">
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">Атлас Москвы · выезд на день</p><h1>За город</h1><p>Куда съездить из Москвы на день или на выходные: как добраться, что посмотреть по порядку, где поесть. Арт-парки, этнопарки, города и усадьбы в пределах дня пути, а для выходных с ночёвкой — три города Золотого кольца.</p></div>{ART["hub"]}</header>
-  <section class="zg-sec"><h2>На карте</h2><div id="zgmap" aria-label="Карта мест за городом"></div></section>
+  <section class="zg-sec"><h2>Куда ехать: схема направлений</h2>{scheme_html(PLACES, HUBPT)}</section>
   <section class="zg-sec zg-winter"><h2>Зимой и на новогодние</h2><p class="zg-note">В декабре темнеет около четырёх часов дня: гулять лучше с утра, музеи оставить на вторую половину дня. Часы работы на праздники меняются — проверяйте на сайтах мест.</p><div class="zg-grid">{''.join(f'<a class="zg-card" href="{k}/"><h3>{E(n)}</h3><p>{E(t)}</p></a>' for k, n, t in WINTER)}</div></section>
   <section class="zg-sec"><h2>Модное и с детьми</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if p.get('fun'))}</div></section>
   <section class="zg-sec"><h2>Города, монастыри и усадьбы</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'near')}</div></section>
   <section class="zg-sec"><h2>Подальше: Золотое кольцо на выходные</h2><p class="zg-note">Это уже не сто километров, а 140–230: Переславль, Ростов и Углич лучше смотреть с ночёвкой.</p><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'far')}</div></section>
   <footer class="zg-src">Проверено {CHECKED}. У каждого места — источники фактов. Карта — <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap</a>.</footer>
 </main>
-{map_js([(p['name'], *HUBPT[p['slug']], p['km'] + ' · ' + p['kind'], p['slug'] + '/') for p in PLACES], False)}
 {METRIKA}
 </body>
 </html>

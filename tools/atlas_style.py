@@ -70,21 +70,30 @@ svg .lbl{font-family:var(--label)!important}
 svg .lbl.okr{font-weight:600!important;font-size:13px!important;text-transform:uppercase}
 section.map svg{overflow:hidden}
 .atlas-home .wrap>header>.where,.atlas-home .wrap>.where{grid-column:1}
+
+/* главная на компьютере: сверху заголовок и крупный переключатель, ниже поиск и рейтинг слева, карта справа; карта не «едет» при прокрутке */
+@media (min-width:1000px){
+.atlas-home .wrap>.map{position:relative!important;top:auto!important}
+.atlas-home .wrap>header>h1{grid-column:1;grid-row:1;margin-bottom:12px!important}
+.atlas-home .wrap>header>.lede{grid-column:1;grid-row:2}
+.atlas-home .wrap>.where{grid-column:2;grid-row:1/span 2;align-self:center;margin:0 0 8px;justify-self:stretch}
+.atlas-home .wrap>.map{grid-row:3/span 12!important}
+.atlas-home .where .q{font-size:20px}
+}
+.zg-hub .where{max-width:none!important}
 /* «Где остаёмся?» */
 .where{margin:6px 0 22px}
 .where .q{font:italic 300 17px/1.3 var(--display);color:var(--muted);margin:0 0 10px}
 .where .wsg{display:grid;grid-template-columns:1fr 1fr;border:1px solid #3a4a80;border-radius:2px;overflow:hidden}
-.where .wsg a{display:block;padding:12px 14px 11px;color:var(--fg,#F2F5FF);text-decoration:none;min-height:44px}
+.where .wsg a{display:block;padding:18px 20px 16px;color:var(--fg,#F2F5FF);text-decoration:none;min-height:44px}
 .where .wsg a+a{border-left:1px solid #3a4a80}
-.where .wsg b{display:block;font:400 23px/1.05 var(--display);letter-spacing:-.01em}
-.where .wsg span{display:block;margin-top:5px;font:500 12.5px/1 var(--label);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.where .wsg b{display:block;font:400 clamp(26px,3vw,38px)/1.05 var(--display);letter-spacing:-.015em}
+.where .wsg span{display:block;margin-top:8px;font:500 12.5px/1 var(--label);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
 .where .wsg a[aria-current]{background:var(--gold);color:#0B1330}
 .where .wsg a[aria-current] span{color:#3d3a26}
 @media (hover:hover){.where .wsg a:not([aria-current]):hover b{text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:5px;text-decoration-thickness:2px}}
-.atlas-home .wrap>header>h1::before{content:"Лист 1 · Москва";display:block;font:500 13px/1 var(--label);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border-top:2px solid var(--fg,#F2F5FF);padding-top:10px;margin-bottom:22px}
 .zg-hub .hero .eyebrow{display:none}
 .zg-hub .where{max-width:480px;margin-top:22px}
-.zg-hub .hero h1::before{content:"Лист 2 · Подмосковье";display:block;font:500 13px/1 var(--label);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
 '''
 
 
@@ -96,8 +105,8 @@ def block(pre):
 def where(pre, here):
     a = 'aria-current="page" '
     return ('<!--WHERE--><nav class="where" aria-label="Где остаёмся"><p class="q">Где остаёмся?</p><div class="wsg">'
-            f'<a {a if here == "msk" else ""}href="{pre}"><b>В Москве</b><span>районы · 125</span></a>'
-            f'<a {a if here == "out" else ""}href="{pre}zagorod/"><b>За городом</b><span>поездки · 30 мест</span></a>'
+            f'<a {a if here == "msk" else ""}href="{pre}"><b>В Москве</b><span>125 районов: цены, экология, школы</span></a>'
+            f'<a {a if here == "out" else ""}href="{pre}zagorod/"><b>За городом</b><span>30 мест на день и выходные</span></a>'
             '</div></nav><!--WHERE-END-->')
 
 
