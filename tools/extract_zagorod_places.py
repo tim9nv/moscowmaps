@@ -1,5 +1,5 @@
 """Что есть рядом с местами раздела «За город» — из OpenStreetMap -> zagorod/<slug>/places.json
-Запуск: python3 tools/extract_zagorod_places.py /tmp/moscow_oblast.osm.pbf /tmp/kaluga_oblast.osm.pbf /tmp/tula_oblast.osm.pbf
+Запуск: python3 tools/extract_zagorod_places.py /tmp/moscow_oblast.osm.pbf /tmp/kaluga_oblast.osm.pbf /tmp/tula_oblast.osm.pbf /tmp/yaroslavl_oblast.osm.pbf
 Берём только объекты с названием в радиусе от центра места: достопримечательности, музеи, храмы, смотровые, кафе, гостиницы; парковки и туалеты — и без названия.
 """
 import osmium, json, sys, os, math, datetime, re
@@ -11,6 +11,10 @@ AREAS = {  # slug: [(lat, lon, радиус м), ...]
  'ostafevo': [(55.4943, 37.5036, 800), (55.4410, 37.4950, 800)], 'tarusa-polenovo': [(54.7290, 37.1800, 1500), (54.7482, 37.2357, 1000)],
  'nikola-lenivets': [(54.7500, 35.6100, 2500)], 'etnomir': [(55.2453, 36.4276, 900)], 'kochevnik': [(56.2413, 38.0532, 500)], 'vorobi': [(55.1585, 36.7778, 700)],
  'zaraysk': [(54.7590, 38.8740, 1300)], 'zubry': [(54.9152, 37.5688, 1500)], 'serednikovo': [(55.9286, 37.2414, 900)],
+ 'serpuhov': [(54.9030, 37.4220, 900), (54.9166, 37.4027, 900), (54.8989, 37.3987, 500)], 'borovsk': [(55.2071, 36.4900, 1500), (55.2147, 36.5330, 600)],
+ 'mozhaysk-borodino': [(55.5120, 36.0090, 1500), (55.5150, 35.8280, 2500)], 'egorevsk': [(55.3835, 39.0370, 1300)], 'klin': [(56.3350, 36.7300, 1400), (56.3284, 36.7454, 500)],
+ 'monino': [(55.8328, 38.1860, 900)], 'senezh': [(56.1930, 36.9800, 1500)], 'gorki-leninskie': [(55.5060, 37.7690, 1200)],
+ 'pereslavl-zalesskiy': [(56.7364, 38.8529, 1500), (56.7225, 38.7900, 1800), (56.7612, 38.8589, 600)], 'rostov-velikiy': [(57.1850, 39.4150, 1500), (57.1743, 39.3924, 600)], 'uglich': [(57.5280, 38.3180, 1500)],
 }
 CAP = {'food': 24, 'hotel': 12, 'parking': 8, 'wc': 8}
 def dist(a, b, c, d):
