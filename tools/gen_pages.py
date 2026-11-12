@@ -161,12 +161,16 @@ def page(f):
     p = P(f); sl = p['slug']; n = p['n']; o = p['o']
     nbs = [BY[x] for x in (p.get('nb') or []) if x in BY]
     er = eco_rank.index(f) + 1
-    title = f'Район {n} ({o}): цены на квартиры, экология, транспорт, плюсы и минусы'
+    title = f'{n} ({o}): плюсы и минусы, цены, экология'
+    if len(title) > 70: title = f'{n} ({o}): плюсы и минусы, цены'
     bits = [f'{n} — район {o} Москвы' + (f', {num(p["pop"])} {zhit(p["pop"])}' if p.get('pop') else '')]
     if p.get('hp'): bits.append(f'метр жилья на вторичке около {num(p["hp"]/1000)} тыс. ₽ ({p["hrk"]}-е место из 125 по цене)')
     bits.append(f'экологический балл {fmt(p["i"])} из 10 (чем меньше, тем чище), {er}-е место по чистоте')
     if p.get('tr'): bits.append(f'до центра около {p["tr"]["tmed"]} {minut_rod(p["tr"]["tmed"])}')
     desc = '; '.join(bits) + '. Школы, поликлиники, спорт, парки и микроклимат в сравнении со всеми районами Москвы.'
+    _sh = ([f'метр ~{num(p["hp"]/1000)} тыс. ₽'] if p.get('hp') else []) + [f'{er}-е место из 125 по чистоте'] + ([f'до центра {p["tr"]["tmed"]} мин'] if p.get('tr') else [])
+    desc = f'Район {n} ({o}): ' + ', '.join(_sh) + '. Плюсы и минусы, школы, парки, транспорт.'
+    if len(desc) > 160: desc = f'{n} ({o}): ' + ', '.join(_sh) + '. Плюсы и минусы, школы, парки.'
     lead = bits[0] + '. ' + '. '.join(x[0].upper() + x[1:] for x in bits[1:]) + '.' if len(bits) > 1 else bits[0] + '.'
     canon = f'{BASE}/rayon/{sl}/'
     tiles = []
