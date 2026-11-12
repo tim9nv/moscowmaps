@@ -6,7 +6,7 @@
 import os, re, glob, html, datetime, json
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'https://www.mskatlas.ru'
-V = '20261112h'
+V = '20261112i'
 CHECKED = '12 ноября 2026'
 E = lambda s: html.escape(str(s), quote=True)
 METRIKA = open(f'{REPO}/tools/metrika.html', encoding='utf-8').read().strip()
@@ -609,6 +609,7 @@ def head(title, desc, url, pre):
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
+.season{{display:inline-grid;grid-template-columns:auto auto;border:1px solid #3a4a80;border-radius:2px;overflow:hidden;margin:4px 0 14px}}.season a{{padding:10px 18px;font:500 15px/1 var(--label,sans-serif);text-transform:uppercase;letter-spacing:.1em;color:var(--fg);text-decoration:none}}.season a[aria-current]{{background:#FFD86B;color:#0B1330}}
 .zg-grid{{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
 .zg-card{{display:block;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;color:var(--ink);text-decoration:none;transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s ease}}
 @media (hover:hover){{.zg-card:hover{{transform:translateY(-2px);border-color:#FFD86B}}}}
@@ -746,8 +747,9 @@ def hub():
     out = head(title, desc, f'{BASE}/zagorod/', '../')
     out += f'''<main class="wrap">
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">Атлас Москвы · выезд на день</p><h1>За город</h1><p>Куда съездить из Москвы на день или на выходные: как добраться, что посмотреть по порядку, где поесть. Арт-парки, этнопарки, города и усадьбы в пределах дня пути, а для выходных с ночёвкой — три города Золотого кольца.</p></div>{ART["hub"]}</header>
+  <nav class="season" aria-label="Сезон"><a aria-current="page" href="./">Лето</a><a href="zima/">Зима: лыжи и склоны</a></nav>
   <section class="zg-sec"><h2>Куда ехать: схема направлений</h2>{scheme_html(PLACES, HUBPT)}</section>
-  <section class="zg-sec zg-winter"><h2>Зимой и на новогодние</h2><p class="zg-note">В декабре темнеет около четырёх часов дня: гулять лучше с утра, музеи оставить на вторую половину дня. Часы работы на праздники меняются — проверяйте на сайтах мест.</p><div class="zg-grid">{''.join(f'<a class="zg-card" href="{k}/"><h3>{E(n)}</h3><p>{E(t)}</p></a>' for k, n, t in WINTER)}</div></section>
+  <section class="zg-sec zg-winter"><h2>Зимой и на новогодние</h2><p class="zg-note"><a href="zima/"><b>Горнолыжные склоны, лыжные маршруты и базы — на странице «Зима» →</b></a> В декабре темнеет около четырёх часов дня: гулять лучше с утра, музеи оставить на вторую половину дня. Часы работы на праздники меняются — проверяйте на сайтах мест.</p><div class="zg-grid">{''.join(f'<a class="zg-card" href="{k}/"><h3>{E(n)}</h3><p>{E(t)}</p></a>' for k, n, t in WINTER)}</div></section>
   <section class="zg-sec"><h2>Модное и с детьми</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if p.get('fun'))}</div></section>
   <section class="zg-sec"><h2>Города, монастыри и усадьбы</h2><div class="zg-grid">{''.join(card(p, '') for p in PLACES if GRP(p) == 'near')}</div></section>
   <section class="zg-sec zg-nm"><h2>Новая Москва</h2><a class="zg-card" href="../new-moscow.html"><h3>Поселения Новой Москвы на карте</h3><p>Формально это Москва, по сути — Подмосковье за МКАД: Новомосковский и Троицкий округа. Рельеф, экология и транспорт по каждому поселению.</p></a></section>
@@ -765,6 +767,10 @@ open(f'{REPO}/zagorod/index.html', 'w', encoding='utf-8').write(hub())
 for p in PLACES:
     os.makedirs(f'{REPO}/zagorod/{p["slug"]}', exist_ok=True)
     open(f'{REPO}/zagorod/{p["slug"]}/index.html', 'w', encoding='utf-8').write(place_page(p))
+
+from zima import zima_page
+os.makedirs(f'{REPO}/zagorod/zima', exist_ok=True)
+open(f'{REPO}/zagorod/zima/index.html', 'w', encoding='utf-8').write(zima_page(head, METRIKA, HUBPT))
 
 # «За город» — отдельная заметная кнопка справа в шапке всех страниц (не вкладка в общем ряду). Идемпотентно.
 ICON = ('<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
@@ -788,7 +794,7 @@ open(g, 'w', encoding='utf-8').write(gs)
 sm = open(f'{REPO}/sitemap.xml', encoding='utf-8').read()
 sm = re.sub(r'  <url><loc>' + re.escape(BASE) + r'/zagorod/[^<]*</loc>.*?</url>\n', '', sm)
 today = datetime.date.today().isoformat()
-urls = [f'{BASE}/zagorod/'] + [f'{BASE}/zagorod/{p["slug"]}/' for p in PLACES]
+urls = [f'{BASE}/zagorod/', f'{BASE}/zagorod/zima/'] + [f'{BASE}/zagorod/{p["slug"]}/' for p in PLACES]
 sm = sm.replace('</urlset>', ''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in urls) + '</urlset>')
 open(f'{REPO}/sitemap.xml', 'w', encoding='utf-8').write(sm)
 print('страниц «За город»:', 1 + len(PLACES), '· кнопка обновлена на', n, 'страницах')

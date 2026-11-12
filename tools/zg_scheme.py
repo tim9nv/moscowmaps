@@ -56,14 +56,23 @@ def xy(b, r):
 
 
 def scheme_html(places, hubpt):
+    items = [dict(name=p['name'], href=p['slug'] + '/', ll=hubpt[p['slug']], t=TYPE_OF.get(p['slug'], 'city'),
+                  tip=f"{p['name']} — {p['kind']}") for p in places]
+    note = ('Схема, а не карта: место стоит в своём направлении от Москвы, а расстояние по прямой сжато, '
+            'чтобы ближние усадьбы и Углич поместились на одном листе. Лучи — железнодорожные направления от московских вокзалов. '
+            'Нажмите на точку, чтобы открыть страницу места.')
+    return scheme_items(items, TYPES, hubpt, note)
+
+
+def scheme_items(items, types, hubpt, note, uid='zs'):
     pts = []
-    for p in places:
-        ll = hubpt[p['slug']]
+    for it in items:
+        ll = it['ll']
         d = km(ll)
         b = bearing(ll)
         x, y = xy(b, rad(d))
-        pts.append(dict(p=p, d=d, b=b, x=x, y=y, t=TYPE_OF.get(p['slug'], 'city')))
-    col = {k: c for k, _, c in TYPES}
+        pts.append(dict(p=it, d=d, b=b, x=x, y=y, t=it['t']))
+    col = {k: c for k, _, c in types}
     o = [f'<svg class="zs" viewBox="0 0 {W} {H}" role="img" aria-labelledby="zs-t"><title id="zs-t">Схема: места за городом по направлениям от Москвы</title>']
     # кольца расстояний
     o.append('<g class="zs-rings">')
@@ -122,15 +131,15 @@ def scheme_html(places, hubpt):
         lead = ''
         if abs(ly - 5 - q['y']) > 3:
             lead = f'<path class="ld" d="M{q["x"]:.1f} {q["y"]:.1f}L{lx:.1f} {ly - 5:.1f}"/>'
-        tip = f'{p["name"]} — {p["kind"]}, около {round(q["d"] / 5) * 5} км по прямой'
-        o.append(f'<a href="{E(p["slug"])}/" class="zp" data-t="{q["t"]}" style="--d:{n}">'
+        tip = f'{p["tip"]}, около {round(q["d"] / 5) * 5} км по прямой'
+        o.append(f'<a href="{E(p["href"])}" class="zp" data-t="{q["t"]}" style="--d:{n}">'
                  f'<title>{E(tip)}</title>{lead}'
                  f'<circle class="h" cx="{q["x"]:.1f}" cy="{q["y"]:.1f}" r="14"/>'
                  f'<circle class="dot" cx="{q["x"]:.1f}" cy="{q["y"]:.1f}" r="6" style="fill:{c}"/>'
                  f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="{side}">{E(p["name"])}</text></a>')
     o.append('</g></svg>')
     legend = ''.join(f'<button type="button" class="zs-f" data-t="{k}" aria-pressed="true"><i style="background:{c}"></i>{E(lbl)}</button>'
-                     for k, lbl, c in TYPES if any(q['t'] == k for q in pts))
+                     for k, lbl, c in types if any(q['t'] == k for q in pts))
     css = ('<style>'
            '.zs-wrap{position:relative;border:1px solid #3a4a80;outline:1px solid #27376B;outline-offset:5px;background:#0A1230;padding:14px 10px 6px;margin-top:6px}'
            '.zs{display:block;width:100%;height:auto;font-family:var(--label,"Arial Narrow",sans-serif)}'
@@ -156,6 +165,4 @@ def scheme_html(places, hubpt):
            'document.querySelectorAll(\'.zp[data-t="\'+x.dataset.t+\'"]\').forEach(function(p){p.classList.toggle("off",!on)})})})})();</script>')
     return (css + f'<div class="zs-legend" role="group" aria-label="Что показать">{legend}</div>'
             f'<p class="zs-note zs-hint" style="display:none">Схема шире экрана — листайте вбок.</p><div class="zs-wrap">{"".join(o)}</div>'
-            '<p class="zs-note">Схема, а не карта: место стоит в своём направлении от Москвы, а расстояние по прямой сжато, '
-            'чтобы ближние усадьбы и Углич поместились на одном листе. Лучи — железнодорожные направления от московских вокзалов. '
-            'Нажмите на точку, чтобы открыть страницу места.</p>' + jsx)
+            f'<p class="zs-note">{E(note)}</p>' + jsx)
