@@ -31,7 +31,7 @@ TYPE_OF = {
     'etnomir': 'kids', 'kochevnik': 'kids', 'vorobi': 'kids', 'fermy': 'kids', 'nikola-lenivets': 'kids',
 }
 # направление вокзала — по городу на этой линии, к которому мы и так даём «как добраться»
-RAYS = [('Ленинградское', 'klin'), ('Савёловское', 'dmitrov'), ('Ярославское', 'sergiev-posad'), ('Ярославское: на Монино', 'monino'),
+RAYS = [('Ленинградское', 'klin'), ('Савёловское', 'dmitrov'), ('Ярославское', 'sergiev-posad'), ('Яросл. вокзал: Монино', 'monino'),
         ('Казанское', 'kolomna'), ('Павелецкое', 'gorki-leninskie'), ('Курское', 'serpuhov'),
         ('Киевское', 'borovsk'), ('Белорусское', 'mozhaysk-borodino'), ('Рижское', 'novyy-ierusalim')]
 E = lambda s: html.escape(str(s), quote=True)
@@ -56,7 +56,7 @@ def xy(b, r):
 
 
 def scheme_html(places, hubpt):
-    items = [dict(name=p['name'], href=p['slug'] + '/', ll=hubpt[p['slug']], t=TYPE_OF.get(p['slug'], 'city'),
+    items = [dict(name=p.get('short') or p['name'], href=p['slug'] + '/', ll=hubpt[p['slug']], t=TYPE_OF.get(p['slug'], 'city'),
                   tip=f"{p['name']} — {p['kind']}") for p in places]
     note = ('Схема, а не карта: место стоит в своём направлении от Москвы, а расстояние по прямой сжато, '
             'чтобы ближние усадьбы и Углич поместились на одном листе. Лучи — железнодорожные направления от московских вокзалов. '
@@ -83,12 +83,16 @@ def scheme_items(items, types, hubpt, note, uid='zs'):
     o.append('</g>')
     # лучи направлений
     o.append('<g class="zs-rays">')
+    raybox = []
     for i, (name, slug) in enumerate(RAYS):
         b = bearing(hubpt[slug])
         x0, y0 = xy(b, rad(MKAD_KM) + 4)
         x1, y1 = xy(b, RMAX + 6)
         lx, ly = xy(b, RMAX + 18)
         anchor = 'start' if math.sin(b) > 0.25 else 'end' if math.sin(b) < -0.25 else 'middle'
+        rw = len(name) * 8.6
+        rx0 = lx if anchor == 'start' else lx - rw if anchor == 'end' else lx - rw / 2
+        raybox.append((rx0, rx0 + rw, ly + 4))
         o.append(f'<line x1="{x0:.1f}" y1="{y0:.1f}" x2="{x1:.1f}" y2="{y1:.1f}" style="--i:{i}"/>'
                  f'<text x="{lx:.1f}" y="{ly + 4:.1f}" text-anchor="{anchor}">{E(name)}</text>')
     o.append('</g>')
@@ -99,25 +103,33 @@ def scheme_items(items, types, hubpt, note, uid='zs'):
              f'<text class="s" x="{CX:.0f}" y="{CY + 15:.0f}" text-anchor="middle">внутри МКАД</text></g>')
     # подписи: пробуем справа и слева от точки и сдвиги по вертикали; не налезаем на другие подписи и точки
     dots = [(q['x'], q['y']) for q in pts]
-    boxes, labels = [], []
+    boxes, labels = list(raybox), []
+    rm2 = rad(MKAD_KM) + 6
     def free(x0, x1, y):
         if x0 < 4 or x1 > W - 4 or y < 14 or y > H - 4:
             return False
         if any(not (x1 < a or x0 > b2) and abs(y - yy) < 15 for a, b2, yy in boxes):
             return False
+        nx, ny = min(max(CX, x0), x1), min(max(CY, y - 14), y + 4)
+        if (nx - CX) ** 2 + (ny - CY) ** 2 < rm2 ** 2:
+            return False
         return not any(x0 - 7 < dx < x1 + 7 and y - 16 < dy < y + 6 for dx, dy in dots)
     for q in sorted(pts, key=lambda q: q['d']):
-        w = len(q['p']['name']) * 7.3 + 4
+        w = len(q['p']['name']) * 7.6 + 4
         pref = 'start' if q['x'] >= CX else 'end'
         best = None
-        for dy in (0, -15, 15, -30, 30, -45, 45, -60, 60):
-            for side in (pref, 'end' if pref == 'start' else 'start'):
-                lx = q['x'] + 11 if side == 'start' else q['x'] - 11
-                ly = q['y'] + 5 + dy
-                x0, x1 = (lx, lx + w) if side == 'start' else (lx - w, lx)
-                if free(x0, x1, ly):
-                    best = (side, lx, ly, x0, x1); break
+        for ex in (0, 35, 70):
+            for dy in (0, -15, 15, -30, 30, -45, 45, -60, 60, -75, 75, -90, 90):
+                for side in (pref, 'end' if pref == 'start' else 'start'):
+                    lx = q['x'] + 11 + ex if side == 'start' else q['x'] - 11 - ex
+                    ly = q['y'] + 5 + dy
+                    x0, x1 = (lx, lx + w) if side == 'start' else (lx - w, lx)
+                    if free(x0, x1, ly):
+                        best = (side, lx, ly, x0, x1); break
+                if best: break
             if best: break
+        if not best:
+            print('схема: подпись без места —', q['p']['name'])
         if not best:
             side = pref; lx = q['x'] + 11 if side == 'start' else q['x'] - 11; ly = q['y'] + 5
             best = (side, lx, ly, *((lx, lx + w) if side == 'start' else (lx - w, lx)))
@@ -129,7 +141,7 @@ def scheme_items(items, types, hubpt, note, uid='zs'):
         p = q['p']
         c = col[q['t']]
         lead = ''
-        if abs(ly - 5 - q['y']) > 3:
+        if abs(ly - 5 - q['y']) > 3 or abs(lx - q['x']) > 14:
             lead = f'<path class="ld" d="M{q["x"]:.1f} {q["y"]:.1f}L{lx:.1f} {ly - 5:.1f}"/>'
         tip = f'{p["tip"]}, около {round(q["d"] / 5) * 5} км по прямой'
         o.append(f'<a href="{E(p["href"])}" class="zp" data-t="{q["t"]}" style="--d:{n}">'
