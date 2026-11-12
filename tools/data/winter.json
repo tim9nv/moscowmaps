@@ -1,0 +1,720 @@
+{
+ "checked": "12 ноября 2026",
+ "resorts": [
+  {
+   "name": "Волен (курорт «Волен-Степаново»)",
+   "site": "https://volen.ru/",
+   "status": "сайт работает, сейчас в летнем режиме; горнолыжных цифр (трассы, перепад, длины) на сайте нет",
+   "vertical_m": null,
+   "trails": null,
+   "longest_m": null,
+   "lifts": {
+    "count": null,
+    "types": [
+     "кресельные",
+     "бугельные",
+     "траволаторы"
+    ],
+    "note": "типы — из «Правил поведения на канатных дорогах»; числа нет"
+   },
+   "rental": true,
+   "school": true,
+   "night": null,
+   "tubing": true,
+   "season_2026_27": "Акция «Зима близко»: «Зима 01.11.26 — 28.02.27»; «Встречайте новый сезон до первого снега!»; дата открытия склонов не названа",
+   "how_to_get": "На машине: по Дмитровскому шоссе в сторону п. Деденево (≈40 км от МКАД), после Деденево через 2 км под ж/д мост, прямо ~2,5 км до стелы «Волен», налево, ~900 м через мост до развилки у мотеля «Норд», налево, через ~1 км развязка «Животино»: направо — «Волен», прямо — «Степаново». На поезде: от ст. «Яхрома» — маршрутка 9 или такси; от ст. «Дмитров» — автобус 38 или такси.",
+   "price_note": "Акция 01.11.26–30.11.26: ски-пасс за 10 000 ₽ (тариф «Один за всех») + подготовка снаряжения в подарок. Цены разового подъёма на сайте нет.",
+   "distance_note": "«всего в 40 км от Москвы» (главная volen.ru)",
+   "notes": "Адрес: Яхрома, ул. Троицкая, 1. Есть ссылка на Яндекс Карты с центром ll=37.460069,56.266333 — это центр карты-конструктора, не точка курорта; лучше OSM.",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://volen.ru/",
+    "https://volen.ru/about_the_park",
+    "https://volen.ru/specpredlozheniya/winter-is-coming",
+    "https://volen.ru/rules_of_conduct_on_cable_cars",
+    "https://volen.ru/sitemap.xml"
+   ],
+   "osm": "Волен",
+   "title": "Волен"
+  },
+  {
+   "name": "Степаново",
+   "site": "https://volen.ru/",
+   "status": "отдельного сайта нет: stepanovo.ru не открывается (502 через прокси), страница volen.ru/stepanovo — 404; на volen.ru курорт называется «Волен-Степаново», отдельных данных по Степаново нет",
+   "vertical_m": null,
+   "trails": null,
+   "longest_m": null,
+   "lifts": null,
+   "rental": null,
+   "school": null,
+   "night": null,
+   "tubing": null,
+   "season_2026_27": null,
+   "how_to_get": "См. Волен: на развязке «Животино» прямо — в «Степаново» (volen.ru)",
+   "price_note": null,
+   "distance_note": null,
+   "notes": "Пресса (T-Ж, 07.02.2023): трассы 550–900 м, кресельные и бугельные, 100–240 ₽ за подъём; RIAMO (2016, обн. 2022): 4 склона, почти 1 км, перепад до 90 м, 2 кресельных. В комментариях T-Ж читатель оспаривает длину (370 м). Официально не подтверждено.",
+   "source_type": "official+press",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://volen.ru/about_the_park",
+    "https://t-j.ru/short/skiing-moscow/",
+    "https://riamo.ru/articles/istorii/gde-pokatatsya-na-gornyh-lyzhah-i-snouborde-v-moskve-i-podmoskove-xl/"
+   ],
+   "osm": "Степаново",
+   "title": "Степаново"
+  },
+  {
+   "name": "Сорочаны",
+   "site": "https://sorochany.ru/",
+   "status": "работает (сайт обновлён: новость 30.10.2026)",
+   "vertical_m": 90,
+   "trails": 10,
+   "longest_m": 1050,
+   "lifts": {
+    "count": null,
+    "types": [
+     "кресельные (2- и 4-местные)",
+     "бугельные",
+     "беби-лифт",
+     "ленточный (упомянут в тарифах)"
+    ],
+    "note": "«О курорте»: 2-местная и 4-местная кресельные + 3 бугельных + беби-лифт. Схема курорта: три 2-кресельные (склоны 9-10, 8, 1), одна 4-кресельная, бугельные Б1, Б2, Б3, М и строящаяся 2-кресельная. Расходится."
+   },
+   "rental": true,
+   "school": true,
+   "night": true,
+   "tubing": true,
+   "season_2026_27": "Открыт раздел «Тарифы сезона Зима 2026-2027»; даты открытия нет. Прошлый сезон закрыт 29.03.2026 в 24:00.",
+   "how_to_get": "На автомобиле (49 км от МКАД): по Дмитровскому ш., на 37 км после п. Икша направо (указатель Ярославль, Софрино, Ногинск), через мост, перед д. Подосинки налево, через 10 км у д. Ильинское налево, через 2 км курорт; стоянка справа, проход по подземному переходу. Экспресс с Савёловского вокзала до ст. «Дмитров» (~1,2 ч), далее автобус 42 до д. Курово. Электричка с Савёловского до ст. «Яхрома» (~1,5 ч), далее автобус 42 до д. Курово. Автобус 401 от м. «Алтуфьево» до автостанции Дмитров, далее автобус 42 до д. Курово.",
+   "price_note": "Страница «Тарифы сезона Зима 2026-2027» (проверено 12.11.2026): абонемент «Основной» — 1 подъём в будни 200 ₽, в выходные 350 ₽ (380 ₽ с 02.01 по 10.01); пластиковая карта 50 ₽. Внимание: в таблице даты «02.01.26–10.01.26» — похоже, таблица прошлого сезона.",
+   "distance_note": "49 км от МКАД (sorochany.ru)",
+   "notes": "Зимний режим сезона 2025-2026: пн с 14:00 до 24:00, вт с 10:00 до 24:00, ср с 10:00 до 01:00… (вечернее катание есть). Адрес: Дмитровский м. о., д. Курово, 68.",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://sorochany.ru/pages/o-kurorte",
+    "https://sorochany.ru/map",
+    "https://sorochany.ru/pages/rezim-raboty",
+    "https://sorochany.ru/tariffs/view/skipass",
+    "https://sorochany.ru/pages/o-kurorte/kak-dobratsia",
+    "https://sorochany.ru/news/zakrytie-sezona-2025-2026"
+   ],
+   "osm": "Сорочаны",
+   "title": "Сорочаны"
+  },
+  {
+   "name": "Горнолыжный клуб Леонида Тягачёва (Шуколово)",
+   "site": "https://shukolovo.ru/",
+   "status": "работает (на странице режима: «Работа клуба — Не работает», межсезонье)",
+   "vertical_m": 96,
+   "trails": 12,
+   "longest_m": 600,
+   "lifts": {
+    "count": 8,
+    "types": [
+     "кресельный",
+     "бугельные",
+     "подъёмник тюбинга"
+    ],
+    "note": "«восемь подъемников»; типы по тарифам"
+   },
+   "rental": true,
+   "school": true,
+   "night": true,
+   "tubing": true,
+   "season_2026_27": null,
+   "how_to_get": "Своим ходом: с Савёловского вокзала электричкой до ст. «Турист», там такси, до клуба 3 км. На машине: 39 км от МКАД по Дмитровскому ш., у д. Шуколово налево; или в п. Деденево по указателю налево, через площадь пос. «Турист», к ж/д, после переезда налево, в горку направо.",
+   "price_note": "На сайте тарифы сезона «зима 2025-2026» (2026/27 ещё нет): разовый подъём 150 ₽ будни / 250 ₽ выходные; почасовой 2 ч — 1 400 ₽, 3 ч — 2 000 ₽.",
+   "distance_note": "39 км от МКАД (shukolovo.ru, «Контакты»)",
+   "notes": "Трассы 0–11: длины 210–600 м, перепады 42,5–96 м (№7–9: 600 м, 96 м); №10–11 учебные. «Вечером и ночью работает освещение». Тюбинг-трасса 280 м с подъёмником, будни 400 ₽/ч. Есть лыжня ~3 км (бесплатно, классика и конёк).",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://shukolovo.ru/sport/skislopes",
+    "https://shukolovo.ru/sport/ski-passy",
+    "https://shukolovo.ru/about/rezhim-raboty",
+    "https://shukolovo.ru/about/contacts",
+    "https://shukolovo.ru/sport/tubing",
+    "https://shukolovo.ru/sport/lyzhnya"
+   ],
+   "osm": "Клуб Леонида Тягачёва (Шуколово)",
+   "title": "Клуб Леонида Тягачёва (Шуколово)"
+  },
+  {
+   "name": "Лисья гора (Балашиха)",
+   "site": "https://foxrock.su/",
+   "status": "работает; сезон 2025-26 закрыт 14.03.2026",
+   "vertical_m": 95,
+   "trails": 5,
+   "longest_m": 400,
+   "lifts": {
+    "count": null,
+    "types": [
+     "бугельные «швабра» (2-местные)",
+     "бугельные «тарелка» (1-местные)",
+     "ленточный (тюбинг)"
+    ],
+    "note": "кресельных нет, хотя адрес страницы /chairlift"
+   },
+   "rental": true,
+   "school": true,
+   "night": true,
+   "tubing": true,
+   "season_2026_27": null,
+   "how_to_get": "1) м. «Щёлковская», автобус/маршрутка 338 до ост. «Баня» (Балашиха) или маршрутка 396 до ост. «РГАЗУ», далее пешком 300 м. 2) м. «Новогиреево», маршрутка 125 до ост. «РГАЗУ». 3) м. «Выхино», маршрутка 193В до ост. «Горсовет», к «Макдональдсу», между ним и ТЦ «Вертикаль» направо, 7–10 минут, мостик через речку. 4) Электричка с Курского вокзала до пл. «Кучино», далее любой автобус в сторону Балашихи до ост. «Баня», 300 м пешком. Адрес: Балашиха, Леоновское ш. (700 м от а/д Москва — Нижний Новгород).",
+   "price_note": "Тарифы сезона 2025-2026 (2026/27 нет): 1 проход в будни 12:00–18:00 — 100 ₽, 18:00–24:00 — 110 ₽; в выходные 10:00–17:00 — 180 ₽; карта ски-пасса 120 ₽.",
+   "distance_note": "«в 7 км от МКАД» (foxrock.su, «Описание»)",
+   "notes": "Склоны 1, 1а (учебный), 2, 3 (350 м, 63 м), 4 (400 м, >95 м), 5 (>400 м, >95 м), Т (тюбинг). «Особая технология освещения… в любое время суток».",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://foxrock.su/about/info",
+    "https://foxrock.su/downhills/description",
+    "https://foxrock.su/services/winter/chairlift",
+    "https://foxrock.su/contacts",
+    "https://foxrock.su/services/winter/instructors",
+    "https://foxrock.su/"
+   ],
+   "osm": "Лисья гора",
+   "title": "Лисья гора"
+  },
+  {
+   "name": "Лоза (ГЦ «Лоза», Сергиев Посад)",
+   "site": "https://lozaski.ru/",
+   "status": "работает; на главной «Подготовка к сезону 2026/27… уже начали готовиться»; chylkovo.ru — это другой курорт (Гая Северина)",
+   "vertical_m": 65,
+   "trails": 4,
+   "longest_m": 350,
+   "lifts": {
+    "count": 4,
+    "types": [
+     "бугельные тарелочные (3)",
+     "бугельный Т-образный на двоих (1)"
+    ],
+    "note": "по одному на склон"
+   },
+   "rental": true,
+   "school": true,
+   "night": true,
+   "tubing": false,
+   "season_2026_27": "«Уже начали готовиться к сезону 2026/27» (главная); дата открытия не названа",
+   "how_to_get": "На машине: по Ярославскому ш. в объезд Сергиева Посада до указателя «п. Лоза», направо, на перекрёстке перед п. Лоза направо (указатель «Восход»), до указателя курорта. Общественным: электричка с Ярославского вокзала; или автобус 388 от ВДНХ до Сергиева Посада, далее автобус 36 или такси.",
+   "price_note": "Сезон 2025/2026: карта 100 ₽; 1 подъём от 60 ₽ в будни (тариф №1 за 12 000 ₽) до 90 ₽ (тариф №6 за 600 ₽); в выходные 100–200 ₽.",
+   "distance_note": "«в 50 км от МКАД» (lozaski.ru/o-nas); пресса пишет 57 и 70 км",
+   "notes": "«4 трассы протяженностью 250-350 м, с перепадом высот от 40 до 65 м»; на страницах склонов: склон 1 — 200 м, склон 2 — до 200 м, учебная — 300 м, «Большая гора» — самая длинная (длина не указана). Тюбинг — только в соседнем пансионате «Восход». Инструкторы — через Telegram-канал курорта.",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://lozaski.ru/",
+    "https://lozaski.ru/o-nas/",
+    "https://lozaski.ru/slopes/sklon-3/",
+    "https://lozaski.ru/kontakty/",
+    "https://lozaski.ru/tarify/ski-pass/"
+   ],
+   "osm": "Лоза",
+   "title": "Лоза"
+  },
+  {
+   "name": "Спас-Каменка",
+   "site": "https://spaskamenka.ru/snowpark1/",
+   "status": "сноупарк коттеджного посёлка; «ГОРНОЛЫЖНЫЙ СЕЗОН 2026г. ЗАКРЫТ!»",
+   "vertical_m": 40,
+   "trails": 3,
+   "longest_m": 300,
+   "lifts": {
+    "count": 3,
+    "types": [
+     "бугельные беби-лифты (П1, П2)",
+     "вытяжной бугельный (П3)"
+    ]
+   },
+   "rental": true,
+   "school": true,
+   "night": null,
+   "tubing": true,
+   "season_2026_27": null,
+   "how_to_get": "Только «Дмитровское шоссе, 26 км от МКАД» (шапка сайта); схема проезда — картинкой",
+   "price_note": "Сезон 2025-2026: вход с безлимитом на день, взрослый — 1 000 ₽ будни / 1 500 ₽ выходные; залог за ленту 1 000 ₽ (только наличные).",
+   "distance_note": "26 км от МКАД (spaskamenka.ru)",
+   "notes": "Склоны: №1 300 м, №2 100 м, №3 260 м, высота 40 м; тюбинг 200 м. Противоречие: режим «пн–пт выходной, сб–вс 10:00–20:00», а в тарифах есть будние цены. Есть лыжная трасса 2,5 км вокруг озера.",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://spaskamenka.ru/snowpark1/",
+    "https://spaskamenka.ru/sport/",
+    "https://spaskamenka.ru/"
+   ],
+   "osm": "Спас-Каменка",
+   "title": "Спас-Каменка"
+  },
+  {
+   "name": "Лужки (ЛУЖКИ.клуб, Истра)",
+   "site": "https://luzhki.com/sport/ski/",
+   "status": "клуб-дом отдыха; горнолыжный комплекс описан на сайте, цен и сезона нет",
+   "vertical_m": null,
+   "trails": 3,
+   "longest_m": 450,
+   "lifts": {
+    "count": 2,
+    "types": [
+     "кресельная (60 двухместных кресел, подъём за 4 минуты)",
+     "траволатор с куполом на учебном склоне"
+    ]
+   },
+   "rental": true,
+   "school": true,
+   "night": null,
+   "tubing": null,
+   "season_2026_27": null,
+   "how_to_get": null,
+   "price_note": null,
+   "distance_note": null,
+   "notes": "«Три склона длиной до 450 метров», учебный склон 150 м. Координаты — с сайта: GPS +55° 51' 13.33\", +36° 58' 58.51\" (переведено в [lon, lat]). Адрес: г. о. Истра, территория дома отдыха Лужки.клуб. Есть карты «Гость Клуба» — уточнить, пускают ли без проживания.",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://luzhki.com/sport/ski/",
+    "https://luzhki.com/contacts/"
+   ],
+   "osm": "Лужки",
+   "title": "Лужки"
+  },
+  {
+   "name": "Кант (СК «Кант», Москва)",
+   "site": "https://kant-sport.ru/",
+   "status": "работает; «Закрыто до сезона 26/27»; kant.ru — чужой/недоступный (403)",
+   "vertical_m": 55,
+   "trails": 20,
+   "longest_m": null,
+   "lifts": {
+    "count": null,
+    "types": [
+     "бугельные (БКД, «тарелочки»)"
+    ],
+    "note": "по таблице склонов; полная таблица подгружается скриптом"
+   },
+   "rental": true,
+   "school": true,
+   "night": null,
+   "tubing": true,
+   "season_2026_27": "«Закрыто до сезона 26/27»; идёт предпродажа сезонных ски-пассов 2026/27",
+   "how_to_get": "м. «Нагорная», ~5 минут: последний вагон из центра, из стеклянных дверей налево, на выходе снова налево, по Электролитному пр. ~300 м, по указателю КАНТ налево. Адрес: Электролитный пр., вл. 7Б. На авто — с Варшавского ш., ул. Ремизова или от м. «Нагатинская», въезд на парковку с Проектируемого пр. №3735.",
+   "price_note": "Сезон 2026/27: безлимитный сезонный ски-пасс 59 990 ₽ (в предпродаже 52 990 ₽); 5 посещений по 4 ч — 27 300 ₽; залог за карту 250 ₽. Разового подъёма в выгрузке нет.",
+   "distance_note": null,
+   "notes": "«20 склонов», «3550 метров общая протяженность», «12 из 20 склонов открыты для катания по ски-пассу», 8 — под инструкторов; в шапке «Склонов открыто 0/21» — расходится (20 или 21). Перепад 55 м — у спортивного склона №2 (160 м) и сноупарка 210 м / 50 м; максимум по всем склонам не указан. Режим комплекса в «Контактах»: пн 14–21, вт–пт 9–21, сб–вс 9–18 (похоже, внесезонный).",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://kant-sport.ru/skislopes/",
+    "https://kant-sport.ru/contact/",
+    "https://kant-sport.ru/ski-pass/"
+   ],
+   "osm": "Кант",
+   "title": "Кант"
+  },
+  {
+   "name": "Лата Трэк (Крылатское)",
+   "site": "https://spusk.ru/",
+   "status": "работает; на сайте предпродажа ски-пассов «до открытия сезона»",
+   "vertical_m": null,
+   "trails": 6,
+   "longest_m": null,
+   "lifts": {
+    "count": null,
+    "types": [
+     "бугельные (в вакансиях «оператор БКД»)",
+     "подъёмники тюбинга"
+    ]
+   },
+   "rental": true,
+   "school": true,
+   "night": true,
+   "tubing": true,
+   "season_2026_27": "«Предпродажа ски-пассов со скидкой до открытия сезона! Скидки до 15%»; дата открытия не названа",
+   "how_to_get": "Склоны: ул. Крылатская, вл. 1 (тюбинг — ул. Крылатская, д. 1, въезд напротив Крылатские холмы 7/2). М. «Молодёжная»: первый вагон из центра, налево, автобус 229 до ост. «Гребной канал» (4 остановки), 3 минуты пешком, вход №1. М. «Крылатское»: автобус 829 до «Гребной канал» (8 остановок). На авто — парковка №4262 на ул. Крылатская, 5 минут пешком к входам №1–3.",
+   "price_note": "Карта «Любитель» 150 ₽; 1 подъём в будни до 16:00 — 110 ₽, после 16:00 — 150 ₽; в выходные до 19:00 — 220 ₽, после 19:00 — 170 ₽ (content.js сайта, проверено 12.11.2026; сезон не подписан).",
+   "distance_note": null,
+   "notes": "Режим склонов: пн 14:00–23:30, вт–чт 09:00–23:30, пт 09:00–01:00, сб 08:00–01:00, вс 08:00–23:30. 4 тюбинговые трассы по 200 м. Школы: Крыловых, Zavadovskaya Club, ProRide, AllPro.",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://spusk.ru/",
+    "https://spusk.ru/content.js",
+    "https://spusk.ru/assets/main-CSKMI850.js"
+   ],
+   "osm": "Лата Трэк",
+   "title": "Лата Трэк"
+  },
+  {
+   "name": "Горнолыжный клуб Гая Северина (Чулково)",
+   "site": "https://chylkovo.ru/",
+   "status": "работает; «Сезон 25/26 — завершен, Клуб — закрыт»",
+   "vertical_m": null,
+   "trails": 4,
+   "longest_m": null,
+   "lifts": {
+    "count": null,
+    "types": null,
+    "note": "в истории: с 2001 г. «2 новых подъемника — основной и учебный»"
+   },
+   "rental": null,
+   "school": null,
+   "night": true,
+   "tubing": false,
+   "season_2026_27": null,
+   "how_to_get": "Адрес: Раменский р-н, пос. им. Тельмана, ул. Курганная, 1; «в 18 км от Москвы по Новорязанскому шоссе». Маршрута общественным транспортом на сайте нет.",
+   "price_note": null,
+   "distance_note": "18 км (о клубе)",
+   "notes": "Трассы: «Звезда», «Учебная», «Боровская», «Лесная»; «Тюбинговых трасс — нет». График прошлого сезона до 23:00–00:00. Склоны на территории памятника природы «Боровской курган».",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "sources": [
+    "https://chylkovo.ru/",
+    "https://chylkovo.ru/o-klube/"
+   ],
+   "osm": "Склон «Звезда» (Томилино)",
+   "title": "Клуб Гая Северина (Чулково)"
+  }
+ ],
+ "xc": [
+  {
+   "name": "Целеево — беговые трассы",
+   "site": "https://tseleevo.ru/ski/cross-country-skiing",
+   "coords": null,
+   "loops_km": "3,85, 6,0, 7,0 км",
+   "styles": "классика, конёк",
+   "lights": true,
+   "rental": true,
+   "changing_room": true,
+   "parking": null,
+   "how_to_get": null,
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "notes": "Общая протяжённость 7,5 км, ширина 6–9 м. Названия трасс расходятся: в одном месте «Ученик/Любитель/Профи», рядом «Новичок» 3 850 м. Въезд по пропуску.",
+   "sources": [
+    "https://tseleevo.ru/ski/cross-country-skiing"
+   ]
+  },
+  {
+   "name": "Лыжня Горнолыжного клуба Л. Тягачёва (Шуколово)",
+   "site": "https://shukolovo.ru/sport/lyzhnya",
+   "coords": null,
+   "loops_km": "3 км",
+   "styles": "классика, конёк",
+   "lights": null,
+   "rental": true,
+   "changing_room": null,
+   "parking": true,
+   "how_to_get": "См. курорт Шуколово (электричка до ст. «Турист»)",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "notes": "«около 3 километров», «бесплатно», беговые лыжи есть в прокате; «большая бесплатная парковка» — со страницы склонов.",
+   "sources": [
+    "https://shukolovo.ru/sport/lyzhnya",
+    "https://shukolovo.ru/sport/skislopes"
+   ]
+  },
+  {
+   "name": "Лыжный стадион «Зоркий» (Красногорск)",
+   "site": "https://masouzorky.ru/lizhn",
+   "coords": null,
+   "loops_km": "5 км",
+   "styles": null,
+   "lights": null,
+   "rental": null,
+   "changing_room": true,
+   "parking": null,
+   "how_to_get": "Адрес: Красногорск, ул. Речная, 37",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "notes": "«лыжная трасса 5 км, имеющая международный сертификат», лыжная база; раздевалки и шкафы — платная услуга (шкаф 150 ₽/ч). Пресса (RIAMO 2021, 360 2020): круги 3 и 5 км, прокат есть; у RIAMO адрес «Речная, 39».",
+   "sources": [
+    "https://masouzorky.ru/lizhn",
+    "https://riamo.ru/articles/istorii/top-10-lyzhnyh-trass-moskovskogo-regiona-gde-katatsya-na-lyzhah-zimoj-2021-2022-xl/"
+   ]
+  },
+  {
+   "name": "Спас-Каменка — лыжная трасса вокруг озера",
+   "site": "https://spaskamenka.ru/sport/",
+   "coords": null,
+   "loops_km": "2,5 км",
+   "styles": null,
+   "lights": null,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "Дмитровское ш., 26 км от МКАД",
+   "source_type": "official",
+   "checked": "2026-11-12",
+   "notes": "«Подготовленная лыжная трасса длиной 2,5 км»; освещена прогулочная дорожка вокруг озера (>2,5 км) — освещена ли лыжня, не сказано. Вход на территорию платный (см. курорт).",
+   "sources": [
+    "https://spaskamenka.ru/sport/",
+    "https://spaskamenka.ru/snowpark1/"
+   ]
+  },
+  {
+   "name": "СШОР «Истина» (Истра)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": null,
+   "rental": true,
+   "changing_room": true,
+   "parking": true,
+   "how_to_get": "Адрес по прессе: г. о. Истра, д. Головино, 89",
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден. RIAMO (10.12.2021, обн. 02.11.2022): «15 км», прокат, раздевалки, парковка.",
+   "sources": [
+    "https://riamo.ru/articles/istorii/top-10-lyzhnyh-trass-moskovskogo-regiona-gde-katatsya-na-lyzhah-zimoj-2021-2022-xl/",
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "«Снежинка» / стадион им. А. Резцовой (Химки)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": null,
+   "rental": true,
+   "changing_room": null,
+   "parking": true,
+   "how_to_get": "Адрес по прессе: Химки, ул. Мичурина, стр. 24",
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден. RIAMO 2021: «до 5 км»; 360 (12.11.2020): «от 500 до 5000 м». По выходным часто соревнования.",
+   "sources": [
+    "https://riamo.ru/articles/istorii/top-10-lyzhnyh-trass-moskovskogo-regiona-gde-katatsya-na-lyzhah-zimoj-2021-2022-xl/",
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "Одинцовский парк им. Л. Лазутиной («Лазутинская лыжня»)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": "классика, конёк",
+   "lights": true,
+   "rental": true,
+   "changing_room": true,
+   "parking": true,
+   "how_to_get": null,
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден (догадки odinpark.ru, lazutinka.ru не открылись). Пресса: ~6 км, ширина 4 м, освещение, тёплые раздевалки, бесплатная парковка, 07:00–01:00 (RIAMO 2021; news.ru 02.01.2026). Адреса расходятся: «Красногорское ш., 3 км» (RIAMO) и «Манжосовская ул., 1» (360, 2020).",
+   "sources": [
+    "https://news.ru/family/puteshestviya/lyzhnye-trassy-podmoskovya-kuda-poehat-katatsya",
+    "https://riamo.ru/articles/istorii/top-10-lyzhnyh-trass-moskovskogo-regiona-gde-katatsya-na-lyzhah-zimoj-2021-2022-xl/",
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "Спортивный парк «Пересвет» (Сергиево-Посадский г. о.)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": true,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "Адрес по прессе: Пересвет, ул. Пионерская, 9",
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден. news.ru (02.01.2026): 12 км, четыре уровня сложности, освещение; вход бесплатный для постояльцев и местных, для остальных — взнос.",
+   "sources": [
+    "https://news.ru/family/puteshestviya/lyzhnye-trassy-podmoskovya-kuda-poehat-katatsya",
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "СК «Ромашково»",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": null,
+   "rental": true,
+   "changing_room": true,
+   "parking": null,
+   "how_to_get": null,
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден (sk-romashkovo.ru — таймаут). news.ru (02.01.2026): до 20 км, холмы, прокат, раздевалки, баня.",
+   "sources": [
+    "https://news.ru/family/puteshestviya/lyzhnye-trassy-podmoskovya-kuda-poehat-katatsya"
+   ]
+  },
+  {
+   "name": "«Волкуша» (Лыткарино)",
+   "site": null,
+   "coords": null,
+   "loops_km": "5, 7,5, 10 км",
+   "styles": null,
+   "lights": null,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": null,
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден. news.ru (02.01.2026): трассы 5; 7,5 и 10 км, «перепад высот около 200 м» (сомнительно для Лыткарина), освещена только стартовая зона, бесплатно, искусственное оснежение. 360 (2020): «освещенные дорожки», Томилинский лесопарк. Расходится.",
+   "sources": [
+    "https://news.ru/family/puteshestviya/lyzhnye-trassy-podmoskovya-kuda-poehat-katatsya",
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "«Красные крылья» (Серпухов)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": null,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "По прессе: д. Васильевское",
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден; в 360 (2020) только название и место.",
+   "sources": [
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "Центр зимних видов спорта (Дмитров)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": true,
+   "rental": true,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "По прессе: мкр. Внуковский, 28",
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Официальный сайт не найден; 360 (2020): освещённые трассы, аренда инвентаря.",
+   "sources": [
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "Королёв (лыжная база КМК / «Народная тропа»)",
+   "site": null,
+   "coords": null,
+   "loops_km": null,
+   "styles": null,
+   "lights": false,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "По прессе: начало у дома 10 по Октябрьскому бульвару",
+   "source_type": "press",
+   "checked": "2026-11-12",
+   "notes": "Отдельной базы КМК не нашёл; в 360 (2020) — «Народная тропа», без освещения. Может быть, это другое место.",
+   "sources": [
+    "https://360.ru/news/mosobl/mesta-dlja-katanija-na-lyzhah-v-podmoskove/"
+   ]
+  },
+  {
+   "name": "Битцевский лес (Москва)",
+   "site": "https://www.mos.ru/news/item/100868073/",
+   "coords": null,
+   "loops_km": "20, 5, 5, 3, 2,5, 2, 1,5, 0,9 км",
+   "styles": "классика, конёк",
+   "lights": null,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "Самая длинная трасса — МКАД 36-й км, внешняя сторона («Альфа-Битца»), 20 км; 5 км — Новоясеневский тупик, вл. 1 и ул. Поляны, 4–6",
+   "source_type": "official (mos.ru), устарело",
+   "checked": "2026-11-12",
+   "notes": "Данные mos.ru за 27.12.2021; mos.ru 22.12.2022: самая длинная 20 км, 2 км трассы с пушками. Новее официального списка не нашёл. Альфа-Битца: news.ru 2026 — до 24 км, прокат, раздевалки (press).",
+   "sources": [
+    "https://www.mos.ru/news/item/100868073/",
+    "https://www.mos.ru/news/item/117870073/",
+    "https://news.ru/family/puteshestviya/lyzhnye-trassy-podmoskovya-kuda-poehat-katatsya"
+   ]
+  },
+  {
+   "name": "Измайлово (Москва)",
+   "site": "https://www.mos.ru/news/item/100868073/",
+   "coords": null,
+   "loops_km": "7,5, 5,25, 3,2, 2,0, 1,6, 2,9 км",
+   "styles": "классика, конёк",
+   "lights": null,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "7,5 и 5,25 км — Измайловская пасека, 1; 3,2 и 2 км — Главная аллея, 11",
+   "source_type": "official (mos.ru), устарело",
+   "checked": "2026-11-12",
+   "notes": "mos.ru 27.12.2021; mos.ru 09.12.2023: в ПИП «Измайловский» спортивная коньковая лыжня (без длины).",
+   "sources": [
+    "https://www.mos.ru/news/item/100868073/",
+    "https://www.mos.ru/news/item/133135073"
+   ]
+  },
+  {
+   "name": "Крылатское (Москва)",
+   "site": "https://www.mos.ru/news/item/100868073/",
+   "coords": null,
+   "loops_km": "1,0 км",
+   "styles": null,
+   "lights": null,
+   "rental": null,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "ул. Крылатская, напротив д. 31",
+   "source_type": "official (mos.ru), устарело",
+   "checked": "2026-11-12",
+   "notes": "mos.ru 27.12.2021, дирекция «Москворецкий»: 1 000 м. Новее не нашёл.",
+   "sources": [
+    "https://www.mos.ru/news/item/100868073/"
+   ]
+  },
+  {
+   "name": "Сокольники (Москва)",
+   "site": "https://www.mos.ru/news/item/133135073",
+   "coords": null,
+   "loops_km": "4,5, 1,5, 10 км",
+   "styles": "классика (трассы с искусственным снегом)",
+   "lights": null,
+   "rental": true,
+   "changing_room": null,
+   "parking": null,
+   "how_to_get": "Беговой клуб: Митьковский пр., 11",
+   "source_type": "official (mos.ru), 2023",
+   "checked": "2026-11-12",
+   "notes": "mos.ru 09.12.2023: 4,5 и 1,5 км с искусственным снегом, самый длинный маршрут №6 — 10 км; прокат в беговом клубе 10:00–21:00.",
+   "sources": [
+    "https://www.mos.ru/news/item/133135073"
+   ]
+  },
+  {
+   "name": "ВДНХ / парк «Останкино» (Москва)",
+   "site": "https://www.mos.ru/news/item/148085073/",
+   "coords": null,
+   "loops_km": "5, 4,7, 0,5, 0,25, 0,25 км",
+   "styles": "классика (2023)",
+   "lights": true,
+   "rental": true,
+   "changing_room": true,
+   "parking": null,
+   "how_to_get": null,
+   "source_type": "official (mos.ru), 2023–2024",
+   "checked": "2026-11-12",
+   "notes": "mos.ru 19.12.2024: 5 км «Останкино», 4,7 км Ботанический сад, 500 м тренировочная, две детские по 250 м; прокат вт–вс 10–22. Освещение по вечерам, классика, тёплая раздевалка — mos.ru 16.12.2023.",
+   "sources": [
+    "https://www.mos.ru/news/item/148085073/",
+    "https://www.mos.ru/news/item/133291073/"
+   ]
+  }
+ ]
+}
