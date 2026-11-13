@@ -5,7 +5,7 @@
 import json, os, re, glob
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = json.load(open(f'{REPO}/tools/data/life_parts.json', encoding='utf-8'))
-NAMES = [('tr', 'Метро, МЦК, МЦД'), ('roads', 'Дороги: пробки'), ('eco', 'Экология'), ('soc', 'Школы и поликлиники'), ('green', 'Зелень и парки рядом'), ('quiet', 'Тишина'), ('height', 'Без высоток'), ('live', 'Кафе и магазины'), ('sport', 'Спорт')]
+NAMES = [('tr', 'На метро'), ('roads', 'На автомобиле'), ('eco', 'Экология'), ('soc', 'Школы и поликлиники'), ('green', 'Зелень и парки рядом'), ('quiet', 'Тишина'), ('height', 'Без высоток'), ('live', 'Кафе и магазины'), ('sport', 'Спорт')]
 LIMN = {'eco': 'экология', 'tr': 'метро и электрички'}
 fmt = lambda v: f'{v:.1f}'.replace('.', ',')
 CSS = ('<style>.lifeb{box-sizing:border-box;max-width:100%;border:1px solid var(--border,#27376B);padding:16px 18px;margin:16px 0}.lifeb h2{margin:0 0 4px!important}'
@@ -23,8 +23,8 @@ def block(sl):
             f'(итог не выше этого показателя плюс {D["cap_plus"]} балла). ') if d.get('lim') else ''
     return ('<!--LIFE-SCORE--><section class="lifeb">' + CSS + '<h2>Балл для жизни</h2>'
             f'<p class="tot"><b>{fmt(d["v"])}</b> из 10 · {d["rank"]}-е место из 125 районов</p><ul>{rows}</ul>'
-            f'<p class="n">{note}Каждый показатель — от 0 до 10, справа его вес в общем балле. Цена жилья не учитывается. Тишина, высотность и «парки рядом» посчитаны по домам из OpenStreetMap (тишина — не замер шума, а расстояние до магистралей и станций; смотрите кнопки на карте района). «Дороги» — сколько квартир приходится на крупные дороги вокруг, <a href="../../roads.html">карта «Машиной»</a>. '
-            '<a href="../../reyting/luchshie-rayony/">Весь рейтинг и как он считается →</a></p></section><!--LIFE-SCORE-END-->')
+            f'<p class="n">{note}Каждый показатель — от 0 до 10, справа его вес в общем балле. Цена жилья не учитывается. Тишина, высотность и «парки рядом» посчитаны по домам из OpenStreetMap (тишина — не замер шума, а расстояние до магистралей и станций; смотрите кнопки на карте района). «На автомобиле» — сколько квартир приходится на крупные дороги вокруг, <a href="../../roads.html">карта «На автомобиле»</a>. '
+            '<a href="../../reyting/">Рейтинг районов: что важно вам →</a></p></section><!--LIFE-SCORE-END-->')
 n = 0
 for f in glob.glob(f'{REPO}/rayon/*/index.html'):
     sl = f.split('/')[-2]

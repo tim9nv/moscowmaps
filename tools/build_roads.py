@@ -1,6 +1,6 @@
-"""Вкладка «Транспорт → Машиной»: roads.html — карта районов по нагрузке на дороги (tools/data/road_load.json).
+"""Вкладка «Транспорт → На автомобиле»: roads.html — карта районов по нагрузке на дороги (tools/data/road_load.json).
 Собирается из transport.html (та же раскладка, карта на том же месте) и ставит на обе страницы
-переключатель «Метро | Машиной». Идемпотентно; запускать после atlas_style.py, перед seo_fix.py.
+переключатель «На метро | На автомобиле». Идемпотентно; запускать после atlas_style.py, перед seo_fix.py.
 """
 import json, os, re, html
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -9,7 +9,7 @@ RL = json.load(open(f'{REPO}/tools/data/road_load.json', encoding='utf-8'))
 SLUG = {n: s for s, n, _ in json.load(open(f'{REPO}/tools/data/districts_list.json', encoding='utf-8'))}
 ddmm = '.'.join(RL['date'].split('-')[::-1])
 
-SW = ('<!--TR-SWITCH--><nav class="trsw" aria-label="Как добираться"><a href="transport.html"{a}>Метро, МЦК, МЦД</a><a href="roads.html"{b}>Машиной: дороги и пробки</a></nav>'
+SW = ('<!--TR-SWITCH--><nav class="trsw" aria-label="Как добираться"><a href="transport.html"{a}>На метро</a><a href="roads.html"{b}>На автомобиле</a></nav>'
       '<style>.trsw{display:flex;gap:0;margin:0 0 14px;border:1px solid #3a4a80;max-width:100%;min-width:0}.trsw a{flex:1 1 auto;text-align:center}.trsw a{padding:9px 16px;font:500 14px/1.2 var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;color:var(--fg,#E6EBFA);text-decoration:none}'
       '.trsw a[aria-current]{background:#FFD86B;color:#0B1330}.trsw a:focus-visible{outline:2px solid #FFD86B;outline-offset:2px}@media (max-width:1000px){.wrap>*,.wrap>*>*{min-width:0;max-width:100%}.wrap>header>h1{white-space:normal!important}}@media (max-width:420px){.trsw a{padding:9px 8px;font-size:12px}}</style><!--TR-SWITCH-END-->')
 
@@ -48,7 +48,7 @@ s = s.replace('function card(p){\n', '''function card(p){
 ''', 1)
 s = s.replace('const meta=p=>CFG.kind==="hs"?', 'const meta=p=>CFG.kind==="rl"?`≈ ${num(p.rl.fl)} квартир · ${p.rl.lk.toFixed(0)} полосо-км`:CFG.kind==="hs"?', 1)
 # тексты
-s = re.sub(r'<h1>Транспорт</h1>\s*<p class="lede">.*?</p>', '<h1>Машиной: дороги и пробки</h1>\n    <p class="lede">Где жилья настроили много, а дороги остались прежними — и утром и вечером тесно. '
+s = re.sub(r'<h1>Транспорт</h1>\s*<p class="lede">.*?</p>', '<h1>На автомобиле: дороги и пробки</h1>\n    <p class="lede">Где жилья настроили много, а дороги остались прежними — и утром и вечером тесно. '
            'Для каждого района: сколько квартир приходится на один полосо-километр крупных дорог в районе и в километре вокруг. Чем больше, тем теснее в час пик. '
            'Это не замер пробок, а соотношение домов и дорог по OpenStreetMap. Наведите на район, чтобы увидеть цифры, нажмите, чтобы открыть его страницу.</p>', s, count=1, flags=re.S)
 s = re.sub(r'<section class="method">.*?</section>', '<section class="method"><h2>Как считали</h2>'
@@ -58,7 +58,7 @@ s = re.sub(r'<section class="method">.*?</section>', '<section class="method"><h
            'Число полос — из OpenStreetMap (у таких дорог оно указано почти везде), без отметки — 2 полосы на двустороннюю и 1 на одностороннюю. '
            'Скоростные дороги без светофоров пропускают больше, поэтому магистраль весит вдвое больше обычной улицы, вылетное шоссе — в полтора раза, улица районного значения — три четверти.</p>'
            '<p><b>Чего здесь нет.</b> Это не замер пробок: открытых данных о загрузке улиц по районам нет (Яндекс публиковал исследования только по городу целиком — в 2014 и 2017 годах). '
-           'Не учтены светофоры, сужения и куда именно все едут. Метро отдельно — на соседней вкладке «Метро, МЦК, МЦД».</p></section>', s, count=1, flags=re.S)
+           'Не учтены светофоры, сужения и куда именно все едут. Метро отдельно — на соседней вкладке «На метро».</p></section>', s, count=1, flags=re.S)
 s = re.sub(r'(<p class="small"[^>]*>|<footer[^>]*>)?Источники?:.*?</(p|footer)>', lambda m: m.group(0), s)
 s = s.replace('aria-label="Транспортная доступность районов Москвы"', 'aria-label="Нагрузка на дороги по районам Москвы"')
 # шапка страницы
