@@ -1,4 +1,4 @@
-"""«Мой рейтинг» на странице reyting/luchshie-rayony/: ползунки «что мне важно» и бюджет за метр,
+"""«Мой рейтинг» на странице reyting/ (вкладка «Рейтинги», с 13.11.2026 там только он): ползунки «что мне важно» и бюджет за метр,
 рейтинг пересчитывается у посетителя в браузере по тем же шкалам 0–10, что и балл «для жизни».
 Идемпотентно (блок <!--MY-RATING-->…<!--MY-RATING-END-->), запускать после life_block.py.
 Данные: tools/data/life_parts.json (шкалы) и assets/atlas.js (название, округ, цена метра)."""
@@ -7,8 +7,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 L = json.load(open(f'{REPO}/tools/data/life_parts.json', encoding='utf-8'))
 s = open(f'{REPO}/assets/atlas.js', encoding='utf-8').read()
 D, _ = json.JSONDecoder().raw_decode(s[s.index('{', s.index('const DATA')):])
-K = [('tr', 'Метро', 'метро, МЦК, МЦД рядом и время до центра'),
-     ('roads', 'Машиной', 'мало жилья на дороги — меньше пробок'),
+K = [('tr', 'На метро', 'метро, МЦК, МЦД рядом и время до центра'),
+     ('roads', 'На автомобиле', 'мало жилья на дороги — меньше пробок'),
      ('eco', 'Экология', 'воздух, заводы, ТЭЦ, свалки'),
      ('soc', 'Школы и поликлиники', 'на число жителей'),
      ('green', 'Парки и зелень', 'доля зелени и парки рядом с домом'),
@@ -46,7 +46,7 @@ JS = ('<script>(function(){var K=' + json.dumps([k for k, _, _ in K]) + ',R=' + 
       'function f1(v){return v.toFixed(1).replace(".",",")}'
       'function upd(){var W=w(),b=+sel.value;K.forEach(function(k){document.getElementById("v-"+k).textContent=LV[W[k]]});'
       'var L=R.filter(function(r){return !b||(r[3]&&r[3]<=b)}).map(function(r){return [score(r,W),r]}).filter(function(x){return x[0]!=null}).sort(function(a,c){return c[0]-a[0]});'
-      'var n=all?L.length:15;ol.innerHTML=L.slice(0,n).map(function(x){var r=x[1];return \'<li><span><a href="../../rayon/\'+r[0]+\'/">\'+r[1]+\'</a><span class="o">\'+r[2]+\'</span></span><span class="pr">\'+(r[3]?r[3]+" тыс. ₽/м²":"цены нет")+\'</span><span class="sc">\'+f1(x[0])+"</span></li>"}).join("");'
+      'var n=all?L.length:15;ol.innerHTML=L.slice(0,n).map(function(x){var r=x[1];return \'<li><span><a href="../rayon/\'+r[0]+\'/">\'+r[1]+\'</a><span class="o">\'+r[2]+\'</span></span><span class="pr">\'+(r[3]?r[3]+" тыс. ₽/м²":"цены нет")+\'</span><span class="sc">\'+f1(x[0])+"</span></li>"}).join("");'
       'root.querySelector(".cnt").textContent=L.length?("Подходит районов: "+L.length+"."):"Под такой бюджет районов нет — поднимите сумму.";'
       'var m=root.querySelector(".more");m.hidden=L.length<=15;m.textContent=all?"Показать первые 15":"Показать все ("+L.length+")";'
       'try{localStorage.setItem("myr",JSON.stringify({w:W,b:b}))}catch(e){}}'
@@ -55,13 +55,12 @@ JS = ('<script>(function(){var K=' + json.dumps([k for k, _, _ in K]) + ',R=' + 
       'root.querySelector(".more").addEventListener("click",function(){all=!all;upd()});'
       'root.querySelector(".rs").addEventListener("click",function(){root.querySelectorAll("input[type=range]").forEach(function(i){i.value=DEF[i.dataset.k]||0});sel.value=0;upd()});upd()})();</script>')
 BLOCK = ('<!--MY-RATING--><section class="myr" id="myr" aria-labelledby="myr-h">' + CSS +
-         '<h2 id="myr-h">Свой рейтинг: что важно вам</h2><p class="sub">Подвиньте ползунки — рейтинг пересчитается под вас. Показатели те же, что в общем балле, по шкале от 0 до 10; '
-         'правило слабого звена тоже действует: если экология или транспорт вам важны, район с провалом по ним наверх не поднимется. Ваши настройки запоминаются в этом браузере.</p>'
+         '<h2 id="myr-h">Что важно вам</h2><p class="sub">Подвиньте ползунки — список ниже пересчитается. Настройки запоминаются в этом браузере.</p>'
          f'<div class="sl">{sliders}</div><div class="bud"><label>Цена метра (вторичка) <select>{bud}</select></label><button type="button" class="rs">Как в общем рейтинге</button>'
          '<span class="cnt" aria-live="polite"></span></div><ol></ol><button type="button" class="rs more" hidden></button>'
          '<p class="nt">Цена — медианная цена метра в объявлениях о продаже квартир на вторичном рынке (Циан, ноябрь 2026), как во вкладке «Цены». Тишина, высотность и парки рядом — по домам из OpenStreetMap.</p>'
          + JS + '</section><!--MY-RATING-END-->')
-p = f'{REPO}/reyting/luchshie-rayony/index.html'
+p = f'{REPO}/reyting/index.html'
 h = open(p, encoding='utf-8').read()
 h = re.sub(r'<!--MY-RATING-->.*?<!--MY-RATING-END-->', '', h, flags=re.S)
 i = h.index('</header>', h.index('<main')) + len('</header>')
