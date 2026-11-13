@@ -2,11 +2,11 @@
 Запуск: python3 tools/extract_district_map.py /tmp/moscow.osm.pbf
 Источник — OpenStreetMap. Для каждого района берём то, что внутри него и в полосе ~150 м вокруг (окрестности на карте притушены).
 Дома мельче 40 м² (будки, гаражи) не берём.
-Формат: {"o":[lon0,lat0], "b":[[точки, этажей|0, год|0, жилой 1/0], ...], "g":[точки,...], "i":[[точки, вид], ...], "date":...}
+Формат: {"o":[lon0,lat0], "b":[[точки, этажей|0, год|0, жилой 1/0, близость к шумным дорогам 0–3], ...], "g":[точки,...], "i":[[точки, вид], ...], "date":...}
 точки — плоский список целых: первая точка (lon-lon0)*1e5, (lat-lat0)*1e5, дальше — приращения.
 """
 import osmium, json, sys, os, re, datetime
-from shapely.geometry import shape, Polygon, box
+from shapely.geometry import shape, Polygon, box, LineString
 from shapely.strtree import STRtree
 from shapely.geometry import Point
 from shapely.prepared import prep
@@ -29,10 +29,29 @@ boxes, names = [], []
 for f in feats:
     boxes.append(shape(f['geometry']).buffer(0).buffer(0.002)); names.append(slugs[f['properties']['n']])
 tree = STRtree(boxes); pboxes = [prep(b) for b in boxes]
+pin = [prep(shape(f['geometry']).buffer(0)) for f in feats]
 out = {s: {'b': [], 'g': [], 'i': []} for s in names}
 GREEN = lambda t: t.get('leisure') in ('park', 'garden', 'nature_reserve') or t.get('landuse') == 'forest' or t.get('natural') == 'wood'
 IND = {'industrial': 'i', 'construction': 'c', 'garages': 'g', 'railway': 'r'}
+# Шумные места: магистрали (motorway, trunk), крупные улицы (primary), железнодорожные станции и платформы
+# (сама железная дорога — нет: владелец, 13.11.2026 — «поезд проехал, и всё», шумно у станций, где движуха).
+# Это не замер шума, а расстояние от стены дома до такой дороги или станции.
+BIG = {'motorway', 'motorway_link', 'trunk', 'trunk_link'}
+MID = {'primary', 'primary_link'}
+KX, KY = 111320 * math.cos(math.radians(55.75)), 110540
+lines_big, lines_mid, stations = [], [], []
 class H(osmium.SimpleHandler):
+    def way(self, w):
+        t = w.tags; hw = t.get('highway')
+        kind = 'big' if hw in BIG else 'mid' if hw in MID else None
+        if not kind or t.get('tunnel') in ('yes', 'building_passage') or t.get('layer', '0').startswith('-'): return
+        try: pts = [(n.lon * KX, n.lat * KY) for n in w.nodes]
+        except Exception: return
+        if len(pts) > 1: (lines_big if kind == 'big' else lines_mid).append(LineString(pts))
+    def node(self, n):
+        t = n.tags
+        if t.get('railway') in ('station', 'halt') and t.get('station') != 'subway' and t.get('subway') != 'yes':
+            stations.append(Point(n.location.lon * KX, n.location.lat * KY))
     def area(self, a):
         t = a.tags
         kind = 'b' if t.get('building') and t.get('building') != 'no' else 'g' if GREEN(t) else 'i' if t.get('landuse') in IND else None
@@ -58,6 +77,16 @@ class H(osmium.SimpleHandler):
             elif kind == 'g': out[names[i]]['g'].append(ring[:-1])
             else: out[names[i]]['i'].append((ring[:-1], IND[t.get('landuse')]))
 H().apply_file(sys.argv[1], locations=True)
+tb, tm, ts = STRtree(lines_big), STRtree(lines_mid), STRtree(stations)
+def near(tree, lines, pt):
+    i = tree.query_nearest(pt, max_distance=450)
+    return min((lines[k].distance(pt) for k in i), default=999)
+def noise(ring):
+    try: pg = Polygon([(x * KX, y * KY) for x, y in ring])
+    except Exception: return 0
+    db, dm, ds = near(tb, lines_big, pg), near(tm, lines_mid, pg), near(ts, stations, pg)
+    return 3 if db <= 100 or dm <= 50 or ds <= 100 else 2 if db <= 250 or dm <= 100 or ds <= 200 else 1 if db <= 400 or dm <= 200 or ds <= 300 else 0
+share = {}
 os.makedirs(f'{REPO}/assets/dmap', exist_ok=True)
 tot = 0
 for i, s in enumerate(names):
@@ -68,8 +97,13 @@ for i, s in enumerate(names):
         for a, b in zip(q, q[1:]): o += [b[0] - a[0], b[1] - a[1]]
         return o
     d = out[s]
-    js = {'o': [round(x0, 5), round(y0, 5)], 'b': [[enc(r), l, y, res] for r, l, y, res in d['b']], 'g': [enc(r) for r in d['g']],
+    bs = [[enc(r), l, y, res, noise(r) if res else 0] for r, l, y, res in d['b']]
+    inside = [b for b, (r, *_ ) in zip(bs, d['b']) if b[3] and pin[i].contains(Point(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)))]
+    if inside: share[s] = {'n': len(inside), 'n3': sum(1 for b in inside if b[4] == 3), 'n2': sum(1 for b in inside if b[4] == 2)}
+    js = {'o': [round(x0, 5), round(y0, 5)], 'b': bs, 'g': [enc(r) for r in d['g']],
           'i': [[enc(r), k] for r, k in d['i']], 'date': datetime.date.today().isoformat()}
     p = f'{REPO}/assets/dmap/{s}.json'
     json.dump(js, open(p, 'w'), separators=(',', ':')); tot += os.path.getsize(p)
+json.dump({'date': datetime.date.today().isoformat(), 'note': 'жилые дома внутри района: n — всего; n3 — стена дома до 100 м от оси магистрали (МКАД, ТТК, хорды, вылетные шоссе), до 50 м от оси крупной улицы или до 100 м от ж/д станции; n2 — до 250 / 100 / 200 м', 'd': share},
+          open(f'{REPO}/tools/data/noise.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 print('районов', len(names), 'всего МБ', round(tot / 1e6, 1))
