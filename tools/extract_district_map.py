@@ -39,7 +39,7 @@ IND = {'industrial': 'i', 'construction': 'c', 'garages': 'g', 'railway': 'r'}
 BIG = {'motorway', 'motorway_link', 'trunk', 'trunk_link'}
 MID = {'primary', 'primary_link'}
 KX, KY = 111320 * math.cos(math.radians(55.75)), 110540
-lines_big, lines_mid, stations = [], [], []
+lines_big, lines_mid, stations, parks = [], [], [], []
 class H(osmium.SimpleHandler):
     def way(self, w):
         t = w.tags; hw = t.get('highway')
@@ -76,8 +76,17 @@ class H(osmium.SimpleHandler):
             if kind == 'b': out[names[i]]['b'].append((ring[:-1], levels(t), year(t), 1 if t.get('building') in RES else 0))
             elif kind == 'g': out[names[i]]['g'].append(ring[:-1])
             else: out[names[i]]['i'].append((ring[:-1], IND[t.get('landuse')]))
+        if kind == 'g':
+            try:
+                pm = Polygon([(x * KX, y * KY) for x, y in ring])
+                if pm.is_valid and pm.area >= 20000: parks.append(pm)   # парк, сквер или лес от 2 га
+            except Exception: pass
 H().apply_file(sys.argv[1], locations=True)
-tb, tm, ts = STRtree(lines_big), STRtree(lines_mid), STRtree(stations)
+tb, tm, ts, tp = STRtree(lines_big), STRtree(lines_mid), STRtree(stations), STRtree(parks)
+def park_near(ring):
+    try: pg = Polygon([(x * KX, y * KY) for x, y in ring])
+    except Exception: return False
+    return near(tp, parks, pg) <= 300
 def near(tree, lines, pt):
     i = tree.query_nearest(pt, max_distance=450)
     return min((lines[k].distance(pt) for k in i), default=999)
@@ -99,11 +108,16 @@ for i, s in enumerate(names):
     d = out[s]
     bs = [[enc(r), l, y, res, noise(r) if res else 0] for r, l, y, res in d['b']]
     inside = [b for b, (r, *_ ) in zip(bs, d['b']) if b[3] and pin[i].contains(Point(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)))]
-    if inside: share[s] = {'n': len(inside), 'n3': sum(1 for b in inside if b[4] == 3), 'n2': sum(1 for b in inside if b[4] == 2)}
+    rin = [r for (r, l, y, res) in d['b'] if res and pin[i].contains(Point(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)))]
+    if inside:
+        fl = [b[1] for b in inside if b[1]]
+        share[s] = {'n': len(inside), 'n3': sum(1 for b in inside if b[4] == 3), 'n2': sum(1 for b in inside if b[4] == 2),
+                    'nf': len(fl), 'f18': sum(1 for x in fl if x >= 18), 'f10': sum(1 for x in fl if 10 <= x < 18),
+                    'park': sum(1 for r in rin if park_near(r))}
     js = {'o': [round(x0, 5), round(y0, 5)], 'b': bs, 'g': [enc(r) for r in d['g']],
           'i': [[enc(r), k] for r, k in d['i']], 'date': datetime.date.today().isoformat()}
     p = f'{REPO}/assets/dmap/{s}.json'
     json.dump(js, open(p, 'w'), separators=(',', ':')); tot += os.path.getsize(p)
-json.dump({'date': datetime.date.today().isoformat(), 'note': 'жилые дома внутри района: n — всего; n3 — стена дома до 100 м от оси магистрали (МКАД, ТТК, хорды, вылетные шоссе), до 50 м от оси крупной улицы или до 100 м от ж/д станции; n2 — до 250 / 100 / 200 м', 'd': share},
-          open(f'{REPO}/tools/data/noise.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+json.dump({'date': datetime.date.today().isoformat(), 'note': 'жилые дома внутри района (OSM): n — всего; n3 — стена дома до 100 м от оси магистрали (МКАД, ТТК, хорды, вылетные шоссе), до 50 м от оси крупной улицы или до 100 м от ж/д станции; n2 — до 250 / 100 / 200 м; nf — этажность известна, f18 — 18 этажей и выше, f10 — 10–17; park — до парка, сквера или леса от 2 га не больше 300 м', 'd': share},
+          open(f'{REPO}/tools/data/houses.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 print('районов', len(names), 'всего МБ', round(tot / 1e6, 1))
