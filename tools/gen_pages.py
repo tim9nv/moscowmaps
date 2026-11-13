@@ -247,7 +247,7 @@ def page(f):
             f'<h1>Район {E(n)}</h1></div></div><p class="lead">{E(lead)}</p>' + (f'<p class="hist">{E(p["hist"])}</p>' if p.get('hist') else '') + '</header>\n'
             f'<section class="scores">{"".join(tiles)}</section>\n' + pc + '\n'
             f'<section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Карта района {E(n)}: улицы, станции, рельеф и источники загрязнения рядом"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>\n'
-            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261113e";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
+            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261113f";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
     return head(title, desc, canon, 2, f'{BASE}/rayon/gerb/{sl}.png' if local_arms(sl) else None) + body
 
 def index_page():
@@ -301,6 +301,10 @@ def _green(f):
 def _quiet(f):
     h = _hs(f)
     return _clip(10 * (1 - (h['n3'] + 0.5 * h['n2']) / h['n'])) if h and h['n'] >= 30 else None
+_RL = json.load(open(f'{REPO}/tools/data/road_load.json', encoding='utf-8'))['d']
+def _roads(f):
+    r = _RL.get(P(f)['slug'])
+    return _clip(10 * (500 - r['per_lane_km']) / 400) if r and r.get('per_lane_km') else None   # квартир на полосо-км: 100 и меньше — 10, 500 и больше — 0
 def _height(f):
     h = _hs(f)
     return _clip(10 * (1 - 2.5 * h['f18'] / h['nf'])) if h and h['nf'] >= 30 and h['nf'] >= 0.5 * h['n'] else None   # 40 % домов от 18 этажей — 0
@@ -311,7 +315,8 @@ SCALE = {
   'edu':   lambda f: P(f).get('edu'),
   'green': _green,                                                                # половина — доля зелени, половина — дома рядом с парком
   'quiet': _quiet,                                                                # 10 × (1 − (дома у трасс и станций + ½ «шумных») / все дома)
-  'height': _height,                                                              # высотки от 18 этажей: 0 % — 10, 40 % и больше — 0
+  'height': _height,
+  'roads': _roads,                                                                # нагрузка на дороги (tools/data/road_load.json)                                                              # высотки от 18 этажей: 0 % — 10, 40 % и больше — 0
   'sport': lambda f: P(f)['sp']['s'] if P(f).get('sp') else None,
   'live':  lambda f: _clip(10 * _m.log(max(P(f)['lv']['d'], 1) / 10) / _m.log(20)) if P(f).get('lv') else None,   # кафе и магазинов на км²: 10 → 0, 200 → 10
 }
@@ -337,12 +342,12 @@ def cell_dist(f, pre):
     return f'<a href="{pre}{sl}/">{img}{E(P(f)["n"])}</a>'
 
 # Балл «лучшие для жизни»: один и тот же в рейтинге и на карте главной (const LIFE в assets/atlas.js)
-LIFE_W = {'tr':25,'eco':20,'soc':15,'green':15,'quiet':10,'height':5,'live':5,'sport':5}
+LIFE_W = {'tr':20,'roads':5,'eco':20,'soc':15,'green':15,'quiet':10,'height':5,'live':5,'sport':5}
 RATINGS = [
  dict(slug='luchshie-rayony', h1='Лучшие районы Москвы для жизни: рейтинг 2026',
       title='Лучшие районы Москвы для жизни — рейтинг всех 125 районов 2026',
       desc='Рейтинг районов Москвы для жизни: транспорт, экология, школы и поликлиники, зелень, магазины рядом и спорт. Все 125 районов с оценками и ценами на жильё.',
-      intro='Общий рейтинг районов для жизни: 10 — лучше, 1 — хуже. Учитывает транспорт (25 %), экологию (20 %), школы, сады и поликлиники (15 %), зелень и парки рядом с домом (15 %), тишину — сколько домов далеко от магистралей и станций (10 %), высотность — меньше домов от 18 этажей лучше (5 %), кафе и магазины рядом (5 %) и спорт (5 %). Каждый показатель оценён по своей шкале от 0 до 10, а не по месту среди районов. Плохое хорошим не перекрывается: итог не может быть выше, чем экология или транспорт района плюс 4 балла — район у завода или без метро в лидеры не попадёт. Цена жилья в балл не входит — она показана рядом, чтобы было видно, где хорошо и недорого.',
+      intro='Общий рейтинг районов для жизни: 10 — лучше, 1 — хуже. Учитывает метро, МЦК и МЦД (20 %), дороги — сколько жилья приходится на крупные дороги вокруг (5 %), экологию (20 %), школы, сады и поликлиники (15 %), зелень и парки рядом с домом (15 %), тишину — сколько домов далеко от магистралей и станций (10 %), высотность — меньше домов от 18 этажей лучше (5 %), кафе и магазины рядом (5 %) и спорт (5 %). Каждый показатель оценён по своей шкале от 0 до 10, а не по месту среди районов. Плохое хорошим не перекрывается: итог не может быть выше, чем экология или транспорт района плюс 4 балла — район у завода или без метро в лидеры не попадёт. Цена жилья в балл не входит — она показана рядом, чтобы было видно, где хорошо и недорого.',
       w=LIFE_W, metric='Балл', cols=['price','eco','tr']),
  dict(slug='ekologiya', h1='Экология районов Москвы: самые чистые и самые грязные районы',
       title='Экология районов Москвы 2026 — рейтинг самых чистых и грязных районов',
