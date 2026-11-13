@@ -106,7 +106,7 @@ def where(pre, here):
     a = 'aria-current="page" '
     return ('<!--WHERE--><nav class="where" aria-label="Где остаёмся"><p class="q">Где остаёмся?</p><div class="wsg">'
             f'<a {a if here == "msk" else ""}href="{pre}"><b>В Москве</b><span>125 районов: цены, экология, школы</span></a>'
-            f'<a {a if here == "out" else ""}href="{pre}zagorod/"><b>За городом</b><span>58 мест на день и выходные</span></a>'
+            f'<a {a if here == "out" else ""}href="{pre}zagorod/"><b>За городом</b><span>63 места на день и выходные</span></a>'
             '</div></nav><!--WHERE-END-->')
 
 
