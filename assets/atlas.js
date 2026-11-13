@@ -343,6 +343,7 @@ function drawDMap(f){
       document.head.appendChild(st)}
     const FL=[[5,"до 5 этажей","#9fd8a0"],[9,"6–9","#e8e08a"],[17,"10–17","#f2a65a"],[25,"18–25","#e8604c"],[999,"26 и выше","#e04fb0"]];
     const AG=[[1945,"до 1945","#b08cff"],[1960,"1946–1960","#f2a65a"],[1980,"1961–1980","#e8e08a"],[2000,"1981–2000","#9fd8a0"],[2014,"2001–2014","#5cc8d6"],[9999,"с 2015","#ff7fb0"]];
+    const NZ=[[0,"тихо","#5fbf7f"],[1,"шум доносится","#e8e08a"],[2,"шумно","#f2a65a"],[3,"окна на трассу или у станции","#e8604c"]];
     const UNK="#56618a", OTH="#333d66", pick=(T,v)=>v?T.find(t=>v<=t[0])[2]:UNK;
     const sv=document.getElementById("dm");
     if(!document.getElementById("dmode")){const d=document.createElement("div");d.className="dmode";d.id="dmode";d.setAttribute("role","group");d.setAttribute("aria-label","Что показать на карте");sv.parentNode.insertBefore(d,sv)}
@@ -350,7 +351,7 @@ function drawDMap(f){
     d3.select("#dmode").html("");
     const bar=d3.select("#dmode"), leg=d3.select("#dml"); let data=null, drawn=false, mode="floors";
     bar.append("b").text("На карте");
-    const btn={}; [["floors","Этажность домов"],["age","Возраст домов"],["relief","Рельеф"]].forEach(([k,t])=>{btn[k]=bar.append("button").attr("type","button").attr("aria-pressed","false").text(t).on("click",()=>set(k))});
+    const btn={}; [["floors","Этажность домов"],["age","Возраст домов"],["noise","Шум"],["relief","Рельеф"]].forEach(([k,t])=>{btn[k]=bar.append("button").attr("type","button").attr("aria-pressed","false").text(t).on("click",()=>set(k))});
     const relief=geo.select("g.relief");
     function draw(){
       const [ox,oy]=data.o, ring=q=>{let x=q[0],y=q[1],o="M"+proj([ox+x/1e5,oy+y/1e5]).map(v=>v.toFixed(1));for(let k=2;k<q.length;k+=2){x+=q[k];y+=q[k+1];o+="L"+proj([ox+x/1e5,oy+y/1e5]).map(v=>v.toFixed(1))}return o+"Z"};
@@ -359,7 +360,7 @@ function drawDMap(f){
       Object.keys(IC).forEach(k=>{const d=data.i.filter(x=>x[1]===k).map(x=>ring(x[0])).join("");if(d)dmG.append("path").attr("d",d).style("fill",IC[k]).style("fill-opacity",.8).style("pointer-events","none")});
       dmG.append("path").attr("d",data.b.filter(b=>!b[3]).map(b=>ring(b[0])).join("")).style("fill",OTH).style("pointer-events","none");
       const hs=dmG.selectAll("path.h").data(data.b.filter(b=>b[3])).join("path").attr("class","h").attr("d",b=>ring(b[0]));
-      hs.append("title").text(b=>"Жилой дом"+(b[2]?" · "+b[2]+" г.":"")+(b[1]?" · этажей: "+b[1]:""));
+      hs.append("title").text(b=>"Жилой дом"+(b[2]?" · "+b[2]+" г.":"")+(b[1]?" · этажей: "+b[1]:"")+(b.length>4?" · "+["тихо","шум доносится","шумно","у трассы или станции"][b[4]]:""));
       drawn=true;
     }
     function set(k){
@@ -370,7 +371,16 @@ function drawDMap(f){
       lblG.selectAll("text.rlv").style("display",houses&&data?"none":null);
       leg.attr("hidden",houses&&data?null:"");
       if(!houses||!data)return;
-      const T=k==="floors"?FL:AG, idx=k==="floors"?1:2, res=data.b.filter(b=>b[3]), known=res.filter(b=>b[idx]).length;
+      const res=data.b.filter(b=>b[3]);
+      if(k==="noise"){
+        const has=res.some(b=>b.length>4);
+        dmG.selectAll("path.h").style("fill",b=>b.length>4?NZ[b[4]][2]:UNK);
+        const n=[0,0,0,0]; res.forEach(b=>{if(b.length>4)n[b[4]]++});
+        leg.html("<span><b>Жилые дома: близость к шумным дорогам и станциям</b></span>"+NZ.map(t=>'<span><i style="background:'+t[2]+'"></i>'+t[1]+" · "+n[t[0]]+"</span>").join("")
+          +'<span><i style="background:'+OTH+'"></i>нежилые здания</span><span><i style="background:#1d5a3a"></i>парки и лес</span>'
+          +'<span class="nt">Это не замер шума, а расстояние от стены дома до магистрали (МКАД, ТТК, хорды, вылетные шоссе), крупной улицы или железнодорожной станции. «Окна на трассу»: до 100 м от магистрали, до 50 м от крупной улицы или до 100 м от станции; «шумно» — до 250 / 100 / 200 м; «доносится» — до 400 / 200 / 300 м. Двор за первой линией домов обычно тише, чем выходит по расстоянию. Сама железная дорога не учитывается — поезда ходят редко, шумно у станций. Данные OpenStreetMap, выгрузка '+data.date.split("-").reverse().join(".")+".</span>");
+        return}
+      const T=k==="floors"?FL:AG, idx=k==="floors"?1:2, known=res.filter(b=>b[idx]).length;
       dmG.selectAll("path.h").style("fill",b=>pick(T,b[idx]));
       leg.html("<span><b>"+(k==="floors"?"Жилые дома по этажности":"Жилые дома по году постройки")+"</b></span>"+T.map(t=>'<span><i style="background:'+t[2]+'"></i>'+t[1]+"</span>").join("")
         +'<span><i style="background:'+UNK+'"></i>нет данных</span><span><i style="background:'+OTH+'"></i>нежилые здания</span><span><i style="background:#1d5a3a"></i>парки и лес</span><span><i style="background:#5b4a63"></i>промзоны и железная дорога</span><span><i style="background:#8a6d1f"></i>стройки</span><span><i style="background:#454063"></i>гаражи</span>'
