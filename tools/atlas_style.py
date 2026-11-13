@@ -139,7 +139,7 @@ def main():
         s = re.sub(r'<!--ATLAS-STYLE-->.*?<!--ATLAS-STYLE-END-->', '', s, flags=re.S)
         # старые шрифты больше не грузим
         s = re.sub(r'<link[^>]*fonts\.googleapis\.com/css2\?family=Unbounded[^>]*>\s*', '', s)
-        s = s.replace('</head>', block(pre) + '</head>', 1)
+        s = s.replace('</head>', block(pre).replace('<!--ATLAS-STYLE-END-->', f'<link rel="icon" type="image/svg+xml" href="{pre}assets/logo.svg?v=2"><!--ATLAS-STYLE-END-->') + '</head>', 1)
         s = re.sub(r'<!--WHERE-->.*?<!--WHERE-END-->', '', s, flags=re.S)
         # на главной переключатель стоит в шаблоне assets/atlas.js (класс .where)
         if f == 'zagorod/index.html':
