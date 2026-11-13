@@ -7,7 +7,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 L = json.load(open(f'{REPO}/tools/data/life_parts.json', encoding='utf-8'))
 s = open(f'{REPO}/assets/atlas.js', encoding='utf-8').read()
 D, _ = json.JSONDecoder().raw_decode(s[s.index('{', s.index('const DATA')):])
-K = [('tr', 'Транспорт', 'метро, МЦК, МЦД рядом и время до центра'),
+K = [('tr', 'Метро', 'метро, МЦК, МЦД рядом и время до центра'),
+     ('roads', 'Машиной', 'мало жилья на дороги — меньше пробок'),
      ('eco', 'Экология', 'воздух, заводы, ТЭЦ, свалки'),
      ('soc', 'Школы и поликлиники', 'на число жителей'),
      ('green', 'Парки и зелень', 'доля зелени и парки рядом с домом'),
