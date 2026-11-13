@@ -151,6 +151,12 @@ def main():
             s = set_tag(s, 'title', PARK_TWINS[f])
             s = set_tag(s, 'og:title', PARK_TWINS[f])
         elif f.startswith('parks/'):
+            d = get(s, 'description') or ''
+            if len(d) > 160 and d.endswith(' Геолокация «Я на карте».'):
+                d = d[:-len(' Геолокация «Я на карте».')]
+                s = set_tag(s, 'description', d)
+                if get(s, 'og:description'):
+                    s = set_tag(s, 'og:description', d)
             t = get(s, 'title') or ''
             if len(t) > 70 and t.endswith(' — карта и что посмотреть'):
                 t2 = t[:-len(' — карта и что посмотреть')] + ': карта'
@@ -166,6 +172,9 @@ def main():
         elif f.startswith('zagorod/'):
             slug = f.split('/')[1] if f.count('/') == 2 else 'zagorod'
             s = og_image(s, 'zagorod-' + slug if slug != 'zagorod' else 'zagorod')
+        elif f.startswith('parks/'):
+            # своей картинки у парка нет — общая картинка вкладки «Парки», чтобы ссылка в мессенджере была с превью
+            s = og_image(s, 'parks')
         if s != s0:
             open(f, 'w', encoding='utf-8').write(s)
             changed += 1
