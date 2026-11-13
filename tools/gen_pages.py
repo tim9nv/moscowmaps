@@ -247,7 +247,7 @@ def page(f):
             f'<h1>Район {E(n)}</h1></div></div><p class="lead">{E(lead)}</p>' + (f'<p class="hist">{E(p["hist"])}</p>' if p.get('hist') else '') + '</header>\n'
             f'<section class="scores">{"".join(tiles)}</section>\n' + pc + '\n'
             f'<section class="map" style="position:relative"><div class="zb" id="zb"><button data-z="in" aria-label="Приблизить">+</button><button data-z="out" aria-label="Отдалить">−</button><button data-z="reset" aria-label="Сбросить масштаб">⟲</button></div><svg id="dm" viewBox="0 0 600 460" role="img" aria-label="Карта района {E(n)}: улицы, станции, рельеф и источники загрязнения рядом"></svg><div class="small" style="padding:0 14px 8px">Приближайте двумя пальцами или колесом с Ctrl. Клик по соседнему району откроет его страницу.</div><div class="legend" id="dlg"></div></section>\n'
-            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261112y";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
+            + '\n'.join(sec) + f'\n{foot(2)}\n</main>\n<script>window.ATLAS_ROOT="../../";window.ATLAS_DISTRICT="{sl}";(function(){{var done=0;function go(){{if(done)return;done=1;var a=document.createElement("script");a.src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js";a.onload=function(){{var b=document.createElement("script");b.src="../../assets/atlas.js?v=20261113a";document.body.appendChild(b)}};document.body.appendChild(a)}}var el=document.getElementById("dm");if("IntersectionObserver" in window&&el){{new IntersectionObserver(function(e,o){{if(e.some(function(x){{return x.isIntersecting}})){{o.disconnect();go()}}}},{{rootMargin:"600px"}}).observe(el)}}else go()}})();</script>\n<script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>\n<script type="application/ld+json">{json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in faq]}, ensure_ascii=False)}</script>\n</body>\n</html>\n')
     return head(title, desc, canon, 2, f'{BASE}/rayon/gerb/{sl}.png' if local_arms(sl) else None) + body
 
 def index_page():
@@ -284,32 +284,35 @@ open(f'{REPO}/robots.txt','w').write(f'User-agent: *\nAllow: /\nClean-param: v\n
 print('sitemap urls',len(locs))
 
 # ================= rating landing pages =================
-def pct_rank(vals):
-    """value list -> dict index->0..10 percentile"""
-    order = sorted(range(len(vals)), key=lambda k: vals[k])
-    out = {}
-    for pos, k in enumerate(order): out[k] = 10 * pos / (len(vals) - 1)
-    return out
-def pr_map(fs, key):
-    fs = [f for f in fs if key(f) is not None]
-    vals = [key(f) for f in fs]; r = pct_rank(vals)
-    return {P(f)['slug']: r[k] for k, f in enumerate(fs)}
+# Шкалы 0–10 по настоящим значениям, а не по месту среди районов (с 12.11.2026):
+# почти одинаковые районы получают почти одинаковый балл, а провал остаётся провалом.
+import math as _m
+_clip = lambda v: max(0.0, min(10.0, v))
 g_pct = lambda f: (GREEN.get(P(f)['n']) or {}).get('pct')
-PR = {
-  'eco': pr_map(F, lambda f: -P(f)['i']),
-  'tr': pr_map(F, lambda f: P(f)['tr']['score'] if P(f).get('tr') else None),
-  'soc': pr_map(F, lambda f: P(f).get('score')),
-  'edu': pr_map(F, lambda f: P(f).get('edu')),
-  'green': pr_map(F, g_pct),
-  'sport': pr_map(F, lambda f: P(f)['sp']['s'] if P(f).get('sp') else None),
-  'live': pr_map(F, lambda f: P(f)['lv']['d'] if P(f).get('lv') else None),   # кафе и магазины на км²
-  'cheap': pr_map(F, lambda f: -P(f)['hp'] if P(f).get('hp') else None),
+SCALE = {
+  'eco':   lambda f: 10 - P(f)['i'],                                              # экобалл сайта: 10 — грязно
+  'tr':    lambda f: P(f)['tr']['score'] if P(f).get('tr') else None,
+  'soc':   lambda f: P(f).get('score'),
+  'edu':   lambda f: P(f).get('edu'),
+  'green': lambda f: _clip(g_pct(f) / 7) if g_pct(f) is not None else None,      # 70 % зелени и больше — 10
+  'sport': lambda f: P(f)['sp']['s'] if P(f).get('sp') else None,
+  'live':  lambda f: _clip(10 * _m.log(max(P(f)['lv']['d'], 1) / 10) / _m.log(20)) if P(f).get('lv') else None,   # кафе и магазинов на км²: 10 → 0, 200 → 10
 }
-def combo(f, w):
+PR = {k: {P(f)['slug']: fn(f) for f in F if fn(f) is not None} for k, fn in SCALE.items()}
+CAP_PLUS = 4   # «слабое звено»: итог не выше худшего из главных показателей (экология, транспорт) плюс 4 балла
+def combo_parts(f, w, caps=('eco', 'tr')):
+    """-> (балл, балл без потолка, показатель-потолок или None)"""
     sl = P(f)['slug']; s = t = 0
     for k, x in w.items():
         if sl in PR[k]: s += PR[k][sl] * x; t += x
-    return round(s / t, 1) if t else None
+    if not t: return None, None, None
+    raw = s / t; lim = None; v = raw
+    for k in caps:
+        if k in w and sl in PR[k] and PR[k][sl] + CAP_PLUS < v:
+            v = PR[k][sl] + CAP_PLUS; lim = k
+    return round(v, 1), round(raw, 1), lim
+def combo(f, w):
+    return combo_parts(f, w)[0]
 
 def cell_dist(f, pre):
     sl = P(f)['slug']
@@ -322,7 +325,7 @@ RATINGS = [
  dict(slug='luchshie-rayony', h1='Лучшие районы Москвы для жизни: рейтинг 2026',
       title='Лучшие районы Москвы для жизни — рейтинг всех 125 районов 2026',
       desc='Рейтинг районов Москвы для жизни: транспорт, экология, школы и поликлиники, зелень, магазины рядом и спорт. Все 125 районов с оценками и ценами на жильё.',
-      intro='Общий рейтинг районов для жизни: 10 — лучше, 1 — хуже. Учитывает транспорт (25 %), экологию (25 %), школы, сады и поликлиники (20 %), долю зелени (15 %), кафе и магазины рядом (10 %) и спорт (5 %). Цена жилья в балл не входит — она показана рядом, чтобы было видно, где хорошо и недорого.',
+      intro='Общий рейтинг районов для жизни: 10 — лучше, 1 — хуже. Учитывает транспорт (25 %), экологию (25 %), школы, сады и поликлиники (20 %), долю зелени (15 %), кафе и магазины рядом (10 %) и спорт (5 %). Каждый показатель оценён по своей шкале от 0 до 10, а не по месту среди районов. Плохое хорошим не перекрывается: итог не может быть выше, чем экология или транспорт района плюс 4 балла — район у завода или без метро в лидеры не попадёт. Цена жилья в балл не входит — она показана рядом, чтобы было видно, где хорошо и недорого.',
       w=LIFE_W, metric='Балл', cols=['price','eco','tr']),
  dict(slug='ekologiya', h1='Экология районов Москвы: самые чистые и самые грязные районы',
       title='Экология районов Москвы 2026 — рейтинг самых чистых и грязных районов',
@@ -347,7 +350,7 @@ RATINGS = [
  dict(slug='dlya-semi-s-detmi', h1='Лучшие районы Москвы для семьи с детьми',
       title='Лучшие районы Москвы для семьи с детьми — школы, сады, парки, экология',
       desc='Рейтинг районов Москвы для семей с детьми: школы и детские сады на жителя, поликлиники, парки, экология и спорт.',
-      intro='Рейтинг для семей с детьми. Больше всего весят школы и детские сады на жителя (30 %), затем экология (25 %), зелень и парки (20 %), поликлиники и прочая соцсфера (10 %) и спорт (15 %).',
+      intro='Рейтинг для семей с детьми. Больше всего весят школы и детские сады на жителя (30 %), затем экология (25 %), зелень и парки (20 %), поликлиники и прочая соцсфера (10 %) и спорт (15 %). Итог не может быть выше экологии района плюс 4 балла.',
       w={'edu':30,'eco':25,'green':20,'soc':10,'sport':15}, metric='Балл', cols=['school','green','eco']),
 ]
 def col_val(c, f, pre):
@@ -411,6 +414,14 @@ def rating_hub():
 
 _lf = [(combo(f, LIFE_W), P(f)['slug']) for f in sorted([f for f in F if combo(f, LIFE_W) is not None], key=lambda f: -combo(f, LIFE_W))]   # тот же порядок, что в рейтинге
 _life = {sl: [v, k + 1] for k, (v, sl) in enumerate(_lf)}   # slug -> [балл, место]
+# разбор балла для страниц районов (tools/life_block.py)
+_parts = {}
+for f in F:
+    _v, _raw, _lim = combo_parts(f, LIFE_W)
+    if _v is None: continue
+    _sl = P(f)['slug']
+    _parts[_sl] = {'v': _v, 'rank': _life[_sl][1], 'raw': _raw, 'lim': _lim, 'p': {k: round(PR[k][_sl], 1) for k in LIFE_W if _sl in PR[k]}}
+json.dump({'w': LIFE_W, 'cap_plus': CAP_PLUS, 'd': _parts}, open(f'{REPO}/tools/data/life_parts.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 _js = open(f'{REPO}/assets/atlas.js', encoding='utf-8').read()
 _line = 'const LIFE = ' + json.dumps(_life, ensure_ascii=False, separators=(',', ':')) + ';'
 _js = re.sub(r'^const LIFE = .*$', lambda m: _line, _js, count=1, flags=re.M) if re.search(r'^const LIFE = ', _js, flags=re.M) else _js.replace('const F = DATA.features', _line + '\nconst F = DATA.features', 1)
