@@ -617,7 +617,7 @@ def head(title, desc, url, pre):
 .zg-card h3{{margin:0 0 4px;font-size:20px}}.zg-card .meta{{color:var(--muted);font-size:14px;margin:0 0 8px}}.zg-card p{{margin:0;line-height:1.5}}
 .zg-facts{{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}}.zg-facts li{{background:rgba(255,255,255,.1);border-radius:999px;padding:5px 12px;font-size:14px}}
 .zg-sec{{margin-top:36px}}.zg-sec h2{{margin:0 0 12px}}
-.zg-get dt{{font-weight:700;margin-top:12px}}.zg-get dd{{margin:4px 0 0;line-height:1.55;max-width:72ch}}
+.zg-route{{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:4px 0 14px}}.zg-route a{{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 16px;border:1px solid #FFD86B;border-radius:3px;color:#FFD86B;text-decoration:none;font:600 14.5px/1 var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase}}.zg-route a:hover{{background:rgba(255,216,107,.12)}}.zg-route a:first-child{{background:#FFD86B;color:#0B1330}}.zg-route span{{flex-basis:100%;font-size:13.5px;color:var(--muted)}}.zg-get dt{{font-weight:700;margin-top:12px}}.zg-get dd{{margin:4px 0 0;line-height:1.55;max-width:72ch}}
 .zg-plan{{list-style:none;padding:0;margin:0;counter-reset:s}}.zg-plan li{{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}}
 .zg-plan li::before{{content:counter(s);width:28px;height:28px;border-radius:50%;background:#22614c;color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px;border:2px solid #fff;box-sizing:border-box}}
 .zg-plan b{{display:block}}.zg-plan .when{{color:#FFD86B;font-size:13px;font-weight:600;text-transform:none}}.zg-plan p{{margin:4px 0 0;line-height:1.55;max-width:72ch}}
@@ -677,6 +677,18 @@ def more_html(p):
         + ''.join(f'<a class="zg-card" href="{E(u)}" target="_blank" rel="nofollow noopener"><h3>{E(n)}</h3><p class="meta">{E(t)} · {E(a)}</p><p class="zg-go">В Яндекс Картах →</p></a>' for n, t, a, u in m['food']) + '</div></section>\n')
     return out
 
+def route_html(p, pt):
+    """Кнопки «Маршрут в Яндекс Картах» от того места, где человек сейчас, до главной точки места (с 14.11.2026)."""
+    to = f'{pt[0]:.5f},{pt[1]:.5f}'
+    u = lambda m: f'https://yandex.ru/maps/?rtext=~{to}&amp;rtt={m}'
+    ico = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">'
+    car = ico + '<path d="M5 16h14M6 16l1.5-5h9L18 16M7 19v-3m10 3v-3"/><circle cx="8" cy="16" r="1"/><circle cx="16" cy="16" r="1"/></svg>'
+    bus = ico + '<rect x="5" y="4" width="14" height="13" rx="2"/><path d="M5 11h14M8 20l1-3m7 3-1-3"/></svg>'
+    return ('<div class="zg-route"><a href="' + u('auto') + '" target="_blank" rel="noopener">' + car + 'Маршрут на машине</a>'
+            '<a href="' + u('mt') + '" target="_blank" rel="noopener">' + bus + 'На электричке и автобусе</a>'
+            f'<span>Яндекс Карты построят путь от того места, где вы сейчас, до точки «{E(p["name"])}» на карте ниже.</span></div>')
+
+
 def place_page(p):
     url = f'{BASE}/zagorod/{p["slug"]}/'
     desc = p['lead'] if len(p['lead']) <= 160 else p['lead'][:158].rsplit(' ', 1)[0].rstrip(',:;—') + '…'
@@ -693,7 +705,7 @@ def place_page(p):
   <nav class="crumb" aria-label="Навигация"><a href="../">За город</a> / {E(p["name"])}</nav>
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">За город · {E(p["kind"])}</p><h1>{E(p["name"])}</h1><p>{E(p["lead"])}</p>
   <ul class="zg-facts"><li>{E(p["km"])}</li><li>{E(p["kind"])}</li></ul></div>{ART.get(p["slug"]) or ART["_" + (p.get("type") or "estate")]}</header>
-  <section class="zg-sec"><h2>Как добраться</h2><dl class="zg-get">{''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a, b in p['get'])}</dl></section>
+  <section class="zg-sec"><h2>Как добраться</h2>{route_html(p, _pt)}<dl class="zg-get">{''.join(f'<dt>{E(a)}</dt><dd>{E(b)}</dd>' for a, b in p['get'])}</dl></section>
   <section class="zg-sec"><h2>{"Маршрут на выходные" if p.get("far") else "Маршрут на день"}</h2><div class="filters zg-filters" id="zgfilters" hidden aria-label="Что показать на карте"></div><div id="zgmap" aria-label="Карта маршрута"></div>
   <ol class="zg-plan">{''.join(f'<li><div>{f"<span class=when>{E(w)}</span>" if w else ""}<b>{E(n)}</b><p>{E(t)}</p></div></li>' for w, n, t in p['plan'])}</ol></section>
 {long_html(p)}{more_html(p)}{aff_html(p)}
