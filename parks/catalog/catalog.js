@@ -70,6 +70,11 @@ function renderCatalog(parks) {
 }
 
 async function renderPark(park) {
+  // Editorial pilot is opt-in on exactly two standalone pages; other parks are unchanged.
+  const pilot = window.PARK_STAGE1;
+  const stage1 = Boolean(pilot && pilot.id === park.id && window.PARK_ID === park.id
+    && ((park.id === "134" && pilot.slug === "park-otradnoe")
+      || (park.id === "85" && pilot.slug === "petrovskiy-park")));
   if (!window.PARK_ID) {
     document.title = `${displayName(park.name)}: карта троп — Атлас Москвы`;
     getCatalogElement("title").textContent = displayName(park.name);
@@ -100,7 +105,22 @@ async function renderPark(park) {
     const all = await read("places.json", "json");
     placesDate = all.date;
     places = (all.parks[park.id] || []).map(([lat, lon, category, name], i) => ({ id: "p" + i, name, category, lat, lon }));
-  } catch (error) { /* карта троп работает и без объектов */ }
+    if (stage1 && pilot.cofix) {
+      const cafe = pilot.cofix;
+      const place = places.find(item => item.name === cafe.name && item.lat === cafe.lat && item.lon === cafe.lon && item.category === "food");
+      if (place) Object.assign(place, { description: cafe.description, url: cafe.url });
+    }
+    if (stage1 && !places.length) {
+      getCatalogElement("load-error").hidden = false;
+      getCatalogElement("load-error").textContent = "В этой выгрузке объекты не найдены. Это не подтверждает их отсутствие в парке. Текстовый справочник ниже доступен отдельно.";
+    }
+  } catch (error) {
+    if (stage1) {
+      getCatalogElement("load-error").hidden = false;
+      getCatalogElement("load-error").textContent = "Не удалось загрузить объекты карты. Это ошибка загрузки, а не отсутствие объектов. Воспользуйтесь текстовым справочником ниже.";
+    }
+    /* карта троп работает и без объектов */
+  }
   const categories = { all: ["Все", "", ""] };
   for (const key of Object.keys(LABELS)) if (places.some(place => place.category === key)) categories[key] = LABELS[key];
   if (places.length) {
@@ -108,6 +128,7 @@ async function renderPark(park) {
     getCatalogElement("park-tools").hidden = false;
     getCatalogElement("places").hidden = false;
     getCatalogElement("places-note").textContent = `Объекты — OpenStreetMap, ${placesDate}. На общем виде карты — достопримечательности, музеи и смотровые; кафе, туалеты, площадки и скульптуры появляются, если приблизить карту или выбрать их кнопкой выше. Нажмите на значок на карте или на название в списке.`;
+    if (stage1) getCatalogElement("places-note").textContent += " Выборка включает небольшой запас у границы: заведения могут находиться рядом с парком. Реестр может быть неполным; текущие условия работы не проверены.";
   }
   // Прогулка Атласа, если она собрана для этого парка: tools/build_park_walks.py -> walks.json
   let routes = [];

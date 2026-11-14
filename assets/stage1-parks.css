@@ -1,0 +1,19 @@
+/* Only loaded by the two stage-one park pages. */
+.stage1-park{margin:28px 0;max-width:76ch;overflow-wrap:anywhere}
+.stage1-park h2{margin:0 0 12px}.stage1-park h3{font-size:1.12rem;margin:18px 0 5px}
+.stage1-park p{margin:8px 0;line-height:1.6}.stage1-park ul{padding-left:22px}
+.stage1-park li{margin:9px 0}.stage1-park a{overflow-wrap:anywhere}
+.stage1-park .stage1-note{color:var(--muted,#9babc9);font-size:.92rem}
+.stage1-park .stage1-status{border-left:3px solid #ffd86b;padding:8px 14px;background:#0f1a3c}
+.stage1-park dl{display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,3fr);gap:10px 18px}
+.stage1-park dt{font-weight:600}.stage1-park dd{margin:0}
+.stage1-park summary{cursor:pointer;min-height:44px;padding:10px 0}
+.stage1-park a:focus-visible,.stage1-park summary:focus-visible{outline:3px solid #ffd86b;outline-offset:4px}
+@media(max-width:580px){
+  .stage1-park dl{grid-template-columns:1fr;gap:4px}.stage1-park dd{margin-bottom:12px}
+  .topbar .in{display:flex!important;flex-direction:row!important;align-items:center;flex-wrap:nowrap!important;gap:8px;min-width:0}
+  .topbar .brand{display:flex!important;flex:0 0 auto!important;width:auto!important;min-width:0}
+  .topbar .tabs{display:flex!important;flex:1 1 0!important;min-width:0!important;width:auto!important;overflow-x:auto;flex-wrap:nowrap!important;white-space:nowrap}
+  .topbar .go-out,.topbar .tg{flex:0 0 auto!important;align-self:center!important}
+  .leaflet-popup-content{max-width:calc(100vw - 112px)!important;overflow-wrap:anywhere}
+}

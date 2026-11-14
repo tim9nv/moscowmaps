@@ -82,3 +82,7 @@ python3 tools/build_sport.py                   # sport.html из шаблона 
 - На картах районов слои школ, детсадов и поликлиник: `tools/extract_social.py` → `assets/places/<slug>.json`.
 - Полная пересборка `gen_pages.py` переносит в шапку страниц районов и рейтингов стили главной и ломает ссылки меню. Пока безопаснее собирать в копии репозитория и забирать нужные файлы (`assets/atlas.js`, `tools/data/life_parts.json`, у рейтингов — только `<main>`), потом `life_block.py` и `my_rating.py` поверх.
 - Парки: у каждого парка своя страница `parks/<slug>/` (сборка `tools/build_park_pages.py`), каталог — `parks/catalog/`, выверенные путеводители с прогулками — `parks/vdnh/` и `parks/botanicheskiy-sad/`. Что есть в парках — `tools/extract_park_places.py` → `parks/catalog/places.json`. Рисунки в шапках — `HERO_ART` в `parks/catalog/catalog.js`.
+
+## Пилот четырёх страниц (14.11.2026, Codex)
+
+После обычной цепочки сборки, включая seo_fix.py, запускать python tools/stage1_districts.py и python tools/stage1_parks.py. Они применяют целевые правки только к Отрадному, Аэропорту, парку «Отрадное» и Петровскому парку. Порядок и ограничения — tools/STAGE1.md. Сгенерированные HTML вручную не править; числовую методику и рекламу этот пилот не меняет.
