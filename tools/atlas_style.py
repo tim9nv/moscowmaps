@@ -45,8 +45,8 @@ table,td,th,.v,.top6 b,.zg-facts,.meta,.stat .v{font-variant-numeric:tabular-num
 .topbar .tabs a{font:500 14px/1 var(--label)!important;text-transform:uppercase;letter-spacing:.045em;border-radius:0!important;padding:9px 7px 7px!important;border-bottom:2px solid transparent}
 .topbar .tabs a:hover{background:transparent!important;color:var(--gold)!important}
 .topbar .tabs a[aria-current="page"]{background:transparent!important;color:var(--gold)!important;border-bottom-color:var(--gold)}
-.topbar .go-out{border-radius:3px!important;font:600 14.5px/1 var(--label)!important;text-transform:uppercase;letter-spacing:.07em}
-@media (max-width:600px){.topbar .in,.topbar .tabs{min-width:0}.topbar .tabs{overflow-x:auto;flex:1 1 auto}.topbar .go-out{letter-spacing:.02em!important;padding:7px 9px!important}.topbar .brand{flex:none}}
+.topbar .tg{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:none;margin-left:8px;border:1px solid rgba(255,216,107,.5);border-radius:3px;color:#FFD86B}.topbar .tg:hover{background:rgba(255,216,107,.12)}.topbar .go-out{border-radius:3px!important;font:600 14.5px/1 var(--label)!important;text-transform:uppercase;letter-spacing:.07em}
+@media (max-width:600px){.topbar .tg{width:30px;height:30px;margin-left:6px}.topbar .in,.topbar .tabs{min-width:0}.topbar .tabs{overflow-x:auto;flex:1 1 auto}.topbar .go-out{letter-spacing:.02em!important;padding:7px 9px!important}.topbar .brand{flex:none}}
 /* ярлыки над заголовками и подписи к цифрам */
 .eyebrow,.stat .l,.tile .l,.hsearch label,.legend b,.zg-note b{font-family:var(--label)!important;font-weight:500!important;text-transform:uppercase;letter-spacing:.12em;font-size:13px!important}
 /* без таблеток и прыгающих карточек */
@@ -125,6 +125,12 @@ def nav_fix(s):
     return s[:m.start(2)] + ''.join(links[k] for k in NAV_ORDER) + s[m.end(2):]
 
 
+TG = ('<!--TG--><a class="tg" href="https://t.me/mskatlas_ru" target="_blank" rel="noopener" '
+      'title="Атлас Москвы в Telegram" aria-label="Атлас Москвы в Telegram">'
+      '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">'
+      '<path d="M21.9 4.3 18.7 19.4c-.2 1.1-.9 1.3-1.8.8l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9.1-8.2c.4-.4-.1-.6-.6-.2L6.3 13.1l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20.6 2.8c.9-.3 1.6.2 1.3 1.5z"/></svg></a><!--TG-END-->')
+
+
 def main():
     n = 0
     files = sorted(set(glob.glob('*.html') + glob.glob('*/index.html') + glob.glob('*/*/index.html')))
@@ -141,6 +147,9 @@ def main():
         s = re.sub(r'<link[^>]*fonts\.googleapis\.com/css2\?family=Unbounded[^>]*>\s*', '', s)
         s = s.replace('</head>', block(pre).replace('<!--ATLAS-STYLE-END-->', f'<link rel="icon" type="image/svg+xml" href="{pre}assets/logo.svg?v=2"><!--ATLAS-STYLE-END-->') + '</head>', 1)
         s = re.sub(r'<!--WHERE-->.*?<!--WHERE-END-->', '', s, flags=re.S)
+        # ссылка на Telegram-канал справа от «За город» (с 14.11.2026)
+        s = re.sub(r'<!--TG-->.*?<!--TG-END-->', '', s, flags=re.S)
+        s = re.sub(r'(<a class="go-out"[^>]*>.*?</a>)', lambda m: m.group(1) + TG, s, count=1, flags=re.S)
         # на главной переключатель стоит в шаблоне assets/atlas.js (класс .where)
         if f == 'zagorod/index.html':
             s = s.replace('<body>', '<body class="zg-hub">', 1) if '<body>' in s else s
