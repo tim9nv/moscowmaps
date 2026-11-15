@@ -85,7 +85,7 @@ def main():
         f = f'zagorod/{k}/index.html'
         h0 = h = open(f, encoding='utf-8').read()
         h = re.sub(r'<!--ZG-FROM-->.*?<!--ZG-FROM-END-->', '', h, flags=re.S)
-        m = re.search(r'(<section class="zg-sec"><h2>Как добраться</h2>.*?</section>)', h, re.S)
+        m = re.search(r'(<section class="zg-sec"(?: id="[^"]*")?><h2>Как добраться</h2>.*?</section>)', h, re.S)
         if not m:
             continue
         h = h[:m.end()] .replace(m.group(1), m.group(1)[:-len('</section>')] + block + '</section>') + h[m.end():]
