@@ -132,6 +132,9 @@ def scheme_items(items, types, hubpt, note, uid='zs'):
            '</style>')
     js = r"""<script>(function(){var D=__DATA__;var w=document.querySelector('.zs-wrap'),sv=w.querySelector('svg'),wd=sv.querySelector('.zs-world'),lb=sv.querySelector('.zs-lab'),card=w.querySelector('.zs-card');
 var NS='http://www.w3.org/2000/svg',k=1,tx=0,ty=0,off={},sel=-1,dots=sv.querySelectorAll('.zd');
+var visible=null;
+function hidden(p){return visible!==null?!visible.has(p.h):!!off[p.t]}
+document.addEventListener('zagorod:filter',function(e){visible=new Set(e.detail);dots.forEach(function(d){d.classList.toggle('off',hidden(D.p[+d.dataset.i]))});if(sel>=0&&hidden(D.p[sel]))pick(-1);else{draw();place()}});
 function el(n,a,t){var e=document.createElementNS(NS,n);for(var q in a)e.setAttribute(q,a[q]);if(t!=null)e.textContent=t;return e}
 function S(x,y){return[x*k+tx,y*k+ty]}
 var meas=el('text',{x:-999,y:-999});lb.appendChild(meas);var wid={},u=1;function tw(s,c){var key=c+'|'+s;if(!(key in wid)){var fs=lb.style.fontSize;lb.style.fontSize='13.5px';meas.setAttribute('class',c||'');meas.textContent=s;wid[key]=meas.getComputedTextLength();lb.style.fontSize=fs}return wid[key]*u}
@@ -141,11 +144,11 @@ var boxes=[],R=D.rm*k,c=S(D.c[0],D.c[1]);
 function hit(b){if(b[0]<2||b[2]>D.W-2||b[1]<2||b[3]>D.H-2)return true;for(var i=0;i<boxes.length;i++){var o=boxes[i];if(b[0]<o[2]&&b[2]>o[0]&&b[1]<o[3]&&b[3]>o[1])return true}
 var nx=Math.max(b[0],Math.min(c[0],b[2])),ny=Math.max(b[1],Math.min(c[1],b[3]));return (nx-c[0])*(nx-c[0])+(ny-c[1])*(ny-c[1])<R*R}
 if(R>40*u){boxes.push([c[0]-R,c[1]-R,c[0]+R,c[1]+R]);lb.appendChild(el('text',{x:c[0],y:c[1]+6*u,'text-anchor':'middle','class':'msk'},'Москва'))}
-D.p.forEach(function(p,i){if(off[p.t])return;var s=S(p.x,p.y);boxes.push([s[0]-7*u,s[1]-7*u,s[0]+7*u,s[1]+7*u])});
+D.p.forEach(function(p,i){if(hidden(p))return;var s=S(p.x,p.y);boxes.push([s[0]-7*u,s[1]-7*u,s[0]+7*u,s[1]+7*u])});
 D.rays.forEach(function(r){var s=S(r.x,r.y),wv=tw(r.n,'ray'),a=r.s>.3?'start':r.s<-.3?'end':'middle',x0=a==='start'?s[0]:a==='end'?s[0]-wv:s[0]-wv/2,b=[x0,s[1]-10*u,x0+wv,s[1]+4*u];if(!hit(b)){boxes.push(b);lb.appendChild(el('text',{x:s[0],y:s[1],'text-anchor':a,'class':'ray'},r.n))}});
 D.rings.forEach(function(g){var s=S(D.c[0],D.c[1]-g.r),t=g.km+' км',wv=tw(t,'ring'),b=[s[0]+3*u,s[1]-15*u,s[0]+5*u+wv,s[1]-3*u];if(!hit(b)){boxes.push(b);lb.appendChild(el('text',{x:s[0]+4*u,y:s[1]-5*u,'class':'ring'},t))}});
 var order=D.p.map(function(p,i){return i});if(sel>=0){order.splice(order.indexOf(sel),1);order.unshift(sel)}
-order.forEach(function(i){var p=D.p[i];if(off[p.t])return;var s=S(p.x,p.y),wv=tw(p.n,''),right=s[0]>=c[0];
+order.forEach(function(i){var p=D.p[i];if(hidden(p))return;var s=S(p.x,p.y),wv=tw(p.n,''),right=s[0]>=c[0];
 var tries=[[right,0],[!right,0],[right,-14],[right,14],[!right,-14],[!right,14]];for(var j=0;j<tries.length;j++){var rt=tries[j][0],dy=tries[j][1]*u,x0=rt?s[0]+10*u:s[0]-10*u-wv,b=[x0,s[1]-9*u+dy,x0+wv,s[1]+6*u+dy];
 if(i===sel||!hit(b)){boxes.push(b);lb.appendChild(el('text',{x:rt?s[0]+10*u:s[0]-10*u,y:s[1]+4*u+dy,'text-anchor':rt?'start':'end','class':i===sel?'on':''},p.n));return}}})}
 function clamp(){var mx=D.W*.2,my=D.H*.2;tx=Math.min(mx,Math.max(D.W-D.W*k-mx,tx));ty=Math.min(my,Math.max(D.H-D.H*k-my,ty))}
@@ -163,9 +166,9 @@ function place(){if(sel<0){card.classList.remove('show');return}var p=D.p[sel],s
 if(x<-5||y<-5||x>r.width+5||y>r.height+5){card.classList.remove('show');return}var L=x+16+cw>r.width?x-16-cw:x+16,T=Math.max(6,Math.min(r.height-ch-6,y-ch/2));card.style.left=Math.max(6,L)+'px';card.style.top=T+'px';card.classList.add('show')}
 function pick(i){sel=i;dots.forEach(function(d){d.classList.toggle('on',+d.dataset.i===i)});if(i>=0){var p=D.p[i];card.innerHTML='<b></b><span></span><a>Открыть место →</a>';card.querySelector('b').textContent=p.f;card.querySelector('span').textContent=(p.k?p.k+' · ':'')+'около '+p.d+' км по прямой';card.querySelector('a').href=p.h}draw();place()}
 dots.forEach(function(d){d.addEventListener('mouseenter',function(){if(!drag)pick(+d.dataset.i)});d.addEventListener('click',function(e){if(moved)return;e.stopPropagation();var i=+d.dataset.i;if(sel===i&&e.pointerType!=='touch'){location.href=D.p[i].h}else pick(i)})});
-sv.addEventListener('click',function(e){if(moved||e.target.classList.contains('zd'))return;var q=pt(e),bi=-1,bd=22*u;D.p.forEach(function(p,i){if(off[p.t])return;var s=S(p.x,p.y),dd=Math.hypot(s[0]-q[0],s[1]-q[1]);if(dd<bd){bd=dd;bi=i}});pick(bi)});
+sv.addEventListener('click',function(e){if(moved||e.target.classList.contains('zd'))return;var q=pt(e),bi=-1,bd=22*u;D.p.forEach(function(p,i){if(hidden(p))return;var s=S(p.x,p.y),dd=Math.hypot(s[0]-q[0],s[1]-q[1]);if(dd<bd){bd=dd;bi=i}});pick(bi)});
 w.querySelector('.zs-in').addEventListener('click',function(){zoomAt(1.6,D.W/2,D.H/2)});w.querySelector('.zs-out').addEventListener('click',function(){zoomAt(1/1.6,D.W/2,D.H/2)});w.querySelector('.zs-home').addEventListener('click',function(){k=1;tx=0;ty=0;pick(-1)});
-document.querySelectorAll('.zs-f').forEach(function(x){x.addEventListener('click',function(){var on=x.getAttribute('aria-pressed')!=='true';x.setAttribute('aria-pressed',on);off[x.dataset.t]=!on;
+document.querySelectorAll('.zs-f').forEach(function(x){x.addEventListener('click',function(){if(document.querySelector('.zc-grid'))return;var on=x.getAttribute('aria-pressed')!=='true';x.setAttribute('aria-pressed',on);off[x.dataset.t]=!on;
 dots.forEach(function(d){if(d.dataset.t===x.dataset.t)d.classList.toggle('off',!on)});if(sel>=0&&off[D.p[sel].t])pick(-1);else draw()})});
 window.addEventListener('resize',function(){wid={};draw();place()});draw()})();</script>""".replace('__DATA__', data)
     return (css + f'<div class="zs-legend" role="group" aria-label="Что показать">{legend}</div>'

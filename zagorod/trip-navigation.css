@@ -1,0 +1,7 @@
+.zg-contents{margin:20px 0 28px;padding:14px 0;border-top:1px solid #3a4a80;border-bottom:1px solid #3a4a80}
+.zg-contents>span{display:block;margin-bottom:8px;color:#B4C1E4;font:500 13px var(--label,sans-serif);letter-spacing:.08em;text-transform:uppercase}
+.zg-contents>div{display:flex;gap:4px 20px;flex-wrap:wrap}
+.zg-contents a{display:inline-flex;align-items:center;min-height:40px;color:#FFD86B;font:500 16px var(--body,sans-serif);text-underline-offset:5px}
+.zg-contents a:focus-visible{outline:2px solid #FFD86B;outline-offset:4px}
+.zg-sec[id],.zg-src[id]{scroll-margin-top:var(--zg-anchor-offset,190px)}
+@media(max-width:600px){.zg-contents>div{gap:2px 16px}.zg-contents a{min-height:44px;font-size:15px}}
