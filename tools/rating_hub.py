@@ -40,7 +40,7 @@ for sub in SUBS:
     os.makedirs(d, exist_ok=True)
     open(f'{d}/index.html', 'w', encoding='utf-8').write(
         '<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>Рейтинг районов Москвы</title>'
-        '<meta name="robots" content="noindex,follow"><link rel="canonical" href="https://www.mskatlas.ru/reyting/">'
+        '<link rel="canonical" href="https://www.mskatlas.ru/reyting/">'
         '<meta http-equiv="refresh" content="0; url=../"><script>location.replace("../")</script></head>'
         '<body><p>Рейтинг переехал: <a href="../">Рейтинг районов Москвы</a>.</p></body></html>')
 
