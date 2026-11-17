@@ -35,6 +35,7 @@ TABS = {
 OG = {'index.html': 'home', 'housing.html': 'housing', 'ecology.html': 'ecology', 'transport.html': 'transport',
       'social.html': 'social', 'parks.html': 'parks', 'sport.html': 'sport', 'climate.html': 'climate',
       'new-moscow.html': 'new-moscow', 'reyting/index.html': 'reyting', 'rayon/index.html': 'home'}
+OG['zagorod/bez-mashiny/index.html'] = 'zagorod'
 PARK_TWINS = {  # два разных участка с одним именем в OpenStreetMap
     'parks/park-nikulino/index.html': 'Парк Никулино у памятника Скобелеву (Тропарево-Никулино)',
     'parks/park-nikulino-192/index.html': 'Парк Никулино у храма Архангела Михаила (Тропарево-Никулино)',

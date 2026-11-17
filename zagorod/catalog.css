@@ -15,3 +15,8 @@
 #zc-share-url{box-sizing:border-box;width:100%;padding:10px;background:#0F1A3C;color:#E6EBFA;border:1px solid #6477AA;font-size:16px;margin-bottom:12px}
 .zc-jump a{display:inline-flex;align-items:center;min-height:44px;color:#FFD86B;text-underline-offset:5px}
 #all{scroll-margin-top:var(--zg-anchor-offset,190px)}
+.zc-access-row{display:flex;flex-wrap:wrap;gap:12px 20px;margin:0 0 16px}
+.zc-access-row label{display:grid;gap:6px;flex:1 1 240px;min-width:0;font:500 14px var(--label,sans-serif);letter-spacing:.04em;text-transform:uppercase}
+.zc-access-row select{box-sizing:border-box;width:100%;min-width:0;min-height:44px;padding:10px 12px;background:#0F1A3C;color:#E6EBFA;border:1px solid #6477AA;border-radius:3px;font:400 16px var(--body,sans-serif);letter-spacing:normal;text-transform:none;color-scheme:dark}
+.zc-access-row select:focus-visible{outline:2px solid #FFD86B;outline-offset:3px}
+@media(max-width:600px){.zc-access-row{gap:12px}.zc-access-row label{flex-basis:100%}.zc-access-row select{min-height:48px}}

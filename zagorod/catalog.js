@@ -8,6 +8,10 @@
   const distances = Array.from(document.querySelectorAll('.zc-d'));
   const reset = document.getElementById('zc-reset');
   const sort = document.getElementById('zc-sort');
+  const access = document.getElementById('zc-access');
+  const walk = document.getElementById('zc-walk');
+  const accessValue = () => access ? access.value : 'all';
+  const walkValue = () => walk ? walk.value : 'all';
   const enabled = new Set(cards.map(c => c.dataset.t));
   const types = new Set(enabled);
   const normalize = text => text.toLocaleLowerCase('ru').replace(/ё/g, 'е').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
@@ -19,11 +23,13 @@
 
   function selectionUrl() {
     const url = new URL(location.href);
-    ['q', 'types', 'distance', 'sort'].forEach(key => url.searchParams.delete(key));
+    ['q', 'types', 'distance', 'sort', 'access', 'walk'].forEach(key => url.searchParams.delete(key));
     if (search.value.trim()) url.searchParams.set('q', search.value.trim());
     if (enabled.size !== types.size) url.searchParams.set('types', Array.from(types).filter(type => enabled.has(type)).join(','));
     if (range !== 'all') url.searchParams.set('distance', range);
     if (sort.value !== 'km') url.searchParams.set('sort', sort.value);
+    if (accessValue() !== 'all') url.searchParams.set('access', accessValue());
+    if (walkValue() !== 'all') url.searchParams.set('walk', walkValue());
     return url;
   }
   function save() {
@@ -37,6 +43,8 @@
     selected.filter(type => types.has(type)).forEach(type => enabled.add(type));
     range = distances.some(button => button.dataset.r === params.get('distance')) ? params.get('distance') : 'all';
     sort.value = params.get('sort') === 'n' ? 'n' : 'km';
+    if (access) access.value = ['verified', 'walk', 'transfer'].includes(params.get('access')) ? params.get('access') : 'all';
+    if (walk) walk.value = Array.from(walk.options).some(option => option.value === params.get('walk')) ? params.get('walk') : 'all';
     reorder(false);
   }
 
@@ -47,7 +55,11 @@
     cards.forEach(card => {
       const km = Number(card.dataset.km);
       const within = range === 'all' || (km >= Number(range.split('-')[0]) && km < Number(range.split('-')[1]));
-      const show = within && enabled.has(card.dataset.t) && words.every(word => texts.get(card).includes(word));
+      const verified = card.dataset.access === 'walk' || card.dataset.access === 'transfer';
+      const accessible = accessValue() === 'all' || (accessValue() === 'verified' ? verified : card.dataset.access === accessValue());
+      const minutes = Number(card.dataset.walkMin);
+      const walkable = walkValue() === 'all' || (verified && Number.isFinite(minutes) && minutes > 0 && minutes <= Number(walkValue()));
+      const show = within && accessible && walkable && enabled.has(card.dataset.t) && words.every(word => texts.get(card).includes(word));
       card.hidden = !show;
       if (show) { count++; visible.add(card.getAttribute('href')); }
     });
@@ -56,7 +68,7 @@
     distances.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.r === range)));
     document.getElementById('zc-n').textContent = count;
     document.querySelector('.zc-empty').hidden = count > 0;
-    reset.hidden = !search.value && range === 'all' && enabled.size === types.size && sort.value === 'km';
+    reset.hidden = !search.value && range === 'all' && enabled.size === types.size && sort.value === 'km' && accessValue() === 'all' && walkValue() === 'all';
     if (shareStatus) shareStatus.textContent = '';
     if (shareUrl) shareUrl.hidden = true;
     if (persist) save();
@@ -68,6 +80,8 @@
   }));
   distances.forEach(button => button.addEventListener('click', () => { range = button.dataset.r; update(); }));
   search.addEventListener('input', () => update());
+  if (access) access.addEventListener('change', () => update());
+  if (walk) walk.addEventListener('change', () => update());
   function reorder(persist = true) {
     cards.slice().sort((a, b) => sort.value === 'n'
       ? a.dataset.n.localeCompare(b.dataset.n, 'ru')
@@ -77,6 +91,8 @@
   sort.addEventListener('change', () => reorder());
   reset.addEventListener('click', () => {
     search.value = ''; range = 'all'; sort.value = 'km';
+    if (access) access.value = 'all';
+    if (walk) walk.value = 'all';
     types.forEach(type => enabled.add(type));
     reorder(); search.focus();
   });
