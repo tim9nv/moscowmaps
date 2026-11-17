@@ -1,0 +1,18 @@
+.hsearch{position:relative;z-index:5}
+.hsearch .search-help{font-size:13px;line-height:1.4;color:var(--muted);margin:6px 0 0}
+.district-search-results{position:absolute;top:100%;left:0;right:0;margin-top:7px;max-height:min(430px,65vh);overflow-y:auto;overscroll-behavior:contain;background:var(--surface,#0F1A3C);color:var(--fg,#F2F5FF);border:1px solid var(--line,#27376B);border-radius:3px;box-shadow:0 12px 30px #0007;padding:10px;box-sizing:border-box;z-index:30}
+.district-search-results[hidden]{display:none}
+.district-search-results ul{list-style:none;padding:0;margin:0}
+.district-search-results li+li{border-top:1px dotted var(--line,#27376B);margin-top:6px;padding-top:6px}
+.district-search-results a{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 8px;min-height:44px;box-sizing:border-box;color:var(--fg,#F2F5FF);text-decoration:none;overflow-wrap:anywhere}
+.district-search-results a:hover,.district-search-results a:focus-visible{background:#FFD86B16;outline:2px solid var(--gold,#FFD86B);outline-offset:-2px}
+.district-search-results small{font-size:12px;color:var(--muted);font-weight:400}
+.district-search-results .street-hit>strong{display:block;padding:7px 8px 2px;font-weight:600;overflow-wrap:anywhere}
+.district-search-results .street-hit>small{display:block;padding:0 8px 4px}
+.district-search-results .street-hit>a{padding-left:16px}
+.search-group{font-family:var(--label,inherit);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold,#FFD86B);margin:5px 8px}
+.search-note,.search-source{font-size:12px;line-height:1.45;color:var(--muted);margin:9px 8px}
+.district-search-results .search-source a{display:inline;padding:0;min-height:0;color:var(--muted);text-decoration:underline}
+.district-search-results button{font:inherit;min-height:44px;padding:8px 12px;color:var(--gold,#FFD86B);background:transparent;border:1px solid currentColor;margin:0 8px 8px;cursor:pointer}
+
+#dl a[hidden],#dl .hl[hidden],#dl .okh[hidden]{display:none!important}
