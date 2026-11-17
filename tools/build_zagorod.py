@@ -5,6 +5,7 @@
 """
 import os, re, glob, html, datetime, json
 from zagorod_navigation import add_navigation
+from no_car import attributes as nc_attributes, badge as nc_badge, filters as nc_filters, enrich_place, promo as nc_promo, collection_page
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE = 'https://www.mskatlas.ru'
 V = '20261112i'
@@ -719,7 +720,7 @@ def place_page(p):
 </body>
 </html>
 '''
-    return add_navigation(out)
+    return add_navigation(enrich_place(out, p['slug']))
 
 HUBPT = {'sergiev-posad': (56.31069, 38.13021), 'kolomna': (55.1058, 38.7633), 'arhangelskoe': (55.78858, 37.28593), 'abramtsevo': (56.23721, 37.96611), 'zvenigorod': (55.72818, 36.81626), 'novyy-ierusalim': (55.92171, 36.84546), 'melihovo': (55.11483, 37.64675), 'dmitrov': (56.3433, 37.51969), 'muranovo': (56.18071, 37.90213), 'ostafevo': (55.4943, 37.50364), 'tarusa-polenovo': (54.7482, 37.2357), 'nikola-lenivets': (54.74834, 35.59855), 'etnomir': (55.2453, 36.42757), 'kochevnik': (56.24126, 38.05318), 'vorobi': (55.15854, 36.77783), 'zaraysk': (54.75752, 38.87168), 'zubry': (54.91524, 37.56884), 'serednikovo': (55.9286, 37.2414), 'fermy': (56.18458, 37.33589), 'serpuhov': (54.91662, 37.40271), 'borovsk': (55.20708, 36.48233), 'mozhaysk-borodino': (55.5179, 35.82266), 'egorevsk': (55.38405, 39.03469), 'klin': (56.33502, 36.73328), 'monino': (55.83279, 38.184), 'senezh': (56.19947, 36.99796), 'gorki-leninskie': (55.50772, 37.76797), 'pereslavl-zalesskiy': (56.73637, 38.85286), 'rostov-velikiy': (57.18464, 39.41632), 'uglich': (57.52869, 38.31733)}
 def _brg(p):
@@ -790,15 +791,16 @@ def catalog_html():
     dist = ''.join(f'<button type="button" class="zc-d" data-r="{r}" aria-pressed="{"true" if r == "all" else "false"}">{E(l)}</button>'
                    for r, l in (('all', 'Любое'), ('0-60', 'До 60 км'), ('60-120', '60–120 км'), ('120-999', 'Дальше 120 км')))
     cards = ''.join(
-        f'<a class="zg-card zc" href="{p["slug"]}/" data-t="{t}" data-km="{d}" data-n="{E(p["name"])}">'
+        f'<a class="zg-card zc" href="{p["slug"]}/" data-t="{t}" data-km="{d}" data-n="{E(p["name"])}"{nc_attributes(p["slug"])}>'
         f'<p class="zc-t"><i style="background:{col[t][1]}"></i>{E(col[t][0].split(" и ")[0])}<span>~{d} км по прямой</span></p>'
-        f'<h3>{E(p["name"])}</h3><p class="meta">{E(p["kind"])}{" · лучше с ночёвкой" if p.get("far") else ""}</p><p>{E(p["lead"])}</p></a>'
+        f'<h3>{E(p["name"])}</h3><p class="meta">{E(p["kind"])}{" · лучше с ночёвкой" if p.get("far") else ""}</p>{nc_badge(p["slug"])}<p>{E(p["lead"])}</p></a>'
         for d, p, t in rows)
-    return ('<link rel="stylesheet" href="catalog.css?v=20261115-nav">'
+    return ('<link rel="stylesheet" href="catalog.css?v=20261117-no-car"><link rel="stylesheet" href="no-car.css?v=20261117">'
             '<script defer src="navigation.js?v=20261115-nav"></script>'
             '<div class="zc-bar"><div class="zc-search-row"><label class="zc-search" for="zc-search">Найти место'
             '<input id="zc-search" type="search" placeholder="Название или что хочется посмотреть" aria-controls="zc-results" autocomplete="off"></label>'
             '<button type="button" id="zc-reset" hidden>Сбросить фильтры</button></div>'
+            + nc_filters() +
             f'<div class="zs-legend" role="group" aria-label="Тип места">{chips}</div>'
             f'<div class="zc-row"><div class="zc-dist" role="group" aria-label="Расстояние">{dist}</div>'
             f'<label class="zc-sort">Порядок <select id="zc-sort"><option value="km">ближе сначала</option><option value="n">по алфавиту</option></select></label></div>'
@@ -807,7 +809,7 @@ def catalog_html():
             '<p id="zc-share-status" class="zg-note" role="status"></p>'
             '<input id="zc-share-url" type="text" readonly hidden aria-label="Ссылка на подборку для копирования"></div>'
             f'<div class="zg-grid zc-grid" id="zc-results">{cards}</div><p class="zg-note zc-empty" hidden>Ничего не найдено. Измените запрос или сбросьте фильтры.</p>'
-            '<script defer src="catalog.js?v=20261115-nav"></script>')
+            '<script defer src="catalog.js?v=20261117-no-car"></script>')
 
 def hub():
     title = 'За город: куда поехать из Москвы на день или выходные'
@@ -817,6 +819,7 @@ def hub():
   <header class="hero has-art"><div class="hero-copy"><p class="eyebrow">Атлас Москвы · выезд на день</p><h1>За город</h1><p>Куда съездить из Москвы на день или на выходные: как добраться, что посмотреть по порядку, где поесть. Арт-парки, этнопарки, города и усадьбы в пределах дня пути, а для выходных с ночёвкой — три города Золотого кольца.</p></div>{ART["hub"]}</header>
   <nav class="season" aria-label="Сезон"><a aria-current="page" href="./">Лето</a><a href="zima/">Зима: лыжи и склоны</a></nav>
   <p class="zc-jump"><a href="#all">Выбрать место: поиск и фильтры ↓</a></p>
+  {nc_promo()}
   <section class="zg-sec"><h2>Куда ехать: схема направлений</h2>{scheme_html(PLACES, HUBPT)}</section>
   <section class="zg-sec zg-winter"><h2>Зимой и на новогодние</h2><p class="zg-note"><a href="zima/"><b>Горнолыжные склоны, лыжные маршруты и базы — на странице «Зима» →</b></a> В декабре темнеет около четырёх часов дня: гулять лучше с утра, музеи оставить на вторую половину дня. Часы работы на праздники меняются — проверяйте на сайтах мест.</p><div class="zg-grid">{''.join(f'<a class="zg-card" href="{k}/"><h3>{E(n)}</h3><p>{E(t)}</p></a>' for k, n, t in WINTER)}</div></section>
   <section class="zg-sec zg-cat" id="all"><h2>Все места</h2>{catalog_html()}</section>
@@ -831,6 +834,8 @@ def hub():
 
 os.makedirs(f'{REPO}/zagorod', exist_ok=True)
 open(f'{REPO}/zagorod/index.html', 'w', encoding='utf-8').write(hub())
+os.makedirs(f'{REPO}/zagorod/bez-mashiny', exist_ok=True)
+open(f'{REPO}/zagorod/bez-mashiny/index.html', 'w', encoding='utf-8').write(collection_page(head, METRIKA))
 for p in PLACES:
     os.makedirs(f'{REPO}/zagorod/{p["slug"]}', exist_ok=True)
     open(f'{REPO}/zagorod/{p["slug"]}/index.html', 'w', encoding='utf-8').write(place_page(p))
@@ -861,7 +866,7 @@ open(g, 'w', encoding='utf-8').write(gs)
 sm = open(f'{REPO}/sitemap.xml', encoding='utf-8').read()
 sm = re.sub(r'  <url><loc>' + re.escape(BASE) + r'/zagorod/[^<]*</loc>.*?</url>\n', '', sm)
 today = datetime.date.today().isoformat()
-urls = [f'{BASE}/zagorod/', f'{BASE}/zagorod/zima/'] + [f'{BASE}/zagorod/{p["slug"]}/' for p in PLACES]
+urls = [f'{BASE}/zagorod/', f'{BASE}/zagorod/zima/', f'{BASE}/zagorod/bez-mashiny/'] + [f'{BASE}/zagorod/{p["slug"]}/' for p in PLACES]
 sm = sm.replace('</urlset>', ''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in urls) + '</urlset>')
 open(f'{REPO}/sitemap.xml', 'w', encoding='utf-8').write(sm)
 print('страниц «За город»:', 1 + len(PLACES), '· кнопка обновлена на', n, 'страницах')
