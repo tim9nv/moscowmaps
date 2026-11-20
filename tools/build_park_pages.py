@@ -5,6 +5,7 @@
 Карту и объекты на странице рисует parks/catalog/catalog.js (window.PARK_ID, window.PARK_BASE).
 """
 import json, re, os, gzip, base64, math, html, datetime
+from pathlib import Path
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAT = f'{REPO}/parks/catalog'
 BASE = 'https://www.mskatlas.ru'
@@ -52,6 +53,8 @@ for p in parks:
     pid = p['id']
     if pid in GUIDES: p['url'] = GUIDES[pid]; continue
     sl = p['slug']
+    note_path = Path(REPO, 'tools', 'data', 'park_notes', sl + '.html')
+    visit_note = note_path.read_text(encoding='utf-8') if note_path.exists() else ''
     src = PARKS[int(pid) - 1]; name = cap(p['name'])
     pls = places['parks'].get(pid, [])
     t = trails.get(pid, {}).get('t', {})
@@ -112,7 +115,7 @@ for p in parks:
 <main class="wrap">
   <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / {E(cap(p["short"]))}</nav>
   <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве{(" · " + E(dist[0])) if dist else ""}</p><h1 id="title">{E(name)}</h1><p id="intro">{E(lead)}</p><div class="actions"><a class="primary" href="#map-section">Открыть карту</a></div></div></header>
-  <p id="load-error" role="status" hidden></p>
+{visit_note}  <p id="load-error" role="status" hidden></p>
   <section id="map-section" aria-labelledby="map-title" hidden>
     <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
     <div class="map-shell" id="map-shell">

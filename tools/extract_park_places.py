@@ -33,6 +33,8 @@ def rec(t, lon, lat):
     if not c: return
     if t.get('access') in ('private', 'no') or t.get('disused') == 'yes': return
     name = (t.get('name') or '').strip()
+    if name == 'Основателям Ашиновского парка':
+        name = 'Основателям Аршиновского парка'
     if not name:
         if c not in DEF: return          # безымянные памятники и кафе не показываем
         name = DEF[c]
