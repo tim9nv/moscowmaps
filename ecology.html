@@ -36,6 +36,8 @@
 </style>
 <style>
 /* Layout: one column, map is the page; detail card under it, then rankings and method */
+.eco-picker { display: grid; gap: 6px; margin-top: 12px; font-weight: 600; }
+.eco-picker select { width: 100%; min-width: 0; min-height: 44px; padding: 6px 10px; font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); }
 :root{
   --bg:#f6f5f1; --surface:#ffffff; --fg:#1d1f1c; --muted:#62655e; --line:#dcdad2;
   --accent:#a8322a;
@@ -154,7 +156,12 @@ path.dim{fill-opacity:.12!important;opacity:.5}
     <p class="lede">Сводный индекс экологической нагрузки по 125 районам Москвы: рейтинг факторов EcoStandard, замеры воздуха и жалобы на запах, грязная вода у берега, близость к НПЗ, мусоросжигательным и асфальтовым заводам, ТЭЦ и очистным, радиационно опасным объектам, промзонам, свалкам и аэропортам, самые загруженные магистрали и западный перенос воздуха. Шкала от 1 (чище) до 10 (грязнее). Наведите на район, чтобы увидеть цифры, нажмите, чтобы открыть его страницу.</p>
   </header>
 
-  <section class="filt" id="flt" aria-label="Фильтр районов"></section>
+  <section class="filt" aria-label="Выбор и фильтр районов">
+    <div id="flt"></div>
+    <label class="eco-picker" for="eco-district">Экология моего района
+      <select id="eco-district"></select>
+    </label>
+  </section>
   <section class="map" aria-label="Карта районов внутри МКАД">
     <svg id="main" viewBox="0 0 600 620" role="img" aria-label="Карта районов Москвы, окрашенных по сводному индексу загрязнения"></svg>
     <div class="legend" id="legend"></div>
@@ -269,6 +276,10 @@ const cls=v=>{for(let k=0;k<BINS.length;k++){if(v<BINS[k][1])return k+1}return 5
 const col=v=>`var(--c${cls(v)})`;
 const fmt=v=>v.toFixed(1).replace(".",",");
 const F=DATA.features;
+const districtPicker = document.getElementById("eco-district");
+const districtNames = F.map(feature => feature.properties.n).sort((a, b) => a.localeCompare(b, "ru"));
+for (const name of districtNames) districtPicker.add(new Option(name, name));
+districtPicker.addEventListener("change", () => show(districtPicker.value));
 const OUT=new Set(["НАО","ТАО","ЗелАО"]);
 const inner={type:"FeatureCollection",features:F.filter(f=>!OUT.has(f.properties.o))};
 
@@ -316,6 +327,7 @@ draw("whole",DATA,400,420,8,false);
 
 function show(name){
   const f=F.find(x=>x.properties.n===name); if(!f)return;
+  districtPicker.value = name;
   const p=f.properties;
   mainSel.classed("sel",d=>d.properties.n===name);if(window._shownDist!==name){window._shownDist=name;mainSel.filter(d=>d.properties.n===name).raise();{const pn=mainSel.node()&&mainSel.node().parentNode;if(pn)[...pn.children].filter(c=>c.tagName!=="path").forEach(c=>pn.appendChild(c))}}
   const rv=p.w>=9?". Берег Москвы-реки ниже выпуска Курьяновских очистных.":p.w>=7?". Берег Москвы-реки ниже центра.":"";
