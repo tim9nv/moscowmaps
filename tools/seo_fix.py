@@ -36,11 +36,25 @@ OG = {'index.html': 'home', 'housing.html': 'housing', 'ecology.html': 'ecology'
       'social.html': 'social', 'parks.html': 'parks', 'sport.html': 'sport', 'climate.html': 'climate',
       'new-moscow.html': 'new-moscow', 'reyting/index.html': 'reyting', 'rayon/index.html': 'home'}
 OG['zagorod/bez-mashiny/index.html'] = 'zagorod'
-PARK_TWINS = {  # два разных участка с одним именем в OpenStreetMap
-    'parks/park-nikulino/index.html': 'Парк Никулино у памятника Скобелеву (Тропарево-Никулино)',
-    'parks/park-nikulino-192/index.html': 'Парк Никулино у храма Архангела Михаила (Тропарево-Никулино)',
-    'parks/park-v-poyme-reki-gorodni/index.html': 'Парк в пойме реки Городни (Братеево): карта',
-    'parks/park-v-poyme-reki-gorodni-145/index.html': 'Парк в пойме Городни (Братеево и Зябликово): карта',
+PARK_TWINS = {
+    'park-nikulino': ('Парк Никулино у памятника Скобелеву',
+                      'Карта участка парка Никулино в Тропарёве-Никулине. На ней отмечены памятник М. Д. Скобелеву и две детские площадки.'),
+    'park-nikulino-192': ('Парк Никулино у храма Архангела Михаила',
+                          'Участок парка Никулино у храма Архангела Михаила в Тропарёве. На карте можно найти храм, дорожки и две детские площадки.'),
+    'park-v-poyme-reki-gorodni': ('Парк в пойме Городни в Братееве',
+                                  'Карта участка в пойме реки Городни в районе Братеево. На ней отмечены кафе, три детские площадки и туалеты.'),
+    'park-v-poyme-reki-gorodni-145': ('Парк в пойме Городни в Братееве и Зябликове',
+                                      'Карта участка парка в районах Братеево и Зябликово. Найдите «Цаплю», детские площадки и туалеты в пойме Городни.'),
+    'park-druzhby': ('Парк Дружбы в Левобережном и Головинском районах',
+                     'Карта парка Дружбы в Левобережном и Головинском районах. Здесь отмечены памятники Сервантесу и Тагору, кафе и детские площадки.'),
+    'park-druzhby-78': ('Парк Дружбы в Некрасовке',
+                        'Дорожки парка Дружбы в Некрасовке на карте Москвы. Посмотрите, где находятся смотровая площадка и кафе.'),
+    'yablonevyy-sad': ('Яблоневый сад в Конькове',
+                       'На карте Яблоневого сада в Конькове отмечены скульптуры «Косули», «Олени» и «Сердце», детские площадки и туалет.'),
+    'yablonevyy-sad-195': ('Яблоневый сад в районе Орехово-Борисово Южное',
+                           'Дорожки Яблоневого сада в районе Орехово-Борисово Южное. На карте обозначены граница сада и детская площадка.'),
+    'yablonevyy-sad-214': ('Яблоневый сад в Восточном Бирюлёве',
+                           'Карта Яблоневого сада в районе Бирюлёво Восточное с дорожками и тремя детскими площадками.'),
 }
 DESC_OVERRIDE = {
     'rayon/index.html': 'Все 125 районов Москвы по округам. У каждого своя страница: цена метра, экология, транспорт, школы, поликлиники и парки.',
@@ -129,6 +143,7 @@ def main():
     changed = 0
     files = sorted(set(glob.glob('*.html') + glob.glob('*/index.html') + glob.glob('*/*/index.html')))
     for f in files:
+        f = f.replace(os.sep, '/')
         if os.path.basename(f).startswith(('yandex_', 'google')):
             continue
         s0 = s = open(f, encoding='utf-8').read()
@@ -148,9 +163,12 @@ def main():
             s = set_tag(s, 'title', TITLE_OVERRIDE[f])
             if get(s, 'og:title'):
                 s = set_tag(s, 'og:title', TITLE_OVERRIDE[f])
-        if f in PARK_TWINS:
-            s = set_tag(s, 'title', PARK_TWINS[f])
-            s = set_tag(s, 'og:title', PARK_TWINS[f])
+        if f.startswith('parks/') and f.split('/')[1] in PARK_TWINS:
+            name, description = PARK_TWINS[f.split('/')[1]]
+            title = name + ' — карта'
+            for tag, value in (('title', title), ('og:title', title), ('description', description), ('og:description', description)):
+                s = set_tag(s, tag, value)
+            s = re.sub(r'<h1 id="title">[^<]+</h1>', f'<h1 id="title">{E(name)}</h1>', s, count=1)
         elif f.startswith('parks/'):
             t = get(s, 'title') or ''
             if len(t) > 70 and t.endswith(' — карта и что посмотреть'):

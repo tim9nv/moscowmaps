@@ -53,10 +53,24 @@ function renderCatalog(parks) {
     "76": "Участок в Бабушкинском районе и Южном Медведкове",
     "86": "Долина Чермянки"
   };
+  const labels = new Map(Array.from(districtList?.querySelectorAll("a[href]") || [],
+    link => [link.getAttribute("href"), link.textContent]));
   const sections = parks.filter(park => sectionNames[park.id]);
   const hasYauza = parks.some(park => park.id === "9");
   const entries = parks.filter(park => !hasYauza || !sectionNames[park.id])
     .sort((a, b) => a.name.localeCompare(b.name, "ru"));
+  const names = new Set();
+  const duplicates = new Set();
+  for (const park of entries) {
+    const name = normalize(labels.get(park.url) || park.name);
+    if (names.has(name)) duplicates.add(name);
+    names.add(name);
+  }
+  function resultName(park) {
+    const name = labels.get(park.url) || displayName(park.name);
+    if (!duplicates.has(normalize(name))) return name;
+    return `${name} · ${park.center[1].toFixed(3)}, ${park.center[0].toFixed(3)}`;
+  }
   function linkTo(park, label) {
     const link = document.createElement("a");
     link.href = park.url || `?park=${park.id}`;
@@ -66,13 +80,11 @@ function renderCatalog(parks) {
   function update() {
     const term = normalize(search.value.trim());
     if (districtList) districtList.hidden = Boolean(term);
-    const matchesPark = park => normalize([park.name, park.short, sectionNames[park.id] || ""].join(" ")).includes(term);
+    const matchesPark = park => normalize([resultName(park), park.short, sectionNames[park.id] || ""].join(" ")).includes(term);
     const matches = entries.filter(park => matchesPark(park) || (park.id === "9" && sections.some(matchesPark)));
     const items = matches.map(park => {
       const li = document.createElement("li");
-      const sameName = entries.some(other => other.id !== park.id && other.name === park.name);
-      const label = sameName ? `${displayName(park.name)} · ${park.center[1].toFixed(3)}, ${park.center[0].toFixed(3)}` : displayName(park.name);
-      li.append(linkTo(park, label));
+      li.append(linkTo(park, resultName(park)));
       if (park.id === "9" && sections.length) {
         const details = document.createElement("details");
         const summary = document.createElement("summary");

@@ -30,9 +30,25 @@ YAUZA_MAPS = {
                                     'На этой карте показан участок вдоль Чермянки в Южном Медведкове и Отрадном.'),
 }
 
+CATALOG_LOCATIONS = {
+    'park-druzhby': 'Левобережный и Головинский районы',
+    'park-druzhby-78': 'Некрасовка',
+    'park-v-poyme-reki-gorodni': 'Братеево',
+    'park-v-poyme-reki-gorodni-145': 'Братеево и Зябликово',
+    'park-nikulino': 'у памятника Скобелеву',
+    'park-nikulino-192': 'у храма Архангела Михаила',
+    'yablonevyy-sad': 'Коньково',
+    'yablonevyy-sad-195': 'Орехово-Борисово Южное',
+    'yablonevyy-sad-214': 'Бирюлёво Восточное',
+}
+
 def park_name(park):
     info = YAUZA_MAPS.get(park.get('slug'))
-    return info[0] if info else cap(park['name'])
+    if info:
+        return info[0]
+    name = cap(park['name'])
+    location = CATALOG_LOCATIONS.get(park.get('slug'))
+    return f'{name} · {location}' if location else name
 
 def yauza_navigation(slug):
     if slug not in YAUZA_MAPS:
