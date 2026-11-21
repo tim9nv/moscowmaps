@@ -1,4 +1,4 @@
-"""Apply the stage-one editorial pilot to TWO generated district pages only.
+"""Apply editorial improvements to selected generated district pages.
 
 Run LAST, after the normal build including seo_fix.py:
     python tools/stage1_districts.py
@@ -16,6 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOTS = {"otradnoe": "Отрадное", "aeroport": "Аэропорт"}
+QUICK_LINKS = {"bogorodskoe": "Богородское", "orehovo-borisovo-severnoe": "Орехово-Борисово Северное"}
+PILOTS.update(QUICK_LINKS)
 QUIET = (
     "Расчётная оценка по расстоянию от домов до магистралей, крупных улиц и железнодорожных "
     "станций (без метро); это не замер шума."
@@ -185,7 +187,47 @@ def process(slug, name, text, p, age, houses, life):
         'Стоимость квартиры 54 м² — медианная цена метра × 54, а не оценка конкретной квартиры. '
         'Источник и месяц цен указаны выше; <a href="../../housing.html">методика цен</a>.',
         summary="Как рассчитана стоимость квартиры")
+    if slug in QUICK_LINKS:
+        text = text.replace("Для спорта мало мест: бассейнов нет,", "В выгрузке OpenStreetMap бассейны не отмечены,")
+        park_tip = (
+            'Для прогулки по готовому маршруту откройте <a href="../../parks/natsionalnyy-park-losinyy-ostrov/#walks">«Лабиринт и Босоногая тропа» в Лосином Острове</a>. '
+            'Если выбираете прогулку с видом, на <a href="../../parks/yauzskiy-lesopark/#map-section">карте Яузского лесопарка</a> отмечены смотровые площадки.'
+            if slug == "bogorodskoe" else
+            'Для прогулки от Фигурного моста через дворцы откройте <a href="../../parks/muzey-zapovednik-tsaritsyno/#walks">маршрут по «Царицыну»</a>. '
+            'Для прогулки у воды с детьми на <a href="../../parks/borisovskie-prudy/#map-section">карте Борисовских прудов</a> отмечены детские площадки и туалеты.'
+        )
+        heading = f'<h2>Парки района {name}</h2>'
+        text = re.sub(r'<!--PARK-CHOICE-->.*?<!--PARK-CHOICE-END-->', '', text, flags=re.S)
+        text = text.replace(heading, heading + '<!--PARK-CHOICE--><p>' + park_tip + '</p><!--PARK-CHOICE-END-->')
+        text = district_navigation(text, name)
     return sync_faq(text)
+
+
+def district_navigation(text, name):
+    sections = (
+        ("homes-map", None, "Карта домов"),
+        ("housing", "Жильё и транспорт", "Цены и метро"),
+        ("schools", "Школы, детские сады и поликлиники", "Школы и поликлиники"),
+        ("parks", "Парки района " + name, "Парки"),
+        ("ecology", "Экология района " + name, "Экология"),
+    )
+    links = []
+    for anchor, heading, label in sections:
+        pattern = (r'<section(?=[^>]*class="map")[^>]*>' if heading is None
+                   else r'<section[^>]*>(?=<h2>' + re.escape(heading) + r'</h2>)')
+        match = re.search(pattern, text)
+        if not match:
+            raise ValueError(f"Missing district section: {anchor}")
+        tag = match.group()
+        if f'id="{anchor}"' not in tag:
+            text = text[:match.start()] + tag[:-1] + f' id="{anchor}">' + text[match.end():]
+        links.append(f'<a href="#{anchor}">{label}</a>')
+    text = re.sub(r'<!--DISTRICT-NAV-->.*?<!--DISTRICT-NAV-END-->', '', text, flags=re.S)
+    nav = ('<!--DISTRICT-NAV--><style>.district-nav{display:flex;flex-wrap:wrap;gap:0 1em;margin:.5em 0}'
+           '.district-nav a{display:inline-flex;align-items:center;min-height:44px}'
+           'main section[id]{scroll-margin-top:4.5rem}</style>'
+           '<nav class="district-nav" aria-label="На странице района">' + ''.join(links) + '</nav><!--DISTRICT-NAV-END-->')
+    return replace_checked(text, '</header><!--LIFE-SCORE-->', '</header>' + nav + '<!--LIFE-SCORE-->')
 
 
 def main():
