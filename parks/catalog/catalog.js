@@ -47,23 +47,46 @@ async function read(url, format) {
 
 function renderCatalog(parks) {
   const search = getCatalogElement("park-search");
-  const normalize = s => s.toLocaleLowerCase("ru").replace(/ё/g, "е");
+  const districtList = getCatalogElement("all-parks")?.closest("section");
+  const normalize = s => s.toLocaleLowerCase("ru").replace(/ё/g, "е").replace(/[^а-яa-z0-9]+/gu, " ").trim();
+  const sectionNames = {
+    "76": "Участок в Бабушкинском районе и Южном Медведкове",
+    "86": "Долина Чермянки"
+  };
+  const sections = parks.filter(park => sectionNames[park.id]);
+  const hasYauza = parks.some(park => park.id === "9");
+  const entries = parks.filter(park => !hasYauza || !sectionNames[park.id])
+    .sort((a, b) => a.name.localeCompare(b.name, "ru"));
+  function linkTo(park, label) {
+    const link = document.createElement("a");
+    link.href = park.url || `?park=${park.id}`;
+    link.textContent = label;
+    return link;
+  }
   function update() {
     const term = normalize(search.value.trim());
-    const matches = parks.filter(p => normalize(p.name + " " + p.short).includes(term));
+    if (districtList) districtList.hidden = Boolean(term);
+    const matchesPark = park => normalize([park.name, park.short, sectionNames[park.id] || ""].join(" ")).includes(term);
+    const matches = entries.filter(park => matchesPark(park) || (park.id === "9" && sections.some(matchesPark)));
     const items = matches.map(park => {
       const li = document.createElement("li");
-      const link = document.createElement("a");
-      link.href = park.url || `?park=${park.id}`;
-      const sameName = parks.filter(other => other.name === park.name).length > 1;
-      link.textContent = sameName ? `${displayName(park.name)} · ${park.center[1].toFixed(3)}, ${park.center[0].toFixed(3)}` : displayName(park.name);
-      li.append(link);
+      const sameName = entries.some(other => other.id !== park.id && other.name === park.name);
+      const label = sameName ? `${displayName(park.name)} · ${park.center[1].toFixed(3)}, ${park.center[0].toFixed(3)}` : displayName(park.name);
+      li.append(linkTo(park, label));
+      if (park.id === "9" && sections.length) {
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.textContent = "Карты участков";
+        details.open = Boolean(term) && !matchesPark(park);
+        details.append(summary);
+        for (const section of sections) details.append(linkTo(section, sectionNames[section.id]));
+        li.append(details);
+      }
       return li;
     });
     getCatalogElement("park-list").replaceChildren(...items);
     getCatalogElement("park-count").textContent = matches.length ? `Найдено: ${matches.length}` : "Ничего не найдено";
   }
-  parks.sort((a, b) => a.name.localeCompare(b.name, "ru"));
   search.addEventListener("input", update);
   getCatalogElement("catalog").hidden = false;
   update();

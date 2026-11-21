@@ -20,6 +20,26 @@ def E(t): return html.escape(t, quote=True)
 def num(v, d=1): return (f'{v:.{d}f}').replace('.', ',')
 def pl(n, a, b, c): return a if n % 10 == 1 and n % 100 != 11 else (b if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14) else c)
 def cap(t): return t[0].upper() + t[1:]
+YAUZA_MAPS = {
+    'park-yauza': ('Парк «Яуза»', 'Основная карта', 'Парк «Яуза» — карта дорожек и достопримечательностей',
+                   'На основной карте показаны участки парка в Свиблове, Ростокине, Южном и Северном Медведкове.'),
+    'park-yauza-76': ('Парк «Яуза» — участок в Бабушкинском районе и Южном Медведкове', 'Участок в Бабушкинском районе и Южном Медведкове',
+                      'Парк «Яуза» в Бабушкинском районе и Южном Медведкове — карта',
+                      'На этой карте показан участок парка в Бабушкинском районе и Южном Медведкове.'),
+    'park-yauza-dolina-chermyanki': ('Парк «Яуза» — долина Чермянки', 'Долина Чермянки', 'Долина Чермянки в парке «Яуза» — карта дорожек',
+                                    'На этой карте показан участок вдоль Чермянки в Южном Медведкове и Отрадном.'),
+}
+
+def park_name(park):
+    info = YAUZA_MAPS.get(park.get('slug'))
+    return info[0] if info else cap(park['name'])
+
+def yauza_navigation(slug):
+    if slug not in YAUZA_MAPS:
+        return ''
+    links = ''.join(f'<li><a href="../{other}/">{E(info[1])}</a></li>'
+                    for other, info in YAUZA_MAPS.items() if other != slug)
+    return f'<nav class="park-sec" aria-labelledby="yauza-maps"><h2 id="yauza-maps">Другие карты парка «Яуза»</h2><ul class="park-names">{links}</ul></nav>\n'
 def km(lines):
     s = 0
     for ln in lines:
@@ -55,7 +75,7 @@ for p in parks:
     sl = p['slug']
     note_path = Path(REPO, 'tools', 'data', 'park_notes', sl + '.html')
     visit_note = note_path.read_text(encoding='utf-8') if note_path.exists() else ''
-    src = PARKS[int(pid) - 1]; name = cap(p['name'])
+    src = PARKS[int(pid) - 1]; name = park_name(p)
     pls = places['parks'].get(pid, [])
     t = trails.get(pid, {}).get('t', {})
     total = sum(km(v) for v in t.values()); paved = km(t.get('paved', []))
@@ -72,6 +92,11 @@ for p in parks:
     title = f'{name} ({dist[0]}) — карта и что посмотреть' if dist else f'{name} — карта и что посмотреть'
     empty = not pls and total < 0.3      # ни объектов, ни троп: в поиск не отдаём, пока не дописана
     desc = (f'{name} в Москве: карта с дорожками и тропами' + (', ' + ', '.join(cnt[:4]) if cnt else '') + '. Геолокация «Я на карте».')
+    if sl in YAUZA_MAPS:
+        _, _, title, description = YAUZA_MAPS[sl]
+        lead = description + (f' Площадь участка на карте — {num(src["a"], 2 if src["a"] < 1 else 1)} км².' if src.get('a') else '')
+        if cnt: lead += ' На карте отмечено: ' + ', '.join(cnt) + '.'
+        desc = description + ' Дорожки, смотровые площадки и места для остановок.'
     secs = ''
     for c, h, _ in CATS[:5]:
         names = sorted(set(by[c]), key=lambda x: x.lower())
@@ -91,8 +116,9 @@ for p in parks:
     others = []
     for d in dist:
         for q in by_district.get(d, []):
+            if sl in YAUZA_MAPS and q.get('slug') in YAUZA_MAPS: continue
             if q['id'] != pid and q not in others: others.append(q)
-    others_html = ('<section class="park-sec"><h2>Другие парки рядом</h2><ul class="park-names">' + ''.join(f'<li><a href="{E(q.get("url") or "../" + q.get("slug", "") + "/")}">{E(cap(q["name"]))}</a></li>' for q in others[:12]) + '</ul></section>\n') if others else ''
+    others_html = ('<section class="park-sec"><h2>Другие парки рядом</h2><ul class="park-names">' + ''.join(f'<li><a href="{E(q.get("url") or "../" + q.get("slug", "") + "/")}">{E(park_name(q))}</a></li>' for q in others[:12]) + '</ul></section>\n') if others else ''
     links = ''.join(f'<a href="../../rayon/{dslug[d][0]}/">Район {E(d)}</a>' for d in dist)
     page = f'''<!doctype html>
 <html lang="ru">
@@ -113,9 +139,9 @@ for p in parks:
 <body>
 <header class="topbar"><div class="in"><a class="brand" href="../../index.html" aria-label="Атлас Москвы, на главную"><i aria-hidden="true"></i>Атлас Москвы</a><nav class="tabs" aria-label="Разделы"><a href="../../index.html">Районы</a><a href="../../housing.html">Цены</a><a href="../../ecology.html">Экология</a><a href="../../transport.html">Транспорт</a><a href="../../social.html">Школы и поликлиники</a><a href="../../parks.html" aria-current="page">Парки и прогулки</a><a href="../../reyting/">Рейтинги</a><a href="../../new-moscow.html">Новая Москва</a><a href="../../climate.html">Климат и рельеф</a></nav></div></header><script>(function(){{var t=document.querySelector(".topbar .tabs"),a=t&&t.querySelector("[aria-current]");if(a&&t.scrollWidth>t.clientWidth)t.scrollLeft=a.offsetLeft-(t.clientWidth-a.offsetWidth)/2}})()</script>
 <main class="wrap">
-  <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / {E(cap(p["short"]))}</nav>
+  <nav class="crumb" aria-label="Навигация"><a href="../catalog/">Все карты парков</a> / {E(name if sl in YAUZA_MAPS else cap(p["short"]))}</nav>
   <header class="hero"><div class="hero-copy"><p class="eyebrow">Прогулки по Москве{(" · " + E(dist[0])) if dist else ""}</p><h1 id="title">{E(name)}</h1><p id="intro">{E(lead)}</p><div class="actions"><a class="primary" href="#map-section">Открыть карту</a></div></div></header>
-{visit_note}  <p id="load-error" role="status" hidden></p>
+{visit_note}{yauza_navigation(sl)}  <p id="load-error" role="status" hidden></p>
   <section id="map-section" aria-labelledby="map-title" hidden>
     <div class="section-head"><h2 id="map-title" tabindex="-1">Карта парка</h2></div>
     <div class="map-shell" id="map-shell">
@@ -162,7 +188,7 @@ for q in parks:
     o = dslug[d[0]][1] if d and d[0] in dslug else 'Новая Москва'
     groups.setdefault(o, []).append(q)
 lst = '<!--PARK-LIST--><section class="park-sec" aria-labelledby="all-parks"><h2 id="all-parks">Все парки по округам</h2>' + ''.join(
-    f'<h3>{E(o)}</h3><ul class="park-names">' + ''.join(f'<li><a href="{E(q["url"].replace("../", "../", 1))}">{E(cap(q["name"]))}</a></li>' for q in sorted(groups[o], key=lambda q: q['name'].lower())) + '</ul>'
+    f'<h3>{E(o)}</h3><ul class="park-names">' + ''.join(f'<li><a href="{E(q["url"].replace("../", "../", 1))}">{E(park_name(q))}</a></li>' for q in sorted(groups[o], key=lambda q: q['name'].lower())) + '</ul>'
     for o in sorted(groups, key=lambda o: OKR.index(o) if o in OKR else 99)) + '</section><!--PARK-LIST-END-->'
 c = open(f'{CAT}/index.html', encoding='utf-8').read()
 c = re.sub(r'<!--PARK-LIST-->.*?<!--PARK-LIST-END-->', '', c, flags=re.S)
@@ -182,7 +208,7 @@ for d, (dsl, o) in dslug.items():
     qs = sorted(by_district.get(d, []), key=lambda q: -(PARKS[int(q['id']) - 1].get('a') or 0))
     if qs:
         blk = (f'<!--DISTRICT-PARKS--><section><h2>Парки района {E(d)}</h2><p>Карты с дорожками, что посмотреть, кафе и туалеты:</p><ul>'
-               + ''.join(f'<li><a href="../../parks/{q["url"][3:] if q["url"].startswith("../") else q["url"]}">{E(cap(q["name"]))}</a></li>' for q in qs[:15]) + '</ul></section><!--DISTRICT-PARKS-END-->')
+               + ''.join(f'<li><a href="../../parks/{q["url"][3:] if q["url"].startswith("../") else q["url"]}">{E(park_name(q))}</a></li>' for q in qs[:15]) + '</ul></section><!--DISTRICT-PARKS-END-->')
         i = t.find('<section class="faq">')
         if i > 0: t = t[:i] + blk + t[i:]; n += 1
     open(f, 'w', encoding='utf-8').write(t)
