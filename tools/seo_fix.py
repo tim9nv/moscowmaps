@@ -16,8 +16,8 @@ os.chdir(ROOT)
 TABS = {
     'housing.html': ('Цены на квартиры по районам Москвы — карта 2026',
                      'Сколько стоит квадратный метр на вторичке в каждом из 125 районов Москвы: карта, рейтинг от дешёвых к дорогим, данные по свежим объявлениям.'),
-    'ecology.html': ('Экология районов Москвы — карта загрязнения 2026',
-                     'Экологический балл каждого района Москвы: заводы, ТЭЦ, магистрали и замеры воздуха на карте. Самые чистые и самые загрязнённые районы.'),
+    'ecology.html': ('Экология Москвы по районам — карта и рейтинг',
+                     'Сравните экологическую нагрузку в 125 районах Москвы. Карта, выбор района, крупные источники загрязнения и ссылка на замеры Мосэкомониторинга.'),
     'transport.html': ('Транспорт в районах Москвы: метро и время до центра',
                        'Метро, МЦК и МЦД в каждом районе Москвы: сколько ехать до центра и идти до станции. Карта и рейтинг транспортной доступности.'),
     'social.html': ('Школы и поликлиники по районам Москвы на карте',
@@ -139,9 +139,35 @@ def og_image(s, name):
     return s
 
 
-def main():
+def search_landing(s, path):
+    if path == 'rayon/lefortovo/index.html':
+        title = 'Район Лефортово (ЮВАО) — границы, метро и цены'
+        description = 'Лефортово входит в Юго-Восточный административный округ Москвы. Карта границ и домов, транспорт, цены на жильё и Лефортовский парк.'
+        if 'id="lefortovo-location"' not in s:
+            s = s.replace('<h1>Район Лефортово</h1>',
+                          '<h1>Район Лефортово</h1><p id="lefortovo-location">Лефортово входит в Юго-Восточный административный округ Москвы (ЮВАО). '
+                          '<a href="#dm">Смотрите границы района и дома на карте</a> или откройте <a href="../../parks/lefortovskiy-park/">карту Лефортовского парка</a>.</p>', 1)
+    elif path == 'parks/chobotovskiy-les/index.html':
+        title = 'Чоботовский лес в Москве — карта троп и как добраться'
+        description = 'Чоботовский лес в Ново-Переделкине. Карта троп и детских площадок, ориентиры от метро «Боровское шоссе» и со стороны станции Переделкино.'
+        if 'id="chobotovo-visit"' not in s:
+            s = s.replace('  <p id="load-error"', '''  <section class="park-sec" aria-labelledby="chobotovo-visit">
+    <h2 id="chobotovo-visit">Как добраться до Чоботовского леса</h2>
+    <p>Если едете на метро, ориентир — станция «Боровское шоссе» и Чоботовская улица. С юга удобнее подъехать на МЦД-4 до станции Переделкино. От станции есть наземный переход в сторону 9-й Чоботовской аллеи. Сверьте подход к лесу с картой троп.</p>
+    <p><a href="#map-section">Открыть карту троп и площадок</a> · <a href="https://mtp.mos.ru/projects/proekt-transportnogo-i-peshehodnogo-obslujivaniia-novyh-stancii-metro-i-mcd">Схема подходов к станции Переделкино</a></p>
+  </section>
+  <p id="load-error"''', 1)
+    else:
+        return s
+    for tag, value in (('title', title), ('og:title', title), ('description', description), ('og:description', description)):
+        s = set_tag(s, tag, value)
+    return s
+
+
+def main(files=None):
     changed = 0
-    files = sorted(set(glob.glob('*.html') + glob.glob('*/index.html') + glob.glob('*/*/index.html')))
+    if files is None:
+        files = sorted(set(glob.glob('*.html') + glob.glob('*/index.html') + glob.glob('*/*/index.html')))
     for f in files:
         f = f.replace(os.sep, '/')
         if os.path.basename(f).startswith(('yandex_', 'google')):
@@ -185,6 +211,7 @@ def main():
         elif f.startswith('zagorod/'):
             slug = f.split('/')[1] if f.count('/') == 2 else 'zagorod'
             s = og_image(s, 'zagorod-' + slug if slug != 'zagorod' else 'zagorod')
+        s = search_landing(s, f)
         if s != s0:
             open(f, 'w', encoding='utf-8').write(s)
             changed += 1
