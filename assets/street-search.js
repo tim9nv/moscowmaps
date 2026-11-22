@@ -65,6 +65,17 @@ export function findAddress(index, address) {
   return {name: entry.name};
 }
 
+export function findMappedAddresses(index, address) {
+  const street = normalize(address.street), kind = streetType(address.street);
+  const matches = [];
+  for (const [name, aliases, numbers] of index.streets) {
+    const districts = numbers[address.number];
+    if (!districts || ![name, ...aliases].some(label => normalize(label) === street && (!kind || streetType(label) === kind))) continue;
+    for (const id of districts) matches.push({name, slug: index.districts[id][0], number: address.number});
+  }
+  return matches;
+}
+
 export function mount({input, results, features, onFilter, urlForDistrict}) {
   const css = document.createElement('link');
   css.rel = 'stylesheet'; css.href = new URL('./street-search.css?v=20261116', import.meta.url).href;
@@ -72,15 +83,29 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
   const controller = new AbortController();
   const districts = features.map(f => f.properties);
   let data = null, pending = null, failed = false, dismissed = false, version = 0, rendering = false;
+  let addressData = null, addressPending = null, addressFailed = false;
   const load = () => {
     if (data) return Promise.resolve(data);
-    if (!pending) pending = fetch(new URL('./streets.json?v=20261116', import.meta.url))
+    if (!pending) pending = fetch(new URL('./streets.json?v=20261122', import.meta.url))
       .then(r => { if (!r.ok) throw new Error('street index'); return r.json(); })
       .then(d => {
         if (!Array.isArray(d.streets) || !Array.isArray(d.districts)) throw new Error('street index format');
         data = d; failed = false; return d;
       }).catch(() => { failed = true; return null; }).finally(() => { pending = null; });
     return pending;
+  };
+  const loadAddresses = () => {
+    if (addressData) return Promise.resolve();
+    if (!addressPending) {
+      addressPending = fetch(new URL('./street-addresses.json?v=20261122', import.meta.url))
+        .then(r => { if (!r.ok) throw new Error('address index'); return r.json(); })
+        .then(index => {
+          if (!Array.isArray(index.streets) || !Array.isArray(index.districts)) throw new Error('address index format');
+          addressData = index; addressFailed = false;
+        })
+        .catch(() => { addressFailed = true; }).finally(() => { addressPending = null; });
+    }
+    return addressPending;
   };
   function link(slug, text, detail) {
     const a = document.createElement('a'); a.href = urlForDistrict(slug);
@@ -102,15 +127,19 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
     results.replaceChildren();
     if (!raw) { results.hidden = true; onFilter(null); rendering = false; return; }
     const address = splitAddress(raw);
-    const house = address && data ? findAddress(addresses, address) : null;
-    const districtHits = house ? [] : districts.filter(d => normalize(d.n).includes(text) && text);
-    const streets = data && !house ? findStreets(data.streets, raw) : [];
+    const checkedHouse = address && findAddress(addresses, address);
+    const houses = checkedHouse?.slug ? [checkedHouse] : address && addressData ? findMappedAddresses(addressData, address) : [];
+    const districtHits = address ? [] : districts.filter(d => normalize(d.n).includes(text) && text);
+    const streets = data && !address ? findStreets(data.streets, raw) : [];
     const slugs = new Set(districtHits.map(d => d.slug));
-    if (house?.slug) {
-      const [, district, area] = data.districts.find(([slug]) => slug === house.slug);
-      slugs.add(house.slug);
-      const ul = group('Адрес');
-      item(ul, link(house.slug, district, `${house.name}, ${house.number} · ${area}`));
+    if (houses.length) {
+      const ul = group(houses.length === 1 ? 'Адрес' : 'Найдено несколько совпадений');
+      for (const house of houses) {
+        const district = districts.find(d => d.slug === house.slug);
+        if (!district) continue;
+        slugs.add(house.slug);
+        item(ul, link(house.slug, district.n, `${house.name}, ${house.number.toUpperCase()} · ${district.o}`));
+      }
     }
     for (const row of streets) for (const id of row[1]) slugs.add(data.districts[id][0]);
     onFilter(slugs);
@@ -130,18 +159,20 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
       }
       if (streets.length === 12) message('Показаны первые 12 улиц. Уточните название, если нужной нет.');
     }
-    if (failed && text.length >= 2) {
-      message('Не удалось загрузить улицы. Поиск районов работает.', true);
+    if ((address && !houses.length && addressFailed) || (!address && failed && text.length >= 2)) {
+      message(address ? 'Не удалось загрузить адреса.' : 'Не удалось загрузить улицы. Поиск районов работает.', true);
       const retry = document.createElement('button'); retry.type = 'button'; retry.textContent = 'Попробовать ещё раз';
       retry.onclick = () => { dismissed = false; update(); }; results.append(retry);
-    } else if (!data && text.length >= 2) message('Загружаем улицы…', true);
-    else if (house && !house.slug) message('Этот номер не найден среди проверенных адресов. Уточните номер или введите название улицы без дома.', true);
-    else if (!house?.slug && !districtHits.length && !streets.length) message(text.length < 2 ? 'Введите хотя бы две буквы названия.' : 'Ничего не найдено. Уточните название улицы или района.', true);
-    if (data && streets.length) {
-      message('По данным OpenStreetMap; список районов может быть неполным. Для конкретного дома уточните район по адресу.');
+    } else if (address && !houses.length) {
+      message(addressData ? 'Адрес не найден в индексе. Уточните номер дома или поищите улицу отдельно.' : 'Загружаем адреса…', true);
+    } else if (!address && !data && text.length >= 2) message('Загружаем улицы…', true);
+    else if (!address && !districtHits.length && !streets.length) message(text.length < 2 ? 'Введите хотя бы две буквы названия.' : 'Ничего не найдено. Уточните название улицы или района.', true);
+    const osm = streets.length ? data : houses.length && !checkedHouse?.slug ? addressData : null;
+    if (osm) {
+      if (streets.length) message('По данным OpenStreetMap; список районов может быть неполным. Уточните номер дома для поиска по адресу.');
       const p = document.createElement('p'); p.className = 'search-source';
       const a = document.createElement('a'); a.href = 'https://www.openstreetmap.org/copyright'; a.textContent = '© OpenStreetMap';
-      p.append(a, ` · ${data.date.split('-').reverse().join('.')}`); results.append(p);
+      p.append(a, ` · ${osm.date.split('-').reverse().join('.')}`); results.append(p);
     }
     results.hidden = dismissed;
     if (focused && !dismissed) {
@@ -154,10 +185,11 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
   async function update() {
     const current = ++version;
     render();
-    if (normalize(input.value).length >= 2 && !data) {
-      await load();
-      if (current === version && input.isConnected) render();
-    }
+    const address = splitAddress(input.value);
+    if (address && !addressData && !findAddress(addresses, address)?.slug) await loadAddresses();
+    else if (!address && normalize(input.value).length >= 2 && !data) await load();
+    else return;
+    if (current === version && input.isConnected) render();
   }
   input.addEventListener('input', () => { dismissed = false; update(); });
   input.addEventListener('focus', () => { dismissed = false; update(); });
@@ -169,7 +201,7 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
       e.preventDefault();
       const links = [...results.querySelectorAll('li a')];
       const destinations = new Set(links.map(a => a.href));
-      if (destinations.size === 1 && (data || failed || normalize(input.value).length < 2)) links[0].click();
+      if (destinations.size === 1 && (splitAddress(input.value) || data || failed || normalize(input.value).length < 2)) links[0].click();
       else { dismissed = false; update(); }
     }
   });
@@ -212,13 +244,13 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     const input = original.cloneNode(true);
     input.value = earlyQuery;
     input.dataset.streetSearch = 'ready';
-    input.placeholder = 'Марьино или Олонецкая, 6';
+    input.placeholder = 'Марьино или Тверская, 15';
     input.setAttribute('aria-controls', 'district-search-results');
     input.setAttribute('aria-describedby', 'district-search-help');
     original.replaceWith(input);
-    document.querySelector('label[for="q"]').textContent = 'Найти район или улицу';
+    document.querySelector('label[for="q"]').textContent = 'Найти район, улицу или дом';
     const help = document.createElement('p'); help.className = 'search-help'; help.id = 'district-search-help';
-    help.textContent = 'Введите район или улицу. На Олонецкой можно уточнить номер дома.';
+    help.textContent = 'Введите район, улицу или адрес с номером дома. Адреса — по данным OpenStreetMap.';
     const results = document.createElement('div'); results.id = 'district-search-results';
     results.className = 'district-search-results'; results.setAttribute('aria-label', 'Результаты поиска'); results.hidden = true;
     input.after(help, results);
