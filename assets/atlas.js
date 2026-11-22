@@ -273,7 +273,7 @@ async function drawDMap(f){
       return m.x>12&&m.x<W-12&&m.y>15&&m.y<H-15&&fits(m.x,m.y,Math.min(w,90),fs+4);
     });
     if(fraction===undefined){labelPath.remove();li--;return}
-    streetLabels.append("text").attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset",`${fraction*100}%`).attr("text-anchor","middle").text(n)});
+    streetLabels.append("text").datum(fs).attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset",`${fraction*100}%`).attr("text-anchor","middle").text(n)});
   relLbl.forEach(([q,v])=>{if(!fits(q[0],q[1],26,12))return;lblG.append("text").attr("class","lbl rlv").attr("x",q[0]).attr("y",q[1]).attr("text-anchor","middle").attr("dy","0.35em").text(v)});
   // 7. overlay: neighbour names, sources, district name (kept upright and unscaled on zoom)
   const pts=[];
@@ -314,8 +314,10 @@ async function drawDMap(f){
   // 9. zoom: pinch / ctrl+wheel / buttons; overlay stays crisp
   const zoom=d3.zoom().scaleExtent([1,8]).translateExtent([[-W,-H],[2*W,2*H]])
     .filter(e=>e.type==="wheel"?(e.ctrlKey||e.metaKey):e.type==="touchstart"?e.touches.length>1:!e.button)
-    .on("zoom",e=>{const t=e.transform;geo.attr("transform",t);lblG.selectAll("text").style("font-size",function(){return (this.dataset.fs||(this.dataset.fs=parseFloat(this.style.fontSize)))/t.k+"px"});
+    .on("zoom",e=>{const t=e.transform;geo.attr("transform",t);
       streetLabels.style("visibility", t.k>=2?"visible":"hidden");
+      streetLabels.selectAll("text").style("font-size",fs=>fs/t.k+"px")
+        .style("stroke-width",2.4/t.k+"px").attr("dy",fs=>fs*0.35/t.k);
       pts.forEach(([el,x,y])=>el.attr("transform",`translate(${t.applyX(x)},${t.applyY(y)})`))});
   svg.call(zoom).style("touch-action","pan-y");
   const zb=document.getElementById("zb");
