@@ -49,7 +49,7 @@ def age_card(slug):
 
 
 def update_age(h, slug):
-    h = re.sub(r'assets/atlas\.js\?v=(?:20261113f|20261122-age|20261122-labels|20261122-periods|20261122-house-years)\b', 'assets/atlas.js?v=20261122-house-review', h)
+    h = re.sub(r'assets/atlas\.js\?v=(?:20261113f|20261122-age|20261122-labels|20261122-periods|20261122-house-years|20261122-house-review)\b', 'assets/atlas.js?v=20261122-house-tap', h)
     h = re.sub(r'<!--HOUSE-AGE-->.*?<!--HOUSE-AGE-END-->', '', h, flags=re.S)
     h = re.sub(r'<p class="small house-age-src">.*?</p>', '', h, flags=re.S)
     card, note = age_card(slug)

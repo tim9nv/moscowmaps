@@ -41,7 +41,8 @@
       "https://www.zelenograd.ru/news/63421/",
       "https://tochno.st/datasets/gisgkh"
     ],
-    "note": "Старый дом в Крюкове включён в реновацию. На участке № 4 строится новый комплекс. Совпадение по названию улицы вывело на другой объект.",
+    "note": "Кадастровый номер 77:10:0006006:1045 в паспорте относится к пятиэтажке 1962 года в Крюкове. На месте группы расселённых домов, включая № 4, сейчас строится новый комплекс. Год старой пятиэтажки к новостройке неприменим. Контур, ранее совпавший по названию улицы, находится в Красногорске.",
+    "status": "replaced",
     "documented_year": 1962,
     "cadastre": "77:10:0006006:1045"
   },
@@ -252,9 +253,15 @@
     "address": "Расторгуевский пер., 4 Строение 3",
     "sources": [
       "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=862",
-      "https://tochno.st/datasets/gisgkh"
+      "https://tochno.st/datasets/gisgkh",
+      "https://dompassport.ru/dom/moskva/rastorguevskiy-4s3/",
+      "https://www.mos.ru/upload/documents/files/4820/AKTStolyarniipersprilojeniyami.pdf"
     ],
-    "note": "В программе капремонта стоит 1956, в паспорте постройка — 1910 и реконструкция — 1956. По найденным документам нельзя точно установить, какая часть старого здания сохранилась.",
+    "note": "ГИС ЖКХ и электронный паспорт объекта 77:01:0004023:1073 отдельно указывают постройку в 1910, реконструкцию и ввод в 1956. Площадь и трёхэтажный контур соответствуют строению 3. На карте 1910 показан как год постройки, 1956 — как год реконструкции. Точный объём сохранившейся кладки по открытым документам не установлен.",
+    "year": 1910,
+    "reconstruction_year": 1956,
+    "area": 63435642,
+    "outline": "291a9c03294d85e8",
     "cadastre": "77:01:0004023:1073"
   },
   "398125": {
@@ -274,10 +281,15 @@
     "sources": [
       "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=1248",
       "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=726",
-      "https://tochno.st/datasets/gisgkh"
+      "https://tochno.st/datasets/gisgkh",
+      "https://ossdoc.ru/mkd/moskva/moskva/vysokaya-ul-1",
+      "https://sovet.n-sadovniki.ru/sovet/otchety_deputatov_soveta_deputatov/otchety_deputatov_soveta_deputatov_municipal_nogo_okruga_nagatino-sadovniki/otchety_deputatov_soveta_deputatov_municipal_nogo_okruga_nagatino-sadovniki_za_2018_god/informaciya_o_rezul_tatah_otchetov_deputatov_soveta_deputatov_municipal_nogo_okruga_nagatino-sadovniki_izbiratel_nogo_okruga_1_p/"
     ],
-    "note": "В городском перечне 1956 для Нагатина-Садовников и 1995 для одноимённого адреса в Ерино. Прежнее совпадение вывело на Ерино. Контур по московскому адресу сейчас помечен в картографии как школа.",
-    "documented_year": 1956,
+    "note": "Запись ГИС ЖКХ с кадастровым номером 77:05:0004005:1019 и городской перечень подтверждают пятиэтажный жилой дом 1956 года в Нагатине-Садовниках. Координаты записи попадают внутрь контура с точным московским адресом. В карте исправлено назначение контура. Дом 1995 года на одноимённой улице в Ерино — другой объект.",
+    "year": 1956,
+    "area": 63305840,
+    "outline": "97749a97de9bc1b0",
+    "confirm_residential": true,
     "cadastre": "77:05:0004005:1019"
   },
   "413689": {
@@ -375,9 +387,11 @@
     "sources": [
       "https://www.mos.ru/upload/documents/files/4577/2Prilojenie_1_k_prikazy_303_17_03_26.pdf",
       "https://tochno.st/datasets/gisgkh",
-      "https://www.zdanija.ru/forum/topic-43767-moskva_malyy_ivanovskiy_pereulok_6_5_str1.html"
+      "https://www.zdanija.ru/forum/topic-43767-moskva_malyy_ivanovskiy_pereulok_6_5_str1.html",
+      "https://proza.ru/2023/01/19/437",
+      "https://files01.core.ac.uk/download/pdf/268117162.pdf"
     ],
-    "note": "В паспорте указан 1900, другие адресные справочники называют 1880. Городское адресное приложение подтверждает строение 1, но года постройки в нём нет.",
+    "note": "ГИС ЖКХ для строения 1 даёт 1900, адресные справочники указывают 1880, а исторический справочник датирует доходный дом А. В. Расторгуевой по тому же адресу 1893 годом. Архивное исследование подтверждает историческое владение, но не датирует сохранившееся здание. Точный год по открытым материалам не подтверждён.",
     "cadastre": "77:01:0001022:1015"
   },
   "594134": {
@@ -514,9 +528,14 @@
     "address": "ул. Вешних Вод, 4 корпус 2",
     "sources": [
       "https://tochno.st/datasets/gisgkh",
-      "https://www.mos.ru/upload/documents/files/8420/67_KP2015-2017_2.pdf"
+      "https://meganorm.ru/Data2/1/4293800/4293800091.pdf",
+      "https://mail.photobuildings.com/projects/650/",
+      "https://www.openstreetmap.org/way/117288463/history"
     ],
-    "note": "В паспорте по кадастровому номеру 77:02:0016003:1051 стоят 1994 как год постройки и ввода. В карте 1959. В доступной городской программе нашёл соседний корпус 1, подтверждения по корпусу 2 из независимого документа нет.",
+    "note": "В паспорте объекта 77:02:0016003:1051 год постройки и ввода — 1994. Проверенный пятиэтажный контур имеет проект 161-101-21. Строительные нормы Минобороны подтверждают этот проект, а серия утверждена в 1983 году. Это согласуется с паспортом и исключает прежнюю датировку 1959.",
+    "year": 1994,
+    "area": 234576926,
+    "outline": "663473083748bb29",
     "cadastre": "77:02:0016003:1051"
   },
   "1342041": {

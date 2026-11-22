@@ -362,6 +362,19 @@ async function drawDMap(f){
   {
     if(!document.getElementById("dmode-css")){const st=document.createElement("style");st.id="dmode-css";
       st.textContent=".dmode{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;align-items:center}.dmode b{font:500 13px var(--label,sans-serif);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}.dmode button{min-height:36px;padding:0 13px;border:1px solid #3a4a80;border-radius:3px;background:transparent;color:var(--fg);font:500 14px/1 var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.dmode button[aria-pressed=true]{background:#FFD86B;border-color:#FFD86B;color:#0B1330}.dmode button:focus-visible{outline:2px solid #FFD86B;outline-offset:2px}#dml{border-top:0}#dml i{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px}#dml .nt{flex-basis:100%;color:var(--muted)}.dmg path.h{cursor:default}@media (max-width:560px){.dmode{padding:8px 10px}.dmode b{flex-basis:100%}}";
+      st.textContent+=`
+        .dmg.is-age path.h{cursor:pointer}
+        .dmg path.h.is-selected{stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
+        .house-info{position:absolute;z-index:3;right:10px;width:min(270px,calc(100% - 65px));
+          padding:12px 48px 12px 14px;box-sizing:border-box;border:1px solid #5266a0;
+          border-radius:4px;background:var(--surface);color:var(--fg);box-shadow:0 4px 14px #0006}
+        .house-info[hidden]{display:none}
+        .house-info strong{display:block;font:600 19px/1.2 var(--body,system-ui)}
+        .house-info p{margin:4px 0 0;color:var(--muted);font-size:13px}
+        .house-info button{position:absolute;top:3px;right:3px;width:40px;height:40px;
+          border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:23px;cursor:pointer}
+        .house-info button:focus-visible{outline:2px solid #FFD86B;outline-offset:-3px}
+      `;
       document.head.appendChild(st)}
     const FL=[[5,"до 5 этажей","#9fd8a0"],[9,"6–9","#e8e08a"],[17,"10–17","#f2a65a"],[25,"18–25","#e8604c"],[999,"26 и выше","#e04fb0"]];
     // Те же границы периодов, что в tools/extract_house_age.py.
@@ -373,6 +386,23 @@ async function drawDMap(f){
     if(!document.getElementById("dml")){const d=document.createElement("div");d.className="legend";d.id="dml";d.hidden=true;const l=document.getElementById("dlg");l.parentNode.insertBefore(d,l)}
     d3.select("#dmode").html("");
     const bar=d3.select("#dmode"), leg=d3.select("#dml"); let data=null, drawn=false, mode="floors";
+    const info=document.createElement("aside");
+    info.className="house-info";
+    info.hidden=true;
+    info.innerHTML='<div role="status"><strong></strong><p></p></div><button type="button" aria-label="Закрыть сведения о доме">×</button>';
+    sv.after(info);
+    const infoTitle=info.querySelector("strong"), infoDetails=info.querySelector("p");
+    let selectedHouse=null, reviewData=null;
+    function closeHouse(){
+      selectedHouse?.classList.remove("is-selected");
+      selectedHouse=null;
+      info.hidden=true;
+    }
+    info.querySelector("button").onclick=closeHouse;
+    sv.parentElement.addEventListener("keydown",event=>{if(event.key==="Escape")closeHouse()});
+    svg.on("click.house-info",event=>{
+      if(!event.target.matches("path.h"))closeHouse();
+    });
     bar.append("b").text("На карте");
     const btn={}; [["floors","Этажность домов"],["age","Возраст домов"],["noise","Шум"],["relief","Рельеф"]].forEach(([k,t])=>{btn[k]=bar.append("button").attr("type","button").attr("aria-pressed","false").text(t).on("click",()=>set(k))});
     const relief=geo.select("g.relief");
@@ -383,6 +413,34 @@ async function drawDMap(f){
       Object.keys(IC).forEach(k=>{const d=data.i.filter(x=>x[1]===k).map(x=>ring(x[0])).join("");if(d)dmG.append("path").attr("d",d).style("fill",IC[k]).style("fill-opacity",.8).style("pointer-events","none")});
       dmG.append("path").attr("d",data.b.filter(b=>!b[3]).map(b=>ring(b[0])).join("")).style("fill",OTH).style("pointer-events","none");
       const hs=dmG.selectAll("path.h").data(data.b.filter(b=>b[3])).join("path").attr("class","h").attr("d",b=>ring(b[0]));
+      hs.on("click",(event,b)=>{
+        if(mode!=="age"||event.defaultPrevented)return;
+        selectedHouse?.classList.remove("is-selected");
+        selectedHouse=event.currentTarget;
+        selectedHouse.classList.add("is-selected");
+        const source=b[5]<0?"Поадресная сверка":b[5]>0?"Дом.МинЖКХ":"OpenStreetMap";
+        const details=[b[2]?source:null,b[1]?"Этажей: "+b[1]:null].filter(Boolean);
+        info.hidden=false;
+        infoTitle.textContent=b[2]?"Год постройки "+b[2]:"Год постройки неизвестен";
+        infoDetails.textContent=details.join(" · ");
+        infoDetails.hidden=!details.length;
+        const clickY=event.clientY-sv.getBoundingClientRect().top;
+        const maxTop=Math.max(10,sv.clientHeight-info.offsetHeight-10);
+        const nextTop=clickY>sv.clientHeight/2?clickY-info.offsetHeight-12:clickY+12;
+        info.style.top=sv.offsetTop+Math.min(maxTop,Math.max(10,nextTop))+"px";
+        if(b[5]<0){
+          const house=selectedHouse;
+          reviewData??=fetch(ATLAS_ROOT+"tools/data/house_year_review.json?v=20261122-house-tap")
+            .then(r=>r.ok?r.json():null).catch(()=>null);
+          reviewData.then(review=>{
+            const record=review?.[-b[5]];
+            if(selectedHouse!==house||!record)return;
+            const extra=record.reconstruction_year?"Реконструкция "+record.reconstruction_year:null;
+            infoDetails.textContent=[record.address,extra,...details].filter(Boolean).join(" · ");
+            infoDetails.hidden=false;
+          });
+        }
+      });
       hs.append("title").text(b=>{
         const source=b[5]<0?" (поадресная сверка)":b[5]>0?" (Дом.МинЖКХ)":"";
         return "Жилой дом"+(b[2]?" · "+b[2]+" г."+source:"")+(b[1]?" · этажей: "+b[1]:"")+(b[4]!=null?" · "+["тихо","шум доносится","шумно","у трассы или станции"][b[4]]:"");
@@ -391,6 +449,8 @@ async function drawDMap(f){
     }
     function set(k){
       mode=k; Object.keys(btn).forEach(x=>btn[x].attr("aria-pressed",String(x===k)));
+      if(k!=="age")closeHouse();
+      dmG.classed("is-age",k==="age");
       const houses=k!=="relief";
       if(houses&&data&&!drawn)draw();
       dmG.style("display",houses&&data?null:"none"); relief.style("display",houses&&data?"none":null);
@@ -415,11 +475,15 @@ async function drawDMap(f){
       dmG.selectAll("path.h").style("fill",b=>pick(T,b[idx]));
       leg.html("<span><b>"+(k==="floors"?"Жилые дома по этажности":"Жилые дома по году постройки")+"</b></span>"+T.map(t=>'<span><i style="background:'+t[2]+'"></i>'+t[1]+"</span>").join("")
         +'<span><i style="background:'+UNK+'"></i>нет данных</span><span><i style="background:'+OTH+'"></i>нежилые здания</span><span><i style="background:#1d5a3a"></i>парки и лес</span><span><i style="background:#5b4a63"></i>промзоны и железная дорога</span><span><i style="background:#8a6d1f"></i>стройки</span><span><i style="background:#454063"></i>гаражи</span>'
-        +'<span class="nt">Жилых домов на карте с окрестностями: '+res.length+", "+(k==="floors"?"этажность известна":"год известен")+" у "+known+". OpenStreetMap, выгрузка "+data.date.split("-").reverse().join(".")+"."+ageSource+(reviewedCount?" Поадресно сверено: "+reviewedCount+".":"")+" На компьютере наведите на дом — покажем год и этажи.</span>");
+        +'<span class="nt">Жилых домов на карте с окрестностями: '+res.length+", "+(k==="floors"?"этажность известна":"год известен")+" у "+known+". OpenStreetMap, выгрузка "+data.date.split("-").reverse().join(".")+"."+ageSource+(reviewedCount?" Поадресно сверено: "+reviewedCount+".":"")+(k==="age"?" Нажмите на дом, чтобы увидеть год.":"")+"</span>");
     }
     btn.relief.attr("aria-pressed","true");
-    const zbEl=document.getElementById("zb"), fixZb=()=>{if(zbEl)zbEl.style.top=(bar.node().offsetHeight+10)+"px"};
-    fetch(ATLAS_ROOT + "assets/dmap/" + p.slug + ".json?v=20261122-house-review").then(r=>r.ok?r.json():null).then(d=>{
+    const zbEl=document.getElementById("zb"), fixZb=()=>{
+      const top=sv.offsetTop+10+"px";
+      if(zbEl)zbEl.style.top=top;
+      info.style.top=top;
+    };
+    fetch(ATLAS_ROOT + "assets/dmap/" + p.slug + ".json?v=20261122-house-tap").then(r=>r.ok?r.json():null).then(d=>{
       if(!d||!svg.node().isConnected||!d.b.some(b=>b[3])){bar.style("display","none");return}
       data=d; set("floors"); fixZb(); addEventListener("resize",fixZb);
     }).catch(()=>{bar.style("display","none")});

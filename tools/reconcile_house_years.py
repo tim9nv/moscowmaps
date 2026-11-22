@@ -245,6 +245,7 @@ def main():
             continue
         decisions[i] = (-int(source_id), decision['year'])
     reviewed_ids = {abs(record[0]) for record in decisions.values()}
+    reviewed_ids.update(int(id) for id, decision in review.items() if decision.get('status') == 'replaced')
     matches = {i: record for i, record in matches.items() if record[0] not in reviewed_ids}
     matches.update(decisions)
     additional_indices = {i for i in decisions if metadata[i][0] in additional_areas}
