@@ -168,10 +168,16 @@ function district(f){
   ${nb.length?`<section><h2>Соседние районы</h2><div class="chips">${nb.map(n=>`<a href="#${n.properties.slug}">${short(n.properties.n)} · ${fmt(n.properties.i)} / ${fmt(n.properties.score)}</a>`).join("")}</div><p class="small" style="margin-top:8px">Экология / соцобъекты</p></section>`:""}`;
   drawDMap(f);
 }
-function drawDMap(f){
+async function drawDMap(f){
   const p=f.properties;
+  const el0=document.getElementById("dm");
+  if(!el0)return;
+  const streetSignal=typeof AbortSignal.timeout==="function"?AbortSignal.timeout(3000):undefined;
+  const streets=await fetch(ATLAS_ROOT+"assets/district-streets/"+p.slug+".json?v=20261122", {signal:streetSignal})
+    .then(r=>r.ok?r.json():null).catch(()=>null);
+  if(!el0.isConnected||el0!==document.getElementById("dm"))return;
   // district map: district fills the view, everything else muted; zoomable
-  const el0=document.getElementById("dm"), W=Math.max(320,Math.round(el0.getBoundingClientRect().width)||600), H=Math.round(Math.min(Math.max(W*0.95,360),620));
+  const W=Math.max(320,Math.round(el0.getBoundingClientRect().width)||600), H=Math.round(Math.min(Math.max(W*0.95,360),620));
   const svg=d3.select("#dm").attr("viewBox",`0 0 ${W} ${H}`);
   const mp=mainPart(f), near=SRC.filter(s=>p.s.some(x=>x[1]===s.n));
   const padX=Math.max(30,W*0.12), padY=Math.max(30,H*0.12);
@@ -227,23 +233,24 @@ function drawDMap(f){
     zones.append("circle").attr("cx",x).attr("cy",y).attr("r",3*kmPx).attr("vector-effect","non-scaling-stroke")
       .style("fill",c).style("fill-opacity",.06).style("stroke",c).style("stroke-opacity",.55).style("stroke-dasharray","4 4").style("stroke-width",1)});
   // 4. roads with hierarchy (casing + line)
-  const rs=LAY.roads.filter(r=>inBox(r[2])).sort((a,b)=>b[0]-a[0]);
+  const rs=(streets||LAY.roads).filter(r=>inBox(r[2]));
   const rw={1:6.5,2:4.6,3:3.0,4:1.6}, rc={1:2.4,2:2.0,3:1.6,4:1.2};
   const rG=geo.append("g").style("pointer-events","none");
   [4,3,2,1].forEach(c=>{const sub=rs.filter(r=>r[0]===c);
     rG.append("g").selectAll("path").data(sub).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
       .style("stroke",`var(--r${c}c)`).attr("stroke-width",rw[c]+rc[c]);
     rG.append("g").selectAll("path").data(sub).join("path").attr("class","rd").attr("d",r=>path(lineGeo(r[2]))).attr("vector-effect","non-scaling-stroke")
-      .style("stroke",`var(--r${c}f)`).attr("stroke-width",rw[c]);});
+      .attr("data-street",r=>r[1]||null).style("stroke",`var(--r${c}f)`).attr("stroke-width",rw[c]);});
   // 5. mask outside the district + outline
   geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--surface)").style("stroke-width",6).style("pointer-events","none");
   geo.append("path").attr("d",ring).attr("vector-effect","non-scaling-stroke").style("fill","none").style("stroke","var(--fg)").style("stroke-width",2.4).style("pointer-events","none");
   // 6. street names along the line, collision-checked
   const boxes=[], fits=(x,y,w,h)=>{for(const b of boxes)if(Math.abs(x-b[0])<(w+b[2])/2&&Math.abs(y-b[1])<(h+b[3])/2)return false;boxes.push([x,y,w,h]);return true};
   const cands={};
-  rs.forEach(r=>{if(!r[1]||r[0]>4)return;const pp=r[2].map(c=>proj(c)).filter(q=>q[0]>8&&q[0]<W-8&&q[1]>8&&q[1]<H-8);if(pp.length<2)return;
+  rs.forEach(r=>{if(!r[1])return;const pp=r[2].map(c=>proj(c));if(pp.length<2)return;
     let L=0;for(let k=1;k<pp.length;k++)L+=Math.hypot(pp[k][0]-pp[k-1][0],pp[k][1]-pp[k-1][1]);
-    const key=r[1];if(!cands[key]||cands[key].L<L)cands[key]={L,pp,c:r[0]}});
+    const key=r[1], inside=r[2].some(q=>d3.geoContains(f,q));
+    if(!cands[key]||inside&&!cands[key].inside||inside===cands[key].inside&&cands[key].L<L)cands[key]={L,pp,c:r[0],inside}});
   const mG=geo.append("g").style("pointer-events","none");
   METRO.e.forEach(([i,j])=>{const a=METRO.s[i],b=METRO.s[j];const pa=proj([a[0],a[1]]),pb=proj([b[0],b[1]]);
     if(Math.max(pa[0],pb[0])<-W||Math.min(pa[0],pb[0])>2*W||Math.max(pa[1],pb[1])<-H||Math.min(pa[1],pb[1])>2*H)return;
@@ -253,12 +260,19 @@ function drawDMap(f){
   F.filter(d=>d!==f).forEach(d=>{const c=proj(d3.geoCentroid(d));if(!c||c[0]<30||c[0]>W-30||c[1]<20||c[1]>H-20)return;if(d3.geoContains(f,proj.invert(c)))return;
     const t=short(d.properties.n),w=t.length*6.4;if(!fits(c[0],c[1],w,15))return;
     lblG.append("text").attr("class","lbl nbl").attr("x",c[0]).attr("y",c[1]).attr("text-anchor","middle").attr("dy","0.35em").text(t)});
-  Object.entries(cands).sort((a,b)=>a[1].c-b[1].c||b[1].L-a[1].L).forEach(([n,o])=>{
-    const fs=o.c<=2?12:10.5, w=n.length*fs*0.58; if(o.L<w+20||li>26)return;
+  Object.entries(cands).sort((a,b)=>Number(b[1].inside)-Number(a[1].inside)||a[1].c-b[1].c||b[1].L-a[1].L).forEach(([n,o])=>{
+    const fs=o.c<=2?12:10.5, w=n.length*fs*0.54; if(o.L<w+8||li>=26)return;
     let pp=o.pp; if(pp[0][0]>pp[pp.length-1][0])pp=pp.slice().reverse();
-    const m=pp[Math.floor(pp.length/2)]; if(!fits(m[0],m[1],Math.min(w,90),fs+4))return;
-    const id=`rp${li++}`; lblG.append("path").attr("id",id).attr("d",d3.line()(pp)).style("fill","none").style("stroke","none");
-    lblG.append("text").attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset","50%").attr("text-anchor","middle").text(n)});
+    const id=`rp${li++}`;
+    const labelPath=lblG.append("path").attr("id",id).attr("d",d3.line()(pp)).style("fill","none").style("stroke","none");
+    const length=labelPath.node().getTotalLength();
+    const fraction=[0.5,0.38,0.62].find(t=>{
+      if(Math.min(t,1-t)*length<w/2)return false;
+      const m=labelPath.node().getPointAtLength(length*t);
+      return m.x>12&&m.x<W-12&&m.y>15&&m.y<H-15&&fits(m.x,m.y,Math.min(w,90),fs+4);
+    });
+    if(fraction===undefined){labelPath.remove();li--;return}
+    lblG.append("text").attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset",`${fraction*100}%`).attr("text-anchor","middle").text(n)});
   relLbl.forEach(([q,v])=>{if(!fits(q[0],q[1],26,12))return;lblG.append("text").attr("class","lbl rlv").attr("x",q[0]).attr("y",q[1]).attr("text-anchor","middle").attr("dy","0.35em").text(v)});
   // 7. overlay: neighbour names, sources, district name (kept upright and unscaled on zoom)
   const pts=[];
@@ -307,6 +321,10 @@ function drawDMap(f){
   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
   zb.querySelector("[data-z='reset']").onclick=()=>svg.transition().duration(250).call(zoom.transform,d3.zoomIdentity);
   document.getElementById("dlg").innerHTML=`<span><svg width="30" height="14" viewBox="0 0 30 14"><line x1="1" y1="7" x2="29" y2="7" stroke="#d6083b" stroke-width="3.5"/><circle cx="15" cy="7" r="4.5" fill="#fff" stroke="#d6083b" stroke-width="2.6"/></svg>Метро и МЦК</span><span><svg width="30" height="14" viewBox="0 0 30 14"><line x1="1" y1="7" x2="29" y2="7" stroke="#f6a600" stroke-width="2.5" stroke-dasharray="7 4"/></svg>МЦД</span><span><svg width="22" height="14" viewBox="0 0 22 14"><rect x="1" y="3" width="20" height="8" rx="3" style="fill:#8ec5ef;stroke:#3f8fd2"/></svg>Реки и пруды</span>`+(relInfo?`<span><svg width="40" height="12" viewBox="0 0 40 12"><defs><linearGradient id="rlg"><stop offset="0" stop-color="#a9d39c"/><stop offset=".4" stop-color="#e3eab0"/><stop offset=".7" stop-color="#ecc98f"/><stop offset="1" stop-color="#c9925c"/></linearGradient></defs><rect width="40" height="12" rx="2" fill="url(#rlg)"/></svg>Рельеф на карте: от ${relInfo.lo} м (зелёное, низины) до ${relInfo.hi} м (коричневое), горизонтали через ${relInfo.step} м</span>`:"")+roadLegend(true)+[...used].map(t=>`<span>${iconSvg(t)}${TYPES[t][0]}</span>`).join("")+(near.length?`<span><svg width="14" height="14" viewBox="-8 -8 16 16"><circle r="6" style="fill:none;stroke:var(--muted);stroke-dasharray:3 2"/></svg>Зона 3 км вокруг источника</span>`:"")+(used.size?"":`<span>Крупных источников загрязнения рядом нет</span>`);
+  if(streets){
+    d3.select("#dlg").append("span").append("a")
+      .attr("href","https://www.openstreetmap.org/copyright").text("Улицы © OpenStreetMap");
+  }
   // Park links reuse the catalogue IDs and the same projection as the district map.
   fetch(ATLAS_ROOT + "parks/catalog/parks.json")
     .then(response => response.ok ? response.json() : [])

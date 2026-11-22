@@ -55,7 +55,10 @@ def yauza_navigation(slug):
         return ''
     links = ''.join(f'<li><a href="../{other}/">{E(info[1])}</a></li>'
                     for other, info in YAUZA_MAPS.items() if other != slug)
-    return f'<nav class="park-sec" aria-labelledby="yauza-maps"><h2 id="yauza-maps">Другие карты парка «Яуза»</h2><ul class="park-names">{links}</ul></nav>\n'
+    return ('<nav class="park-sec" aria-labelledby="yauza-maps"><h2 id="yauza-maps">Участки парка «Яуза»</h2>'
+            '<p>«Яуза» объединяет территории вдоль Яузы и её притоков. Карты Атласа показывают отдельные участки. '
+            '<a href="https://park-yauza.info/">Все территории на официальном сайте парка</a>.</p>'
+            f'<ul class="park-names">{links}</ul></nav>\n')
 def km(lines):
     s = 0
     for ln in lines:
@@ -110,7 +113,8 @@ for p in parks:
     desc = (f'{name} в Москве: карта с дорожками и тропами' + (', ' + ', '.join(cnt[:4]) if cnt else '') + '. Геолокация «Я на карте».')
     if sl in YAUZA_MAPS:
         _, _, title, description = YAUZA_MAPS[sl]
-        lead = description + (f' Площадь участка на карте — {num(src["a"], 2 if src["a"] < 1 else 1)} км².' if src.get('a') else '')
+        area_label = 'Площадь участков' if sl == 'park-yauza' else 'Площадь участка'
+        lead = description + (f' {area_label} на карте — {num(src["a"], 2 if src["a"] < 1 else 1)} км².' if src.get('a') else '')
         if cnt: lead += ' На карте отмечено: ' + ', '.join(cnt) + '.'
         desc = description + ' Дорожки, смотровые площадки и места для остановок.'
     secs = ''
