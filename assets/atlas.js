@@ -260,11 +260,12 @@ async function drawDMap(f){
   F.filter(d=>d!==f).forEach(d=>{const c=proj(d3.geoCentroid(d));if(!c||c[0]<30||c[0]>W-30||c[1]<20||c[1]>H-20)return;if(d3.geoContains(f,proj.invert(c)))return;
     const t=short(d.properties.n),w=t.length*6.4;if(!fits(c[0],c[1],w,15))return;
     lblG.append("text").attr("class","lbl nbl").attr("x",c[0]).attr("y",c[1]).attr("text-anchor","middle").attr("dy","0.35em").text(t)});
+  const streetLabels=lblG.append("g").attr("class","street-labels").style("visibility","hidden");
   Object.entries(cands).sort((a,b)=>Number(b[1].inside)-Number(a[1].inside)||a[1].c-b[1].c||b[1].L-a[1].L).forEach(([n,o])=>{
     const fs=o.c<=2?12:10.5, w=n.length*fs*0.54; if(o.L<w+8||li>=26)return;
     let pp=o.pp; if(pp[0][0]>pp[pp.length-1][0])pp=pp.slice().reverse();
     const id=`rp${li++}`;
-    const labelPath=lblG.append("path").attr("id",id).attr("d",d3.line()(pp)).style("fill","none").style("stroke","none");
+    const labelPath=streetLabels.append("path").attr("id",id).attr("d",d3.line()(pp)).style("fill","none").style("stroke","none");
     const length=labelPath.node().getTotalLength();
     const fraction=[0.5,0.38,0.62].find(t=>{
       if(Math.min(t,1-t)*length<w/2)return false;
@@ -272,7 +273,7 @@ async function drawDMap(f){
       return m.x>12&&m.x<W-12&&m.y>15&&m.y<H-15&&fits(m.x,m.y,Math.min(w,90),fs+4);
     });
     if(fraction===undefined){labelPath.remove();li--;return}
-    lblG.append("text").attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset",`${fraction*100}%`).attr("text-anchor","middle").text(n)});
+    streetLabels.append("text").attr("class","lbl road"+(o.c<=2?" major":"")).style("font-size",fs+"px").attr("dy",fs*0.35).append("textPath").attr("href",`#${id}`).attr("startOffset",`${fraction*100}%`).attr("text-anchor","middle").text(n)});
   relLbl.forEach(([q,v])=>{if(!fits(q[0],q[1],26,12))return;lblG.append("text").attr("class","lbl rlv").attr("x",q[0]).attr("y",q[1]).attr("text-anchor","middle").attr("dy","0.35em").text(v)});
   // 7. overlay: neighbour names, sources, district name (kept upright and unscaled on zoom)
   const pts=[];
@@ -314,8 +315,9 @@ async function drawDMap(f){
   const zoom=d3.zoom().scaleExtent([1,8]).translateExtent([[-W,-H],[2*W,2*H]])
     .filter(e=>e.type==="wheel"?(e.ctrlKey||e.metaKey):e.type==="touchstart"?e.touches.length>1:!e.button)
     .on("zoom",e=>{const t=e.transform;geo.attr("transform",t);lblG.selectAll("text").style("font-size",function(){return (this.dataset.fs||(this.dataset.fs=parseFloat(this.style.fontSize)))/t.k+"px"});
+      streetLabels.style("visibility", t.k>=2?"visible":"hidden");
       pts.forEach(([el,x,y])=>el.attr("transform",`translate(${t.applyX(x)},${t.applyY(y)})`))});
-  svg.call(zoom).on("dblclick.zoom",null).style("touch-action","pan-y");
+  svg.call(zoom).style("touch-action","pan-y");
   const zb=document.getElementById("zb");
   zb.querySelector("[data-z='in']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
