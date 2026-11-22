@@ -5,10 +5,11 @@ const TYPES = /^(?:улица|ул|проспект|просп|пркт|пере
 // https://www.mos.ru/upload/documents/files/1934/Prilojenie_4.pdf
 // https://www.mos.ru/upload/documents/files/1430/5_Prilojenie5.pdf
 // https://www.mos.ru/upload/documents/files/5045/5_Prilojenie5.pdf
+// https://www.mos.ru/upload/documents/files/9380/Tom1Kniga19PrilojenieA.pdf
 export const addresses = [{
   name: 'Олонецкая улица',
   districts: {
-    ostankinskiy: ['2', '2А', '4', '4А', '6', '14', '14вл1', '24'],
+    ostankinskiy: ['2', '2А', '4', '4А', '6', '14', '14вл1', '14с1', '14с2', '14с3', '24'],
     otradnoe: ['13', '13с1', '15', '15А', '15Б', '15с1', '17', '17А', '19', '21', '21А', '21Ас1',
       '21Ас2', '21Б', '21В', '21с1', '23', '25', '25А', '25Ас1', '25Ас2', '27']
   }
