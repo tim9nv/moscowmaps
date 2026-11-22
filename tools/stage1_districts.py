@@ -95,15 +95,13 @@ def sync_faq(text):
     return re.sub(r'<script type="application/ld\+json">(.*?)</script>', rewrite, text, flags=re.S)
 
 
-def process(slug, name, text, p, age, houses, life):
+def process(slug, name, text, p, houses, life):
     # Verify inputs against the current generated score data. Never repair silently.
     hp = houses["d"][slug]
     lp = life["d"][slug]["p"]
     quiet = max(0, min(10, 10 * (1 - (hp["n3"] + .5 * hp["n2"]) / hp["n"])))
     assert abs(lp["eco"] - (10 - p["i"])) < .00001
     assert abs(lp["quiet"] - quiet) < .00051
-    ar = age["districts"][slug]
-    assert sum(ar["bins"]) == ar["dated"] and 0 < ar["dated"] <= ar["all"]
 
     old_social = (f'Школ, детских садов и поликлиник хватает: балл {fmt(p["score"])} из 10.'
                   if slug == "aeroport" else
@@ -133,18 +131,6 @@ def process(slug, name, text, p, age, houses, life):
     text = text[:row.end()] + (
         '<!--STAGE1-QUIET--><li style="display:block;font-size:13px;color:var(--muted)">'
         + QUIET + '</li><!--STAGE1-QUIET-END-->') + text[row.end():]
-
-    share = round(max(ar["bins"]) / ar["dated"] * 100)
-    old = round(sum(ar["bins"][:3]) / ar["dated"] * 100)
-    text = replace_checked(text,
-        f'{share} % жилых домов района · построено до 1981 года — {old} %',
-        f'{share} % домов с известным годом · среди них построено до 1981 года — {old} %')
-    text = re.sub(r'<p class="small house-age-src">.*?</p>',
-        '<p class="small house-age-src">'
-        f'Год постройки известен для {ar["dated"]} из {ar["all"]} жилых домов в OpenStreetMap '
-        f'(дата подготовки данных: {age["date"]}). Доли возрастных групп рассчитаны только по '
-        f'{ar["dated"]} домам с известным годом; остальные {ar["all"] - ar["dated"]} не распределены по периодам. '
-        '<a href="../../tools/data/house_age.json">Данные о возрасте домов</a>.</p>', text, flags=re.S)
 
     # Keep count and rate values, correct the meaning and provenance of their labels.
     text = replace_checked(text, "Балл обеспеченности", "Оценка по числу объектов на жителя")
@@ -235,13 +221,13 @@ def main():
     parser.add_argument("--check", action="store_true", help="fail if either pilot requires rebuilding")
     args = parser.parse_args()
     props = {f["properties"]["n"]: f["properties"] for f in embedded_data("assets/atlas.js")}
-    age, houses, life = [load_json(f"tools/data/{n}.json") for n in ("house_age", "houses", "life_parts")]
+    houses, life = [load_json(f"tools/data/{n}.json") for n in ("houses", "life_parts")]
     pending = []
     for slug, name in PILOTS.items():
         path = ROOT / "rayon" / slug / "index.html"
         before = path.read_text(encoding="utf-8")
-        after = process(slug, name, before, props[name], age, houses, life)
-        assert process(slug, name, after, props[name], age, houses, life) == after, "Not idempotent"
+        after = process(slug, name, before, props[name], houses, life)
+        assert process(slug, name, after, props[name], houses, life) == after, "Not idempotent"
         if before != after:
             pending.append((path, after))
     if args.check and pending:

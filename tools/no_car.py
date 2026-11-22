@@ -21,6 +21,8 @@ def badge(slug):
     if not p:
         return ''
     text = 'От станции пешком' if p['access'] == 'walk' else 'Электричка + автобус'
+    if slug == 'novyy-ierusalim':
+        text += ' · проверен путь до музея'
     return f'<p class="nc-badge">Без машины · {text}</p>'
 
 def filters():

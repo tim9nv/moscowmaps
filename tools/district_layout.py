@@ -7,7 +7,8 @@
   только если год постройки известен хотя бы у половины домов района и у 30+ домов;
 - «до станции 77 минут пешком» — пишем «пешком далеко»; нулевые спортивные карточки — «нет».
 """
-import re, os, json, glob
+import re, os, json, glob, sys
+from pathlib import Path
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AGE = json.load(open(f'{REPO}/tools/data/house_age.json', encoding='utf-8'))
 FAR = 25
@@ -23,16 +24,41 @@ def key(chunk):
 
 def age_card(slug):
     r = AGE['districts'].get(slug)
-    if not r or r['dated'] < 30 or r['dated'] < r['all'] * 0.5: return ''
+    if not r: return '', ''
+    y, mo, _ = AGE['date'].split('-')
+    coverage = (f'Год постройки известен для {r["dated"]} из {r["all"]} жилых домов района в OpenStreetMap '
+                f'({MONTHS[int(mo)-1]} {y}).')
+    source = '<a href="../../tools/data/house_age.json">Данные о возрасте домов</a>.'
+    if r['dated'] < 30 or r['dated'] < r['all'] * 0.5:
+        return '', f'<p class="small house-age-src">{coverage} Данных мало для сводки по возрасту домов. {source}</p>'
     b = r['bins']; k = max(range(len(b)), key=lambda i: b[i])
     share = round(b[k] / r['dated'] * 100)
     old = round(sum(b[:3]) / r['dated'] * 100)
-    y, mo, _ = AGE['date'].split('-')
     period = AGE['bins'][k]
-    v = period if period.startswith(('до', 'с ')) else f'{period} гг.'
+    v = 'по 1945 включительно' if period == 'до 1945' else period if period.startswith('с ') else f'{period} гг.'
     return (f'<!--HOUSE-AGE--><div class="stat"><div class="l">Чаще всего дома</div><div class="v">{v}</div>'
-            f'<div class="s">{share} % жилых домов района · построено до 1981 года — {old} %</div></div><!--HOUSE-AGE-END-->', 
-            f'<p class="small house-age-src">Возраст домов — годы постройки {r["dated"]} из {r["all"]} жилых домов района в OpenStreetMap ({MONTHS[int(mo)-1]} {y}).</p>')
+            f'<div class="s">{share} % домов с известным годом · среди них построено до 1981 года — {old} %</div></div><!--HOUSE-AGE-END-->',
+            f'<p class="small house-age-src">{coverage} Доли рассчитаны только по домам с известным годом. {source}</p>')
+
+
+def update_age(h, slug):
+    h = h.replace('assets/atlas.js?v=20261113f', 'assets/atlas.js?v=20261122-age')
+    h = re.sub(r'<!--HOUSE-AGE-->.*?<!--HOUSE-AGE-END-->', '', h, flags=re.S)
+    h = re.sub(r'<p class="small house-age-src">.*?</p>', '', h, flags=re.S)
+    card, note = age_card(slug)
+    section = re.search(r'<section(?:\s[^>]*)?><h2>Жильё и транспорт</h2>', h)
+    if not section or not note:
+        return h
+    start = section.start()
+    end = h.index('</section>', start)
+    if card:
+        pos = h.index('</div></div></div>', start, end) + len('</div></div>')
+        h = h[:pos] + card + h[pos:]
+        end += len(card)
+    stage_note = h.find('<!--STAGE1-HOUSE-->', start, end)
+    if stage_note >= 0:
+        end = stage_note
+    return h[:end] + note + h[end:]
 
 def fix_text(h):
     def far(m):
@@ -54,17 +80,7 @@ def process(path, slug):
     h = open(path, encoding='utf-8').read()
     o = h
     h = fix_text(h)
-    # возраст домов
-    h = re.sub(r'<!--HOUSE-AGE-->.*?<!--HOUSE-AGE-END-->', '', h, flags=re.S)
-    h = re.sub(r'<p class="small house-age-src">.*?</p>', '', h, flags=re.S)
-    card = age_card(slug)
-    if card:
-        i = h.find('<section><h2>Жильё и транспорт</h2>')
-        if i >= 0:
-            j = h.find('</div></div></div>', i) + len('</div></div>')  # конец последней карточки
-            h = h[:j] + card[0] + h[j:]
-            k = h.find('</section>', i)
-            h = h[:k] + card[1] + h[k:]
+    h = update_age(h, slug)
     # порядок блоков
     a = h.find('<section class="map"')
     if a >= 0:
@@ -87,6 +103,17 @@ def process(path, slug):
     h = h.replace('</style>', css + '</style>', 1)
     if h != o: open(path, 'w', encoding='utf-8').write(h); return 1
     return 0
+
+if sys.argv[1:] == ['--age-only']:
+    changed = 0
+    for path in sorted(Path(REPO).glob('rayon/*/index.html')):
+        original = path.read_text(encoding='utf-8')
+        updated = update_age(original, path.parent.name)
+        if updated != original:
+            path.write_text(updated, encoding='utf-8', newline='\n')
+            changed += 1
+    print('Обновлено сводок возраста домов:', changed)
+    sys.exit()
 
 n = 0
 for p in sorted(glob.glob(f'{REPO}/rayon/*/index.html')):
