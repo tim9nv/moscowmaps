@@ -51,14 +51,21 @@ main { padding-block: 34px 32px; }
   background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 4px;
 }
 #house-matches small { display: block; color: var(--muted); }
-.house-card { margin-top: 12px; padding: 13px 15px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; }
+.house-card {
+  position: relative; margin-top: 12px; padding: 13px 49px 13px 15px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+}
+.house-close {
+  position: absolute; top: 3px; right: 3px; width: 44px; height: 44px;
+  border: 0; border-radius: 3px; background: transparent; color: var(--text); font-size: 24px;
+}
 .house-card h2 { font-size: 16px; line-height: 1.3; margin: 0 0 2px; overflow-wrap: anywhere; }
 #house-year { margin: 0; color: var(--accent); font-size: clamp(20px, 2.4vw, 28px); font-weight: 650; }
 #house-detail { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
 #house-detail:empty { display: none; }
 .house-card a { display: inline-block; margin: 4px 12px 0 0; font-size: 14px; }
 .house-map-frame { position: relative; border: 1px solid var(--line); padding: 4px; background: var(--panel); border-radius: 4px; }
-#house-map { height: clamp(460px, 68vh, 790px); isolation: isolate; background: #202a42; color: #172044; }
+#house-map { height: clamp(460px, 68vh, 790px); isolation: isolate; background: #202a42; color: #172044; touch-action: none; }
 #house-map .leaflet-tile-pane { filter: brightness(.83) saturate(.72); }
 #house-map .leaflet-control-zoom a { width: 39px; height: 39px; line-height: 39px; }
 .house-choice-marker {
@@ -86,4 +93,11 @@ main { padding-block: 34px 32px; }
   .house-header nav a { white-space: nowrap; }
   .house-intro p { margin: 8px 0 13px; font-size: 14px; }
   #house-map { height: clamp(300px, 57svh, 530px); }
+}
+@media (max-width: 760px), (pointer: coarse) {
+  .house-card {
+    position: fixed; z-index: 10; margin: 0 auto; inset-inline: max(10px, env(safe-area-inset-left, 0px)) max(10px, env(safe-area-inset-right, 0px));
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)); max-width: 480px;
+    max-height: 50dvh; overflow: auto; box-shadow: 0 6px 25px #0009;
+  }
 }

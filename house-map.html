@@ -2,17 +2,17 @@
 <html lang="ru" data-theme="dark">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Год постройки дома по адресу в Москве — карта домов</title>
   <meta name="description" content="Введите улицу и номер дома в Москве. Карта приблизит здание и покажет год постройки, этажность и источник данных.">
   <link rel="canonical" href="https://www.mskatlas.ru/house-map.html">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <link rel="stylesheet" href="assets/house-map.css?v=20261122">
+  <link rel="stylesheet" href="assets/house-map.css?v=20261122-touch">
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script type="module" src="assets/house-map.js?v=20261122"></script>
+  <script type="module" src="assets/house-map.js?v=20261122-touch"></script>
 </head>
 <body>
   <header class="house-header">
@@ -39,6 +39,7 @@
         <p id="house-status" role="status"></p>
         <ul id="house-matches" aria-label="Найденные адреса" hidden></ul>
         <article class="house-card" id="house-card" aria-labelledby="house-title" hidden>
+          <button type="button" class="house-close" id="house-close" aria-label="Закрыть сведения о доме">×</button>
           <div aria-live="polite">
             <h2 id="house-title"></h2>
             <p id="house-year"></p>

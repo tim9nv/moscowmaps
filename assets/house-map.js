@@ -1,7 +1,7 @@
 import {normalize, splitAddress, streetType} from './street-search.js?v=20261122-house-map';
 
 const ui = Object.fromEntries(['search', 'address', 'status', 'matches', 'card', 'title', 'year',
-  'detail', 'source', 'district', 'map', 'reset', 'legend'].map(name =>
+  'detail', 'source', 'district', 'map', 'reset', 'legend', 'close'].map(name =>
   [name, document.getElementById('house-' + name)]));
 const periods = [[1956, 'до 1957', '#b08cff'], [1968, '1957–1968', '#f2a65a'],
   [1980, '1969–1980', '#e8e08a'], [1991, '1981–1991', '#9fd8a0'],
@@ -149,8 +149,8 @@ async function openResult(result) {
   if (request !== sequence) return;
   ui.status.textContent = '';
   ui.address.value = label(name, number);
-  showCard(feature, ui.address.value, districtId, [lat, lon]);
   map.setView([lat, lon], 18, {animate: false});
+  showCard(feature, ui.address.value, districtId, [lat, lon]);
 }
 
 function choices(results) {
@@ -279,7 +279,7 @@ function legend() {
 function init(index) {
   info = index;
   available = new Set(info.tiles);
-  map = L.map(ui.map, {zoomControl: false, scrollWheelZoom: false, minZoom: 8, maxZoom: 20});
+  map = L.map(ui.map, {zoomControl: false, scrollWheelZoom: false, touchZoom: true, zoomAnimation: false, minZoom: 8, maxZoom: 20});
   L.control.zoom({zoomInTitle: 'Приблизить', zoomOutTitle: 'Отдалить'}).addTo(map);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -294,6 +294,8 @@ function init(index) {
   map.options.renderer = L.canvas({padding: .25});
   highlight = L.layerGroup().addTo(map);
   choiceMarkers = L.layerGroup().addTo(map);
+  ui.close.onclick = clearSelection;
+  ui.card.addEventListener('keydown', event => { if (event.key === 'Escape') clearSelection(); });
   const reset = () => map.fitBounds(boundary.getBounds(), {padding: [14, 14], animate: false});
   reset();
   map.on('moveend', drawVisible);

@@ -313,13 +313,13 @@ async function drawDMap(f){
   ng.append("text").attr("class","lbl").attr("y",19).attr("text-anchor","middle").style("fill","var(--fg)").style("font-weight","600").text("С");
   // 9. zoom: pinch / ctrl+wheel / buttons; overlay stays crisp
   const zoom=d3.zoom().scaleExtent([1,8]).translateExtent([[-W,-H],[2*W,2*H]])
-    .filter(e=>e.type==="wheel"?(e.ctrlKey||e.metaKey):e.type==="touchstart"?e.touches.length>1:!e.button)
+    .filter(e=>e.type==="wheel"?(e.ctrlKey||e.metaKey):!e.button)
     .on("zoom",e=>{const t=e.transform;geo.attr("transform",t);
       streetLabels.style("visibility", t.k>=2?"visible":"hidden");
       streetLabels.selectAll("text").style("font-size",fs=>fs/t.k+"px")
         .style("stroke-width",2.4/t.k+"px").attr("dy",fs=>fs*0.35/t.k);
       pts.forEach(([el,x,y])=>el.attr("transform",`translate(${t.applyX(x)},${t.applyY(y)})`))});
-  svg.call(zoom).style("touch-action","pan-y");
+  svg.call(zoom).style("touch-action","none");
   const zb=document.getElementById("zb");
   zb.querySelector("[data-z='in']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
@@ -374,6 +374,12 @@ async function drawDMap(f){
         .house-info button{position:absolute;top:3px;right:3px;width:40px;height:40px;
           border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:23px;cursor:pointer}
         .house-info button:focus-visible{outline:2px solid #FFD86B;outline-offset:-3px}
+        @media (max-width:760px),(pointer:coarse){
+          .house-info{position:fixed;z-index:40;top:auto!important;right:12px;left:12px;
+            bottom:calc(10px + env(safe-area-inset-bottom,0px));width:auto;max-width:480px;margin-inline:auto;
+            max-height:50dvh;overflow:auto}
+          .house-info button{width:44px;height:44px}
+        }
       `;
       document.head.appendChild(st)}
     const FL=[[5,"до 5 этажей","#9fd8a0"],[9,"6–9","#e8e08a"],[17,"10–17","#f2a65a"],[25,"18–25","#e8604c"],[999,"26 и выше","#e04fb0"]];
@@ -390,7 +396,13 @@ async function drawDMap(f){
     info.className="house-info";
     info.hidden=true;
     info.innerHTML='<div role="status"><strong></strong><p></p></div><button type="button" aria-label="Закрыть сведения о доме">×</button>';
-    sv.after(info);
+    const mobileCard=matchMedia("(max-width:760px),(pointer:coarse)");
+    function placeHouseCard(){
+      if(mobileCard.matches)document.body.append(info);
+      else sv.after(info);
+    }
+    placeHouseCard();
+    mobileCard.addEventListener("change",placeHouseCard);
     const infoTitle=info.querySelector("strong"), infoDetails=info.querySelector("p");
     let selectedHouse=null, reviewData=null;
     function closeHouse(){
@@ -399,6 +411,7 @@ async function drawDMap(f){
       info.hidden=true;
     }
     info.querySelector("button").onclick=closeHouse;
+    info.addEventListener("keydown",event=>{if(event.key==="Escape")closeHouse()});
     sv.parentElement.addEventListener("keydown",event=>{if(event.key==="Escape")closeHouse()});
     svg.on("click.house-info",event=>{
       if(!event.target.matches("path.h"))closeHouse();
