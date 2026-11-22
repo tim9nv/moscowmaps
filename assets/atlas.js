@@ -329,32 +329,33 @@ async function drawDMap(f){
     d3.select("#dlg").append("span").append("a")
       .attr("href","https://www.openstreetmap.org/copyright").text("Улицы © OpenStreetMap");
   }
-  // Park links reuse the catalogue IDs and the same projection as the district map.
-  fetch(ATLAS_ROOT + "parks/catalog/parks.json")
+  // Park contours come from the same geometry as the park catalogue.
+  fetch(ATLAS_ROOT + "assets/district-parks.json?v=20261122")
     .then(response => response.ok ? response.json() : [])
     .then(parks => {
       if (!svg.node().isConnected) return;
-      const local = parks.filter(park => d3.geoContains(f, park.center));
-      const adjacent = p.n === "Отрадное" ? parks.filter(park => park.id === "86" && !local.includes(park)) : [];
-      if (!local.length && !adjacent.length) return;
-      const link = park => ATLAS_ROOT + "parks/catalog/?park=" + encodeURIComponent(park.id);
+      const local = parks.filter(([, , districts]) => districts.includes(p.n));
+      if (!local.length) return;
       const legend = d3.select("#dlg").append("div").style("flex-basis", "100%");
       legend.append("b").text("Карты парков и троп");
-      [...local, ...adjacent].forEach(park => {
+      // Hit areas sit under house polygons so residential houses keep their taps.
+      const targets = geo.insert("g", ".dmg").attr("class", "district-park-targets");
+      const outlines = geo.append("g").attr("class", "district-park-outlines").style("pointer-events", "none");
+      const parkPath = d3.line().x(point => point[0]).y(point => point[1]);
+      local.forEach(([name, url, , rings]) => {
+        const href = ATLAS_ROOT + "parks/" + url;
         legend.append("span").style("display", "inline-block").style("margin-inline-start", "10px")
-          .append("a").attr("href", link(park)).text(park.name + (adjacent.includes(park) ? " (рядом)" : ""));
-      });
-      local.forEach(park => {
-        const [x,y] = proj(park.center);
-        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-        add(x,y,g=>{
-          const a = g.append("a").attr("href", link(park)).attr("aria-label", "Карта троп: " + park.name);
-          a.append("title").text(park.name);
-          a.append("circle").attr("r",8).style("fill","#22614c").style("stroke","#fff").style("stroke-width",2);
-          a.append("text").attr("text-anchor","middle").attr("dy","0.35em")
-            .style("fill","#fff").style("font","700 9px system-ui").text("П");
-          return g;
-        });
+          .append("a").attr("href", href).text(name);
+        const shape = rings.map(ring => parkPath(ring.map(proj)) + "Z").join("");
+        const outline = outlines.append("path").attr("d", shape).attr("vector-effect", "non-scaling-stroke");
+        const anchor = targets.append("a").attr("href", href).attr("aria-label", name)
+          .on("pointerenter pointerleave focus blur", function () {
+            outline.classed("is-active", this.matches(":hover, :focus"));
+          });
+        anchor.append("title").text(name);
+        anchor.append("path").attr("d", shape).attr("vector-effect", "non-scaling-stroke")
+          .style("fill", "transparent").style("stroke", "transparent").style("stroke-width", 8)
+          .style("pointer-events", "all");
       });
     })
     .catch(() => { /* The district map remains usable if the catalogue is unavailable. */ });
@@ -363,6 +364,9 @@ async function drawDMap(f){
     if(!document.getElementById("dmode-css")){const st=document.createElement("style");st.id="dmode-css";
       st.textContent=".dmode{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;align-items:center}.dmode b{font:500 13px var(--label,sans-serif);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}.dmode button{min-height:36px;padding:0 13px;border:1px solid #3a4a80;border-radius:3px;background:transparent;color:var(--fg);font:500 14px/1 var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.dmode button[aria-pressed=true]{background:#FFD86B;border-color:#FFD86B;color:#0B1330}.dmode button:focus-visible{outline:2px solid #FFD86B;outline-offset:2px}#dml{border-top:0}#dml i{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px}#dml .nt{flex-basis:100%;color:var(--muted)}.dmg path.h{cursor:default}@media (max-width:560px){.dmode{padding:8px 10px}.dmode b{flex-basis:100%}}";
       st.textContent+=`
+        .district-park-outlines path{fill:none;stroke:#80bda6;stroke-width:1.15;opacity:.82}
+        .district-park-outlines path.is-active{fill:#63b28c;fill-opacity:.24;stroke:#bff7da;stroke-width:3;opacity:1}
+        .district-park-targets a{cursor:pointer}
         .dmg.is-age path.h{cursor:pointer}
         .dmg path.h.is-selected{stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
         .house-info{position:absolute;z-index:3;right:10px;width:min(270px,calc(100% - 65px));

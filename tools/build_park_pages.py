@@ -4,7 +4,7 @@
 Пишет страницы, добавляет в parks.json поле url ("../<slug>/") и обновляет раздел парков в sitemap.xml.
 Карту и объекты на странице рисует parks/catalog/catalog.js (window.PARK_ID, window.PARK_BASE).
 """
-import json, re, os, gzip, base64, math, html, datetime
+import json, re, os, gzip, base64, math, html, datetime, sys
 from pathlib import Path
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CAT = f'{REPO}/parks/catalog'
@@ -65,9 +65,26 @@ def km(lines):
         for (a, b), (c, d) in zip(ln, ln[1:]):
             x = math.radians(d - b) * math.cos(math.radians((a + c) / 2)); y = math.radians(c - a); s += 6371 * math.hypot(x, y)
     return s
+
+def write_district_map(parks, shapes):
+    rows = []
+    for park in parks:
+        shape = shapes[int(park['id']) - 1]
+        rings = [ring for ring in shape.get('p', []) if len({tuple(point) for point in ring}) >= 3]
+        if not shape.get('d') or not rings or not park.get('url'):
+            continue
+        url = park['url'].removeprefix('../')
+        rows.append((shape['a'], park_name(park), url, shape['d'], rings))
+    rows.sort(key=lambda row: -row[0])
+    target = Path(REPO) / 'assets/district-parks.json'
+    target.write_text(json.dumps([row[1:] for row in rows], ensure_ascii=False, separators=(',', ':')) + '\n',
+                      encoding='utf-8')
 parks = json.load(open(f'{CAT}/parks.json', encoding='utf-8'))
-places = json.load(open(f'{CAT}/places.json', encoding='utf-8'))
 PARKS = json.loads(re.search(r'const PARKS = (.*?);\n', open(f'{REPO}/parks.html', encoding='utf-8').read()).group(1))
+if sys.argv[1:] == ['--district-map-only']:
+    write_district_map(parks, PARKS)
+    sys.exit()
+places = json.load(open(f'{CAT}/places.json', encoding='utf-8'))
 dslug = {n: (s, o) for s, n, o in json.load(open(f'{REPO}/tools/data/districts_list.json', encoding='utf-8'))}
 walks = json.load(open(f'{CAT}/walks.json', encoding='utf-8')) if os.path.exists(f'{CAT}/walks.json') else {}
 METRIKA = open(f'{REPO}/tools/metrika.html', encoding='utf-8').read().strip()
@@ -193,6 +210,7 @@ for p in parks:
     open(f'{REPO}/parks/{sl}/index.html', 'w', encoding='utf-8').write(page)
     if not empty: urls.append(f'{BASE}/parks/{sl}/')
 json.dump(parks, open(f'{CAT}/parks.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+write_district_map(parks, PARKS)
 sm = open(f'{REPO}/sitemap.xml', encoding='utf-8').read()
 sm = re.sub(r'  <url><loc>' + re.escape(BASE) + r'/parks/(?!catalog/|vdnh/|botanicheskiy-sad/)[^<]*</loc>.*?</url>\n', '', sm)
 today = datetime.date.today().isoformat()

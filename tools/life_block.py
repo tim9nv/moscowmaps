@@ -38,15 +38,14 @@ def insert_block(page, slug):
     if header < 0:
         return page
     end = header + len('</header>')
-    if slug == 'otradnoe':
-        # Отрадное — образец новой раскладки районных страниц.
-        district_map = re.search(r'<section class="map"[^>]*>.*?</section>', content[end:], re.S)
-        if not district_map or 'id="dm"' not in district_map[0]:
-            raise ValueError('Карта Отрадного не найдена')
-        tail = content[end:]
-        return (content[:end] + '\n' + district_map[0] + '\n' + score
-                + tail[:district_map.start()] + tail[district_map.end():].lstrip('\n'))
-    return content[:end] + score + content[end:]
+    tail = content[end:]
+    district_map = re.search(r'<section class="map"[^>]*>.*?</section>', tail, re.S)
+    if not district_map or 'id="dm"' not in district_map[0]:
+        raise ValueError(f'На странице района {slug} не найдена карта')
+    following = tail[:district_map.start()].strip('\n')
+    return '\n'.join(part for part in (
+        content[:end], district_map[0], score, following, tail[district_map.end():].lstrip('\n')
+    ) if part)
 
 
 if __name__ == '__main__':
