@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Год постройки дома по адресу в Москве — карта домов</title>
+  <meta name="description" content="Введите улицу и номер дома в Москве. Карта приблизит здание и покажет год постройки, этажность и источник данных.">
+  <link rel="canonical" href="https://www.mskatlas.ru/house-map.html">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="assets/house-map.css?v=20261122">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="module" src="assets/house-map.js?v=20261122"></script>
+</head>
+<body>
+  <header class="house-header">
+    <div>
+      <a class="brand" href="./"><img src="assets/logo.svg" width="30" height="30" alt=""> Атлас Москвы</a>
+      <nav aria-label="Разделы"><a href="./">Районы</a><a href="housing.html">Цены на жильё</a></nav>
+    </div>
+  </header>
+  <main>
+    <div class="house-intro">
+      <h1>Годы постройки домов Москвы</h1>
+      <p>Введите адрес или приблизьте карту и нажмите на дом.</p>
+    </div>
+    <div class="house-layout">
+      <section class="house-panel" aria-label="Поиск и сведения о доме">
+        <form id="house-search">
+          <label for="house-address">Улица и номер дома</label>
+          <div class="house-field">
+            <input id="house-address" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false"
+              placeholder="Например, Олонецкая, 21" required maxlength="180">
+            <button type="submit">Найти</button>
+          </div>
+        </form>
+        <p id="house-status" role="status"></p>
+        <ul id="house-matches" aria-label="Найденные адреса" hidden></ul>
+        <article class="house-card" id="house-card" aria-labelledby="house-title" hidden>
+          <div aria-live="polite">
+            <h2 id="house-title"></h2>
+            <p id="house-year"></p>
+          </div>
+          <p id="house-detail"></p>
+          <a id="house-source" hidden></a>
+          <a id="house-district" hidden>Открыть район →</a>
+        </article>
+        <noscript><p>Для поиска адреса включите JavaScript.</p></noscript>
+      </section>
+      <section class="house-map-section" aria-label="Карта домов Москвы">
+        <div class="house-map-frame">
+          <div id="house-map" aria-label="Интерактивная карта домов Москвы"></div>
+          <button type="button" class="house-reset" id="house-reset" disabled>Вся Москва</button>
+        </div>
+        <div id="house-legend" aria-label="Периоды постройки"></div>
+        <p class="house-note">Адреса и контуры — <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>.
+          Где доступна сверка, карточка указывает данные <a href="https://dom.mingkh.ru/moskva/">Дом.МинЖКХ</a>
+          или документы по конкретному адресу.</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

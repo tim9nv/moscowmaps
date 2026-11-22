@@ -22,7 +22,7 @@ export function normalize(value) {
     .replace(/[^а-яa-z0-9]+/g, ' ').trim().split(/\s+/).filter(w => w && !TYPES.test(w)).join(' ');
 }
 
-function streetType(value) {
+export function streetType(value) {
   const tokens = String(value).toLowerCase().replace(/пр\s*[-–—]\s*(?:кт|т)/g, 'проспект').replace(/пр\s*[-–—]\s*д/g, 'проезд').replace(/б\s*[-–—]\s*р/g, 'бульвар').replace(/[^а-яa-z0-9]+/g, ' ').split(/\s+/);
   const aliases = {улица:'улица',ул:'улица',проспект:'проспект',просп:'проспект',пркт:'проспект',переулок:'переулок',пер:'переулок',проезд:'проезд',прд:'проезд',шоссе:'шоссе',ш:'шоссе',набережная:'набережная',наб:'набережная',бульвар:'бульвар',бул:'бульвар',бр:'бульвар',площадь:'площадь',пл:'площадь',аллея:'аллея',тупик:'тупик'};
   return tokens.map(t => aliases[t]).find(Boolean);

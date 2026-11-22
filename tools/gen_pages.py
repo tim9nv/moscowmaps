@@ -275,7 +275,7 @@ print('pages', len(F), 'okrugs', sorted({P(f)['o'] for f in F}))
 
 from datetime import date
 urls=[f'{BASE}/','f'][:1]
-pages=['index.html','housing.html','ecology.html','climate.html','transport.html','social.html','parks.html','sport.html','new-moscow.html']
+pages=['index.html','housing.html','house-map.html','ecology.html','climate.html','transport.html','social.html','parks.html','sport.html','new-moscow.html']
 locs=[f'{BASE}/']+[f'{BASE}/{x}' for x in pages[1:]]+[f'{BASE}/rayon/']+[f'{BASE}/rayon/{P(f)["slug"]}/' for f in F]
 today=date.today().isoformat()
 sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+''.join(f'  <url><loc>{u}</loc><lastmod>{today}</lastmod></url>\n' for u in locs)+'</urlset>\n'
