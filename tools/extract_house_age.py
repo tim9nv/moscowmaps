@@ -1,13 +1,14 @@
-"""Возраст жилых домов по районам из OpenStreetMap -> tools/data/house_age.json
+"""Возраст жилых домов по районам из OpenStreetMap и Дом.МинЖКХ -> tools/data/house_age.json
 Запуск: python3 tools/extract_house_age.py /tmp/moscow.osm.pbf
 Берём только жилые дома (building=apartments|residential|house|detached|semidetached_house|terrace|dormitory)
 с годом постройки в start_date / building:start_date / construction_date. Без года — не учитываем, долю таких пишем в файл.
 """
-import osmium, json, sys, os, re, datetime
+import osmium, json, sys, os, datetime
 from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
+from house_years import RESIDENTIAL, load_verified, resolve_year
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RES = {'apartments', 'residential', 'house', 'detached', 'semidetached_house', 'terrace', 'dormitory'}
+verified = load_verified()
 BINS = [
     (0, 1956, 'до 1957'),
     (1957, 1968, '1957–1968'),
@@ -16,22 +17,16 @@ BINS = [
     (1992, 2010, '1992–2010'),
     (2011, 9999, 'с 2011'),
 ]
-def year(t):
-    for k in ('start_date', 'building:start_date', 'construction_date'):
-        v = t.get(k)
-        if v:
-            m = re.search(r'(1[6-9]\d\d|20[0-3]\d)', v)
-            if m: return int(m.group(1))
-    return None
 pts = []
 class H(osmium.SimpleHandler):
     def area(self, a):
-        if a.tags.get('building') not in RES: return
+        if a.tags.get('building') not in RESIDENTIAL: return
         try:
-            ring = next(iter(a.outer_rings()))
-            xs = [n.lon for n in ring]; ys = [n.lat for n in ring]
+            ring = [(n.lon, n.lat) for n in next(iter(a.outer_rings()))]
         except Exception: return
-        if xs: pts.append((sum(xs) / len(xs), sum(ys) / len(ys), year(a.tags)))
+        if ring:
+            year, source_id = resolve_year(verified['houses'], a, ring)
+            pts.append((sum(x for x, _ in ring) / len(ring), sum(y for _, y in ring) / len(ring), year, source_id))
 source_path = sys.argv[1]
 with osmium.io.Reader(source_path) as reader:
     source_timestamp = reader.header().get('osmosis_replication_timestamp')
@@ -39,19 +34,22 @@ H().apply_file(source_path, locations=True)
 feats = json.load(open(f'{REPO}/tools/data/districts.json', encoding='utf-8'))['features']
 slugs = {n: s for s, n, _ in json.load(open(f'{REPO}/tools/data/districts_list.json', encoding='utf-8'))}
 geoms = [shape(f['geometry']).buffer(0) for f in feats]; tree = STRtree(geoms)
-res = {slugs[f['properties']['n']]: {'all': 0, 'dated': 0, 'bins': [0] * len(BINS)} for f in feats}
-for lon, lat, y in pts:
+res = {slugs[f['properties']['n']]: {'all': 0, 'dated': 0, 'verified': 0, 'bins': [0] * len(BINS)} for f in feats}
+for lon, lat, y, source_id in pts:
     p = Point(lon, lat)
     for i in tree.query(p):
         if geoms[i].contains(p):
             r = res[slugs[feats[i]['properties']['n']]]; r['all'] += 1
             if y:
                 r['dated'] += 1
+                r['verified'] += bool(source_id)
                 for k, (a, b, _) in enumerate(BINS):
                     if a <= y <= b: r['bins'][k] += 1; break
             break
 source_date = source_timestamp[:10] if source_timestamp else datetime.date.today().isoformat()
 out = {'date': source_date, 'source': 'OpenStreetMap', 'bins': [b[2] for b in BINS], 'districts': res}
+if verified['date']:
+    out['verification'] = {'date': verified['date'], 'source': verified['source']}
 json.dump(out, open(f'{REPO}/tools/data/house_age.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 tot = sum(r['all'] for r in res.values()); dt = sum(r['dated'] for r in res.values())
 print(f'жилых домов {tot}, с годом {dt} ({dt / max(tot, 1):.0%})')

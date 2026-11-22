@@ -26,8 +26,12 @@ def age_card(slug):
     r = AGE['districts'].get(slug)
     if not r: return '', ''
     y, mo, _ = AGE['date'].split('-')
-    coverage = (f'Год постройки известен для {r["dated"]} из {r["all"]} жилых домов района в OpenStreetMap '
+    coverage = (f'Год постройки известен для {r["dated"]} из {r["all"]} жилых домов района на карте OpenStreetMap '
                 f'({MONTHS[int(mo)-1]} {y}).')
+    if r.get('verified'):
+        verification = AGE['verification']
+        checked = '.'.join(reversed(verification['date'].split('-')))
+        coverage += f' С <a href="{verification["source"]}">Дом.МинЖКХ</a> сверено {r["verified"]} ({checked}).'
     source = '<a href="../../tools/data/house_age.json">Данные о возрасте домов</a>.'
     if r['dated'] < 30 or r['dated'] < r['all'] * 0.5:
         return '', f'<p class="small house-age-src">{coverage} Данных мало для сводки по возрасту домов. {source}</p>'
@@ -42,7 +46,7 @@ def age_card(slug):
 
 
 def update_age(h, slug):
-    h = re.sub(r'assets/atlas\.js\?v=(?:20261113f|20261122-age|20261122-labels)\b', 'assets/atlas.js?v=20261122-periods', h)
+    h = re.sub(r'assets/atlas\.js\?v=(?:20261113f|20261122-age|20261122-labels|20261122-periods)\b', 'assets/atlas.js?v=20261122-house-years', h)
     h = re.sub(r'<!--HOUSE-AGE-->.*?<!--HOUSE-AGE-END-->', '', h, flags=re.S)
     h = re.sub(r'<p class="small house-age-src">.*?</p>', '', h, flags=re.S)
     card, note = age_card(slug)

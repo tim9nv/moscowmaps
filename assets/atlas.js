@@ -383,7 +383,7 @@ async function drawDMap(f){
       Object.keys(IC).forEach(k=>{const d=data.i.filter(x=>x[1]===k).map(x=>ring(x[0])).join("");if(d)dmG.append("path").attr("d",d).style("fill",IC[k]).style("fill-opacity",.8).style("pointer-events","none")});
       dmG.append("path").attr("d",data.b.filter(b=>!b[3]).map(b=>ring(b[0])).join("")).style("fill",OTH).style("pointer-events","none");
       const hs=dmG.selectAll("path.h").data(data.b.filter(b=>b[3])).join("path").attr("class","h").attr("d",b=>ring(b[0]));
-      hs.append("title").text(b=>"Жилой дом"+(b[2]?" · "+b[2]+" г.":"")+(b[1]?" · этажей: "+b[1]:"")+(b.length>4?" · "+["тихо","шум доносится","шумно","у трассы или станции"][b[4]]:""));
+      hs.append("title").text(b=>"Жилой дом"+(b[2]?" · "+b[2]+" г."+(b[5]?" (Дом.МинЖКХ)":""):"")+(b[1]?" · этажей: "+b[1]:"")+(b.length>4?" · "+["тихо","шум доносится","шумно","у трассы или станции"][b[4]]:""));
       drawn=true;
     }
     function set(k){
@@ -404,14 +404,18 @@ async function drawDMap(f){
           +'<span class="nt">Это не замер шума, а расстояние от стены дома до магистрали (МКАД, ТТК, хорды, вылетные шоссе), крупной улицы или железнодорожной станции. «Окна на трассу»: до 100 м от магистрали, до 50 м от крупной улицы или до 100 м от станции; «шумно» — до 250 / 100 / 200 м; «доносится» — до 400 / 200 / 300 м. Двор за первой линией домов обычно тише, чем выходит по расстоянию. Сама железная дорога не учитывается — поезда ходят редко, шумно у станций. Данные OpenStreetMap, выгрузка '+data.date.split("-").reverse().join(".")+".</span>");
         return}
       const T=k==="floors"?FL:AG, idx=k==="floors"?1:2, known=res.filter(b=>b[idx]).length;
+      const verifiedCount=k==="age"?res.filter(b=>b[5]).length:0;
+      const ageSource=verifiedCount&&data.age_checked
+        ? ' Сверено с <a href="https://dom.mingkh.ru/moskva/">Дом.МинЖКХ</a>: '+verifiedCount+' ('+data.age_checked.split("-").reverse().join(".")+').'
+        : "";
       dmG.selectAll("path.h").style("fill",b=>pick(T,b[idx]));
       leg.html("<span><b>"+(k==="floors"?"Жилые дома по этажности":"Жилые дома по году постройки")+"</b></span>"+T.map(t=>'<span><i style="background:'+t[2]+'"></i>'+t[1]+"</span>").join("")
         +'<span><i style="background:'+UNK+'"></i>нет данных</span><span><i style="background:'+OTH+'"></i>нежилые здания</span><span><i style="background:#1d5a3a"></i>парки и лес</span><span><i style="background:#5b4a63"></i>промзоны и железная дорога</span><span><i style="background:#8a6d1f"></i>стройки</span><span><i style="background:#454063"></i>гаражи</span>'
-        +'<span class="nt">Жилых домов на карте с окрестностями: '+res.length+", "+(k==="floors"?"этажность известна":"год известен")+" у "+known+". Данные OpenStreetMap, выгрузка "+data.date.split("-").reverse().join(".")+". На компьютере наведите на дом — покажем год и этажи.</span>");
+        +'<span class="nt">Жилых домов на карте с окрестностями: '+res.length+", "+(k==="floors"?"этажность известна":"год известен")+" у "+known+". OpenStreetMap, выгрузка "+data.date.split("-").reverse().join(".")+"."+ageSource+" На компьютере наведите на дом — покажем год и этажи.</span>");
     }
     btn.relief.attr("aria-pressed","true");
     const zbEl=document.getElementById("zb"), fixZb=()=>{if(zbEl)zbEl.style.top=(bar.node().offsetHeight+10)+"px"};
-    fetch(ATLAS_ROOT + "assets/dmap/" + p.slug + ".json").then(r=>r.ok?r.json():null).then(d=>{
+    fetch(ATLAS_ROOT + "assets/dmap/" + p.slug + ".json?v=20261122-house-years").then(r=>r.ok?r.json():null).then(d=>{
       if(!d||!svg.node().isConnected||!d.b.some(b=>b[3])){bar.style("display","none");return}
       data=d; set("floors"); fixZb(); addEventListener("resize",fixZb);
     }).catch(()=>{bar.style("display","none")});

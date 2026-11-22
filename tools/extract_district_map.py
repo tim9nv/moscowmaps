@@ -2,7 +2,7 @@
 Запуск: python3 tools/extract_district_map.py /tmp/moscow.osm.pbf
 Источник — OpenStreetMap. Для каждого района берём то, что внутри него и в полосе ~150 м вокруг (окрестности на карте притушены).
 Дома мельче 40 м² (будки, гаражи) не берём.
-Формат: {"o":[lon0,lat0], "b":[[точки, этажей|0, год|0, жилой 1/0, близость к шумным дорогам 0–3], ...], "g":[точки,...], "i":[[точки, вид], ...], "date":...}
+Формат: {"o":[lon0,lat0], "b":[[точки, этажей|0, год|0, жилой 1/0, близость к шумным дорогам 0–3, ID Дом.МинЖКХ (если есть)], ...], "g":[точки,...], "i":[[точки, вид], ...], "date":...}
 точки — плоский список целых: первая точка (lon-lon0)*1e5, (lat-lat0)*1e5, дальше — приращения.
 """
 import osmium, json, sys, os, re, datetime
@@ -11,15 +11,9 @@ from shapely.strtree import STRtree
 from shapely.geometry import Point
 from shapely.prepared import prep
 import math
+from house_years import RESIDENTIAL, load_verified, resolve_year
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RES = {'apartments', 'residential', 'house', 'detached', 'semidetached_house', 'terrace', 'dormitory'}
-def year(t):
-    for k in ('start_date', 'building:start_date', 'construction_date'):
-        v = t.get(k)
-        if v:
-            m = re.search(r'(1[6-9]\d\d|20[0-3]\d)', v)
-            if m: return int(m.group(1))
-    return 0
+verified = load_verified()
 def levels(t):
     m = re.match(r'\d+', t.get('building:levels') or '')
     return min(int(m.group(0)), 120) if m else 0
@@ -71,9 +65,12 @@ class H(osmium.SimpleHandler):
             except Exception: return
         cx = sum(p[0] for p in ring) / len(ring); cy = sum(p[1] for p in ring) / len(ring)
         pt = Point(cx, cy)
+        if kind == 'b':
+            year, source_id = resolve_year(verified['houses'], a, ring)
+            building = ring[:-1], levels(t), year, int(t.get('building') in RESIDENTIAL), source_id
         for i in tree.query(pt):
             if not pboxes[i].contains(pt): continue
-            if kind == 'b': out[names[i]]['b'].append((ring[:-1], levels(t), year(t), 1 if t.get('building') in RES else 0))
+            if kind == 'b': out[names[i]]['b'].append(building)
             elif kind == 'g': out[names[i]]['g'].append(ring[:-1])
             else: out[names[i]]['i'].append((ring[:-1], IND[t.get('landuse')]))
         if kind == 'g':
@@ -106,9 +103,10 @@ for i, s in enumerate(names):
         for a, b in zip(q, q[1:]): o += [b[0] - a[0], b[1] - a[1]]
         return o
     d = out[s]
-    bs = [[enc(r), l, y, res, noise(r) if res else 0] for r, l, y, res in d['b']]
+    bs = [[enc(r), l, y, res, noise(r) if res else 0] + ([source_id] if source_id else [])
+          for r, l, y, res, source_id in d['b']]
     inside = [b for b, (r, *_ ) in zip(bs, d['b']) if b[3] and pin[i].contains(Point(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)))]
-    rin = [r for (r, l, y, res) in d['b'] if res and pin[i].contains(Point(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)))]
+    rin = [r for (r, l, y, res, _) in d['b'] if res and pin[i].contains(Point(sum(p[0] for p in r) / len(r), sum(p[1] for p in r) / len(r)))]
     if inside:
         fl = [b[1] for b in inside if b[1]]
         share[s] = {'n': len(inside), 'n3': sum(1 for b in inside if b[4] == 3), 'n2': sum(1 for b in inside if b[4] == 2),
@@ -116,6 +114,8 @@ for i, s in enumerate(names):
                     'park': sum(1 for r in rin if park_near(r))}
     js = {'o': [round(x0, 5), round(y0, 5)], 'b': bs, 'g': [enc(r) for r in d['g']],
           'i': [[enc(r), k] for r, k in d['i']], 'date': datetime.date.today().isoformat()}
+    if verified['date'] and any(len(b) > 5 for b in bs):
+        js['age_checked'] = verified['date']
     p = f'{REPO}/assets/dmap/{s}.json'
     json.dump(js, open(p, 'w'), separators=(',', ':')); tot += os.path.getsize(p)
 json.dump({'date': datetime.date.today().isoformat(), 'note': 'жилые дома внутри района (OSM): n — всего; n3 — стена дома до 100 м от оси магистрали (МКАД, ТТК, хорды, вылетные шоссе), до 50 м от оси крупной улицы или до 100 м от ж/д станции; n2 — до 250 / 100 / 200 м; nf — этажность известна, f18 — 18 этажей и выше, f10 — 10–17; park — до парка, сквера или леса от 2 га не больше 300 м', 'd': share},
