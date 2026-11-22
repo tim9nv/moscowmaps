@@ -3,6 +3,7 @@
 Источник — OpenStreetMap. Для каждого района берём то, что внутри него и в полосе ~150 м вокруг (окрестности на карте притушены).
 Дома мельче 40 м² (будки, гаражи) не берём.
 Формат: {"o":[lon0,lat0], "b":[[точки, этажей|0, год|0, жилой 1/0, близость к шумным дорогам 0–3, ID Дом.МинЖКХ (если есть)], ...], "g":[точки,...], "i":[[точки, вид], ...], "date":...}
+В опубликованных исправлениях оценка шума может быть null. Отрицательный ID означает поадресную сверку по документам.
 точки — плоский список целых: первая точка (lon-lon0)*1e5, (lat-lat0)*1e5, дальше — приращения.
 """
 import osmium, json, sys, os, re, datetime
@@ -67,7 +68,7 @@ class H(osmium.SimpleHandler):
         pt = Point(cx, cy)
         if kind == 'b':
             year, source_id = resolve_year(verified['houses'], a, ring)
-            building = ring[:-1], levels(t), year, int(t.get('building') in RESIDENTIAL), source_id
+            building = ring[:-1], levels(t), year, int(t.get('building') in RESIDENTIAL or source_id < 0), source_id
         for i in tree.query(pt):
             if not pboxes[i].contains(pt): continue
             if kind == 'b': out[names[i]]['b'].append(building)

@@ -1,0 +1,572 @@
+{
+  "191759": {
+    "address": "ул. Верхние Поля, 5 корпус 3",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=998"
+    ],
+    "note": "Городской перечень для корпуса 3 даёт 1981. В паспорте дома это год ввода.",
+    "year": 1981,
+    "area": 68659362,
+    "outline": "7e35587465801526",
+    "cadastre": "77:04:0004017:1021"
+  },
+  "193422": {
+    "address": "Черноморский б-р, 5 корпус 3",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=1278",
+      "https://stroi.mos.ru/uploads/media/file/0001/93/e834444f2ec1d74b78ef6a11e4c94823017465f2.pdf#page=18"
+    ],
+    "note": "Пятиэтажка 1962 года. Этот же корпус в адресном списке реновации.",
+    "year": 1962,
+    "area": 314420064,
+    "outline": "8178d97a2618dcb6",
+    "cadastre": "77:05:0003005:1126"
+  },
+  "193423": {
+    "address": "Черноморский б-р, 5 корпус 4",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=1278",
+      "https://stroi.mos.ru/uploads/media/file/0001/93/e834444f2ec1d74b78ef6a11e4c94823017465f2.pdf#page=18"
+    ],
+    "note": "Пятиэтажка 1962 года. Этот же корпус в адресном списке реновации.",
+    "year": 1962,
+    "area": 314420066,
+    "outline": "986b0ab709e731a6",
+    "cadastre": "77:05:0003005:1127"
+  },
+  "193972": {
+    "address": "ул. Заводская, 4",
+    "sources": [
+      "https://stroi.mos.ru/uploads/media/file/0001/93/e834444f2ec1d74b78ef6a11e4c94823017465f2.pdf#page=1",
+      "https://www.zelenograd.ru/news/63421/",
+      "https://tochno.st/datasets/gisgkh"
+    ],
+    "note": "Старый дом в Крюкове включён в реновацию. На участке № 4 строится новый комплекс. Совпадение по названию улицы вывело на другой объект.",
+    "documented_year": 1962,
+    "cadastre": "77:10:0006006:1045"
+  },
+  "196559": {
+    "address": "ул. Камчатская, 7",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=42"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1989,
+    "area": 59479260,
+    "outline": "791ecf2ecce9211e",
+    "cadastre": "77:03:0002018:1027"
+  },
+  "206850": {
+    "address": "ул. Преображенская, 6",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=123"
+    ],
+    "note": "Городская таблица даёт 1900 для улицы, дом 6. Площадь с тем же номером — другой адрес.",
+    "year": 1900,
+    "area": 56285938,
+    "outline": "74166cb872200b2c",
+    "cadastre": "77:03:0003012:1040"
+  },
+  "212873": {
+    "address": "пр-кт Волгоградский, 170 корпус 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=938",
+      "https://tochno.st/datasets/gisgkh"
+    ],
+    "note": "В паспорте корпуса 1 по кадастровому номеру 77:04:0004006:1142 указан 1998 и как год постройки, и как год ввода. Программа приводит 1998 по базовому адресу 170.",
+    "year": 1998,
+    "area": 91662620,
+    "outline": "308c1165982bcbec",
+    "cadastre": "77:04:0004006:1142"
+  },
+  "267026": {
+    "address": "ул. Кунцевская, 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=189"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1982,
+    "area": 67747774,
+    "outline": "510f36e1bfe0dd3b",
+    "cadastre": "77:07:0004007:1032"
+  },
+  "283617": {
+    "address": "ул. Дегунинская, 3 корпус 2",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=384"
+    ],
+    "note": "Городской год корпуса 2 совпадает с годом ввода в паспорте.",
+    "year": 2007,
+    "area": 270841884,
+    "outline": "28ccf94e959fb371",
+    "cadastre": "77:09:0002024:1042"
+  },
+  "283618": {
+    "address": "ул. Дегунинская, 3 корпус 3",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=384"
+    ],
+    "note": "Городской год корпуса 3 совпадает с годом ввода в паспорте.",
+    "year": 2008,
+    "area": 270841886,
+    "outline": "31fd5f46eea73261",
+    "cadastre": "77:09:0002024:1056"
+  },
+  "283619": {
+    "address": "ул. Дегунинская, 3 корпус 4",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=385"
+    ],
+    "note": "Городской год корпуса 4 совпадает с обеими датами в паспорте.",
+    "year": 2007,
+    "area": 58346802,
+    "outline": "77805d5bb2d10fb5",
+    "cadastre": "77:09:0002024:1057"
+  },
+  "283632": {
+    "address": "ул. Дегунинская, 23 корпус 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=384"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 2006,
+    "area": 58345962,
+    "outline": "be138c378f1e4d6b",
+    "cadastre": "77:09:0002024:1040"
+  },
+  "290240": {
+    "address": "пр-кт Волгоградский, 140 корпус 2",
+    "sources": [
+      "https://www.mos.ru/upload/documents/files/2491/Spravkas2712po15012026.pdf",
+      "https://mgnov.ru/news/v-kuzminkah-sdali-dva-doma-po-renovacii-na-volgogradskom-prospekte.html",
+      "https://stroi.mos.ru/uploads/media/file/0001/93/e834444f2ec1d74b78ef6a11e4c94823017465f2.pdf#page=121"
+    ],
+    "note": "Пятиэтажку 1961 года по адресу 140, корпус 2 снесли. На её участке построен 22‑этажный дом 2026 года, официальный адрес — 140, корпус 1. Контур на карте относится к новостройке.",
+    "year": 2026,
+    "area": 58800148,
+    "outline": "c60636fc68ecafcd"
+  },
+  "310830": {
+    "address": "ул. Веерная, 34 корпус 2",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=224"
+    ],
+    "note": "В городском документе 1966. Значение 1866 в паспорте противоречит и году ввода, и документам реновации.",
+    "year": 1966,
+    "area": 55587616,
+    "outline": "5f4467aa4d801d95",
+    "cadastre": "77:07:0012011:1046"
+  },
+  "321601": {
+    "address": "пр-д. Багратионовский, 1 Строение 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=276"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1937,
+    "area": 68824832,
+    "outline": "585dbbae986c98fd",
+    "cadastre": "77:07:0005009:1000"
+  },
+  "322250": {
+    "address": "ул. Радужная, 14 корпус 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=480",
+      "https://tochno.st/datasets/gisgkh"
+    ],
+    "note": "Городской документ подтверждает 1958 для Бабушкинского района. Паспортная точка попадает внутрь контура Радужной, 14 корпус 1. Прежнее совпадение вывело на одноимённый адрес в другом районе.",
+    "year": 1958,
+    "area": 72895782,
+    "outline": "d1af81237712fc5c",
+    "confirm_residential": true,
+    "cadastre": "77:02:0015003:1019"
+  },
+  "342500": {
+    "address": "ул. Главмосстроя, 10",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=261"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 2008,
+    "area": 114790780,
+    "outline": "befecb39d3219f1d",
+    "cadastre": "77:07:0015003:1108"
+  },
+  "342503": {
+    "address": "ул. Главмосстроя, 14",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=262"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 2009,
+    "area": 114790750,
+    "outline": "96d89a72595dd7a6",
+    "cadastre": "77:07:0015003:1132"
+  },
+  "342505": {
+    "address": "ул. Главмосстроя, 22 корпус 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=262"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 2008,
+    "area": 114790754,
+    "outline": "726a6d779139fcf1",
+    "cadastre": "77:07:0015003:1107"
+  },
+  "346576": {
+    "address": "Вокзальный пер., 3 корпус 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=339"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1998,
+    "area": 77499066,
+    "outline": "577798eba5df6615",
+    "cadastre": "77:09:0003018:1088"
+  },
+  "376247": {
+    "address": "ш. Загородное, 4 корпус 2",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=1227"
+    ],
+    "note": "Городская программа указывает 1997. В паспорте разнятся поля года постройки и ввода, год ввода также 1997.",
+    "year": 1997,
+    "area": 323742046,
+    "outline": "aef6e3ea94fb2d72",
+    "cadastre": "77:05:0001016:1032"
+  },
+  "397938": {
+    "address": "ул. Мантулинская, 12",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=858",
+      "https://www.mos.ru/upload/documents/oiv/ikes_pri_mkn_1_37_na_pechat_str_1_i_11_ot_19022009_prilozhenie.pdf"
+    ],
+    "note": "Год указан в московской программе и перечне выявленных объектов наследия.",
+    "year": 1926,
+    "area": 93748374,
+    "outline": "b7321a40b0e08006",
+    "cadastre": "77:01:0004035:1006"
+  },
+  "397994": {
+    "address": "Расторгуевский пер., 4 Строение 3",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=862",
+      "https://tochno.st/datasets/gisgkh"
+    ],
+    "note": "В программе капремонта стоит 1956, в паспорте постройка — 1910 и реконструкция — 1956. По найденным документам нельзя точно установить, какая часть старого здания сохранилась.",
+    "cadastre": "77:01:0004023:1073"
+  },
+  "398125": {
+    "address": "ш. Шелепихинское, 3 Строение 2",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://openaddress.ru/77/77000000000314000"
+    ],
+    "note": "В паспорте строения 2 год ввода — 2007. Точная адресная карточка также даёт 2007. Год 1971 относится к соседнему дому 3 без строения.",
+    "year": 2007,
+    "area": 426968562,
+    "outline": "4b0cba25ffcd1a59",
+    "cadastre": "77:01:0004045:1016"
+  },
+  "411059": {
+    "address": "ул. Высокая, 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=1248",
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=726",
+      "https://tochno.st/datasets/gisgkh"
+    ],
+    "note": "В городском перечне 1956 для Нагатина-Садовников и 1995 для одноимённого адреса в Ерино. Прежнее совпадение вывело на Ерино. Контур по московскому адресу сейчас помечен в картографии как школа.",
+    "documented_year": 1956,
+    "cadastre": "77:05:0004005:1019"
+  },
+  "413689": {
+    "address": "Казарменный пер., 4 Строение 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=794"
+    ],
+    "note": "Городская программа даёт 1897 для строения 1. Строение 2 — отдельный дом 1956 года.",
+    "year": 1897,
+    "area": 80891960,
+    "outline": "ca30f02e73706cc3",
+    "cadastre": "77:01:0001024:1034"
+  },
+  "413830": {
+    "address": "ул. Покровка, 37/15 Строение 4",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=802"
+    ],
+    "note": "Год 1927 подтверждён для строения 4 в программе капремонта. В федеральном паспорте 1895 стоит в поле постройки, 1927 — в поле ввода. Сохранилась ли часть более раннего здания, по этим документам не установлено.",
+    "year": 1927,
+    "area": 90259990,
+    "outline": "4358bb557d0d6656",
+    "cadastre": "77:01:0001082:1059"
+  },
+  "431277": {
+    "address": "Петровский б-р, 17/1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/files/2090/Petrovskiibylvar17kv47%281%29.pdf",
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=900"
+    ],
+    "note": "Приказ Мосгорнаследия датирует шестиэтажную часть доходного дома Депре 1901 годом и фиксирует работы 1932 года. В предмете охраны указаны сохранившиеся стены и перекрытия 1899–1901 годов.",
+    "year": 1901,
+    "area": 17822001,
+    "outline": "d7c2e819449dec24",
+    "cadastre": "77:01:0001095:1023"
+  },
+  "491120": {
+    "address": "ул. Академика Бочвара, 3 корпус 1",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.novostroy-m.ru/dom/ul-akademika-bochvara-3-korpus-1"
+    ],
+    "note": "Паспорт даёт 1984 как год ввода, адресная карточка также относит 12-этажный корпус к 1984 году.",
+    "year": 1984,
+    "area": 80851008,
+    "outline": "226291f74c1a3065",
+    "cadastre": "77:08:0009011:1008"
+  },
+  "491402": {
+    "address": "Тепличный пер., 5",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=664"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1971,
+    "area": 55875030,
+    "outline": "f212b91f115430c8",
+    "cadastre": "77:08:0009032:1010"
+  },
+  "499117": {
+    "address": "ул. Трифоновская, 12",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=523"
+    ],
+    "note": "Городская программа и паспорт по дате ввода сходятся на 1993.",
+    "year": 1993,
+    "area": 93481486,
+    "outline": "8d965ce2b4041830",
+    "cadastre": "77:02:0024030:1044"
+  },
+  "506028": {
+    "address": "пр-д. 1-й Тушинский, 17",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=603"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1938,
+    "area": 57875772,
+    "outline": "0a8a47d0bea42621",
+    "cadastre": "77:08:0005007:1013"
+  },
+  "523123": {
+    "address": "Вишняковский пер., 6",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=812"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1960,
+    "area": 96598654,
+    "outline": "a14016155a808852",
+    "cadastre": "77:01:0002012:1018"
+  },
+  "590808": {
+    "address": "Малый Ивановский пер., 6/5 Строение 1",
+    "sources": [
+      "https://www.mos.ru/upload/documents/files/4577/2Prilojenie_1_k_prikazy_303_17_03_26.pdf",
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.zdanija.ru/forum/topic-43767-moskva_malyy_ivanovskiy_pereulok_6_5_str1.html"
+    ],
+    "note": "В паспорте указан 1900, другие адресные справочники называют 1880. Городское адресное приложение подтверждает строение 1, но года постройки в нём нет.",
+    "cadastre": "77:01:0001022:1015"
+  },
+  "594134": {
+    "address": "ул. Усачёва, 19 корпус 3",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=929"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1966,
+    "area": 90198530,
+    "outline": "76183171ef1eb8a2",
+    "cadastre": "77:01:0005010:1037"
+  },
+  "600082": {
+    "address": "ш. Алтуфьевское, 66/2",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=469"
+    ],
+    "note": "Городской перечень даёт 1984 для 66/2. Год 1968 относится к дому 79.",
+    "year": 1984,
+    "area": 57626306,
+    "outline": "3ee98dfbbfb08e2c",
+    "cadastre": "77:02:0003005:1010"
+  },
+  "600083": {
+    "address": "ш. Алтуфьевское, 79",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=470"
+    ],
+    "note": "Городской перечень даёт 1968 для дома 79. Год 1984 относится к дому 66/2.",
+    "year": 1968,
+    "area": 1285952502,
+    "outline": "c474583caeb12d31",
+    "cadastre": "77:02:0003003:1000"
+  },
+  "600121": {
+    "address": "ул. Костромская, 6 корпус 2",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=471"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 1998,
+    "area": 57624320,
+    "outline": "ec3e43f112ba28b4",
+    "cadastre": "77:02:0003005:1048"
+  },
+  "620729": {
+    "address": "ул. Скобелевская, 19",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=1179"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 2003,
+    "area": 60184186,
+    "outline": "8380ee7545e8b943",
+    "cadastre": "77:06:0012001:1066"
+  },
+  "1138400": {
+    "address": "ул. Юннатов, 4",
+    "sources": [
+      "https://www.mos.ru/upload/documents/files/43/SpisokspisokzastroishikovpolychivshihZOSK.pdf",
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.mskagency.ru/materials/3056871"
+    ],
+    "note": "Городской список разрешений подтверждает ЖК «Петровский Парк» на участке № 4. Для жилого контура с адресом Юннатов, 4, подтверждён уже показанный год 2020.",
+    "year": 2020,
+    "area": 30947277,
+    "outline": "fa07ea9f60a5a5b7",
+    "cadastre": "77:09:0004014:8219"
+  },
+  "1141872": {
+    "address": "ул. Плющиха, 37",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://tlp-ab.ru/uploads/2023-02-14_TSIMAILO_LYASHENKO_PARTNERS.pdf",
+      "https://ssh.cre.ru/news/31384"
+    ],
+    "note": "Технический паспорт относит здание к 1907 году и отдельно указывает реконструкцию в 2018. Проектное бюро описывает реконструкцию существующего здания.",
+    "year": 1907,
+    "area": 31686043,
+    "outline": "9e13453ef2e54695",
+    "cadastre": "77:01:0005003:3787"
+  },
+  "1205421": {
+    "address": "Ореховый б-р, 24 корпус 2",
+    "sources": [
+      "https://cdn.mskguru.ru/uploads/docs/4311/%D0%BF%D0%B4.pdf",
+      "https://www.mos.ru/upload/documents/docs/569-3fhh3pdf.pdf"
+    ],
+    "note": "На карте корпус ЖК «Фреш». Проектная декларация приводит разрешение на ввод 77-133000-010382-2021 от 28.10.2021 для корпусов 2, 3 и 4.",
+    "year": 2021,
+    "area": 1811060798,
+    "outline": "4875273e83be21c2",
+    "cadastre": "77:05:0011013:3065"
+  },
+  "1268865": {
+    "address": "2-й Неопалимовский пер., 3",
+    "sources": [
+      "https://www.mos.ru/upload/documents/files/4540/Byrdenkoyld12%2809042018%29.pdf",
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.cian.ru/dom/moskva-2-y-neopalimovskiy-pereulok-dom-3-1715928/"
+    ],
+    "note": "Городской акт рассматривает демонтаж надземной части старого дома. Контур соответствует новому High Garden, в паспорте указан ввод в 2023.",
+    "year": 2023,
+    "area": 311427180,
+    "outline": "124fd81467bca9a0",
+    "cadastre": "77:01:0005003:1045"
+  },
+  "1271425": {
+    "address": "ул. Нагорная, 7 корпус 1",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://base.garant.ru/5710257/",
+      "https://vm.ru/news/852056-problemnyj-dom-na-nagornoj-ulice-v-moskve-vveli-v-ekspluataciyu/amp"
+    ],
+    "note": "По паспорту исходный дом 1940 года. Постановление города предписывает реконструкцию, а при вводе после реконструкции в 2020 у дома сохранили исходный пятиэтажный объём и надстроили этажи.",
+    "year": 1940,
+    "area": 65221524,
+    "outline": "f89fb01fb7e8bca4",
+    "cadastre": "77:06:0002018:1010"
+  },
+  "1298978": {
+    "address": "ул. Главмосстроя, 12",
+    "sources": [
+      "https://www.mos.ru/upload/documents/oiv/832_pp_prilozhenie_.pdf#page=262"
+    ],
+    "note": "Год указан в московской программе капремонта.",
+    "year": 2009,
+    "area": 114790748,
+    "outline": "be37f0c1e9bd93a5",
+    "cadastre": "77:07:0015003:1131"
+  },
+  "1328969": {
+    "address": "ул. Вешних Вод, 4 корпус 2",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.mos.ru/upload/documents/files/8420/67_KP2015-2017_2.pdf"
+    ],
+    "note": "В паспорте по кадастровому номеру 77:02:0016003:1051 стоят 1994 как год постройки и ввода. В карте 1959. В доступной городской программе нашёл соседний корпус 1, подтверждения по корпусу 2 из независимого документа нет.",
+    "cadastre": "77:02:0016003:1051"
+  },
+  "1342041": {
+    "address": "ш. Коровинское, 2А",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.mos.ru/upload/documents/oiv/2015031303.pdf",
+      "https://www.cian.ru/dom/moskva-korovinskoe-shosse-dom-2a-16770/"
+    ],
+    "note": "Паспорт 22-этажного объекта указывает год ввода 1994. Адресная карточка указывает 1994 как год постройки. Хозблок 2А, стр. 1 по городскому плану — другой объект.",
+    "year": 1994,
+    "area": 57329332,
+    "outline": "091a9efe169530de",
+    "cadastre": "77:09:0002022:1035"
+  },
+  "1342575": {
+    "address": "ул. Краснолиманская, 29",
+    "sources": [
+      "https://www.mos.ru/upload/documents/files/1620/aktGIKE_Krasnolimanskaya.pdf",
+      "https://south-butovo.ru/files/documents/Otchet_zhilishchnik_2022.pdf"
+    ],
+    "note": "В городском акте зафиксировано строительство нового дома на участке. В отчёте районного «Жилищника» дом 29 указан как построенный в 2022.",
+    "year": 2022,
+    "area": 1918036834,
+    "outline": "de953184a7925ef0",
+    "cadastre": "77:06:0012014:8667"
+  },
+  "1380076": {
+    "address": "ул. Лавочкина, 2",
+    "sources": [
+      "https://tochno.st/datasets/gisgkh",
+      "https://www.youtube.com/watch?v=qABnUXvfy7Q"
+    ],
+    "note": "Паспорт нового дома на Лавочкина, 2, в Головинском районе даёт 2023. Паспортная точка попадает внутрь контура с этим точным адресом. Переселение началось в 2024.",
+    "year": 2023,
+    "area": 2699654886,
+    "outline": "1340edf4bf71e7d5",
+    "confirm_residential": true,
+    "cadastre": "77:09:0001016:10822"
+  },
+  "1399897": {
+    "address": "Тессинский пер., 1",
+    "sources": [
+      "https://uznai.mos.ru/catalog/9782_tessinskij_1",
+      "https://insigma.ru/"
+    ],
+    "note": "Контур соответствует новому комплексу «Тессинский 1» проектной высотой восемь этажей. Городской каталог подтверждает сдачу в 2023 по адресу Большой Николоворобинский переулок, 9. Дата 1870 относится к старой застройке участка.",
+    "year": 2023,
+    "area": 35606451,
+    "outline": "6571a9db3a945bc0",
+    "cadastre": "77:01:0001019:2988"
+  }
+}

@@ -4,7 +4,8 @@ python tools/reconcile_house_years.py moscow.osm.pbf mingkh.tsv --date ГГГГ-
 Входная таблица TSV без заголовка: ID карточки, адрес, год постройки.
 После сверки запустить extract_house_age.py с той же выгрузкой OSM и
 district_layout.py --age-only. Уже опубликованные контуры меняются только в
-части года и ссылки на источник, слои и границы не пересобираются.
+части года и источника. У объектов, подтверждённых как жилые вручную,
+уточняется тип. Слои и границы не пересобираются.
 """
 import argparse
 from collections import Counter, defaultdict
@@ -21,6 +22,7 @@ from shapely.strtree import STRtree
 from house_years import RESIDENTIAL, VERIFIED_PATH, outline_fingerprint, osm_year
 
 ROOT = Path(__file__).resolve().parent.parent
+REVIEW_PATH = ROOT / 'tools/data/house_year_review.json'
 STREET_TYPES = (
     ('улица', r'улица|ул'), ('переулок', r'переулок|пер'),
     ('проезд', r'проезд|прд|пр\s*-\s*д'), ('проспект', r'проспект|просп|пр\s*-\s*(?:кт|т)'),
@@ -98,7 +100,7 @@ def registry(path, snapshot_year):
             if len(records) == 1 and next(iter(records))[1]}, counts
 
 
-def osm_houses(path, addresses):
+def osm_houses(path, addresses, reviewed_areas=()):
     shapes, metadata, points = [], [], []
     districts = json.loads((ROOT / 'tools/data/districts.json').read_text(encoding='utf-8'))['features']
     zelenograd_names = {'Крюково', 'Матушкино', 'Савелки', 'Силино', 'Старое Крюково'}
@@ -123,10 +125,12 @@ def osm_houses(path, addresses):
                 points.append((addr, Point(lon * X, lat * Y)))
 
         def area(self, area):
-            if area.tags.get('building') not in RESIDENTIAL:
+            if area.tags.get('building') not in RESIDENTIAL and area.id not in reviewed_areas:
                 return
             outer_rings = list(area.outer_rings())
-            if len(outer_rings) != 1:
+            # Карта рисует первый внешний контур. Для ручной сверки допускаем
+            # его в составном объекте, если его отпечаток совпал с проверенным.
+            if not outer_rings or (len(outer_rings) != 1 and area.id not in reviewed_areas):
                 return
             ring = [(n.lon, n.lat) for n in outer_rings[0]]
             if len(ring) < 4:
@@ -168,18 +172,20 @@ def decoded_polygon(origin, coords):
     return Polygon(vertices)
 
 
-def matched_map_houses(shapes, tree, matches):
+def matched_map_houses(shapes, tree, matches, additional_indices=()):
     for path in sorted((ROOT / 'assets/dmap').glob('*.json')):
         data = json.loads(path.read_text(encoding='utf-8'))
         mapped = []
         for house in data['b']:
-            if not house[3] or len(house[0]) < 6:
+            if (not house[3] and not additional_indices) or len(house[0]) < 6:
                 continue
             polygon = decoded_polygon(data['o'], house[0])
             if not polygon.is_valid or not polygon.area:
                 continue
             hits = []
             for idx in tree.query(polygon, predicate='intersects'):
+                if not house[3] and idx not in additional_indices:
+                    continue
                 other = shapes[idx]
                 overlap = polygon.intersection(other).area
                 if overlap >= 0.75 * (polygon.area + other.area - overlap):
@@ -202,6 +208,9 @@ def update_existing_maps(maps, matches, checked_at):
             counts['filled'] += house[2] == 0
             counts['corrected'] += bool(house[2] and house[2] != year)
             house[2] = year
+            if not house[3]:
+                house[3] = 1
+                house[4] = None  # У этого контура ещё нет оценки шума.
             house[5:] = [source_id]
             changed = True
         if changed:
@@ -220,15 +229,34 @@ def main():
     from datetime import date
     snapshot = date.fromisoformat(args.date)
     addresses, counts = registry(args.mingkh_tsv, snapshot.year)
-    shapes, tree, metadata, matches = osm_houses(args.osm, addresses)
-    maps = list(matched_map_houses(shapes, tree, matches))
+    review = json.loads(REVIEW_PATH.read_text(encoding='utf-8')) if REVIEW_PATH.exists() else {}
+    reviewed_areas = {d['area'] for d in review.values() if d.get('year')}
+    additional_areas = {d['area'] for d in review.values() if d.get('confirm_residential')}
+    shapes, tree, metadata, matches = osm_houses(args.osm, addresses, reviewed_areas)
+    by_area = {area: i for i, (area, _, _, _) in enumerate(metadata)}
+    decisions = {}
+    # Ручная сверка относится к конкретному контуру и приоритетнее строки
+    # реестра. Один адрес может относиться к двум разным зданиям.
+    for source_id, decision in review.items():
+        if not decision.get('year'):
+            continue
+        i = by_area.get(decision['area'])
+        if i is None or outline_fingerprint(metadata[i][1]) != decision['outline']:
+            continue
+        decisions[i] = (-int(source_id), decision['year'])
+    reviewed_ids = {abs(record[0]) for record in decisions.values()}
+    matches = {i: record for i, record in matches.items() if record[0] not in reviewed_ids}
+    matches.update(decisions)
+    additional_indices = {i for i in decisions if metadata[i][0] in additional_areas}
+    maps = list(matched_map_houses(shapes, tree, matches, additional_indices))
     # Большой разрыв может относиться к другому зданию с тем же адресом
     # или к реконструкции. Оставляем исходный год до поадресной проверки.
     conflicts = {i for i, (source_id, year) in matches.items()
-                 if source_id in REFERENCE_CONFLICTS
-                 or (metadata[i][2] and abs(metadata[i][2] - year) >= REVIEW_GAP)}
+                 if i not in decisions and (source_id in REFERENCE_CONFLICTS
+                 or (metadata[i][2] and abs(metadata[i][2] - year) >= REVIEW_GAP))}
     for _, _, mapped in maps:
-        conflicts.update(i for house, i in mapped if house[2] and abs(house[2] - matches[i][1]) >= REVIEW_GAP)
+        conflicts.update(i for house, i in mapped
+                         if i not in decisions and house[2] and abs(house[2] - matches[i][1]) >= REVIEW_GAP)
     counts['needs_review'] = len(conflicts)
     review_ids = sorted(matches[i][0] for i in conflicts)
     matches = {i: record for i, record in matches.items() if i not in conflicts}

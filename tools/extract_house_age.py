@@ -20,12 +20,14 @@ BINS = [
 pts = []
 class H(osmium.SimpleHandler):
     def area(self, a):
-        if a.tags.get('building') not in RESIDENTIAL: return
+        if a.tags.get('building') not in RESIDENTIAL and str(a.id) not in verified['houses']: return
         try:
             ring = [(n.lon, n.lat) for n in next(iter(a.outer_rings()))]
         except Exception: return
         if ring:
             year, source_id = resolve_year(verified['houses'], a, ring)
+            if a.tags.get('building') not in RESIDENTIAL and source_id >= 0:
+                return
             pts.append((sum(x for x, _ in ring) / len(ring), sum(y for _, y in ring) / len(ring), year, source_id))
 source_path = sys.argv[1]
 with osmium.io.Reader(source_path) as reader:
@@ -43,6 +45,8 @@ for lon, lat, y, source_id in pts:
             if y:
                 r['dated'] += 1
                 r['verified'] += bool(source_id)
+                if source_id < 0:
+                    r['reviewed'] = r.get('reviewed', 0) + 1
                 for k, (a, b, _) in enumerate(BINS):
                     if a <= y <= b: r['bins'][k] += 1; break
             break
