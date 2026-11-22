@@ -8,7 +8,14 @@ from shapely.geometry import shape, Point
 from shapely.strtree import STRtree
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RES = {'apartments', 'residential', 'house', 'detached', 'semidetached_house', 'terrace', 'dormitory'}
-BINS = [(0, 1945, 'до 1945'), (1946, 1960, '1946–1960'), (1961, 1980, '1961–1980'), (1981, 2000, '1981–2000'), (2001, 2014, '2001–2014'), (2015, 2100, 'с 2015')]
+BINS = [
+    (0, 1956, 'до 1957'),
+    (1957, 1968, '1957–1968'),
+    (1969, 1980, '1969–1980'),
+    (1981, 1991, '1981–1991'),
+    (1992, 2010, '1992–2010'),
+    (2011, 9999, 'с 2011'),
+]
 def year(t):
     for k in ('start_date', 'building:start_date', 'construction_date'):
         v = t.get(k)
@@ -25,7 +32,10 @@ class H(osmium.SimpleHandler):
             xs = [n.lon for n in ring]; ys = [n.lat for n in ring]
         except Exception: return
         if xs: pts.append((sum(xs) / len(xs), sum(ys) / len(ys), year(a.tags)))
-H().apply_file(sys.argv[1], locations=True)
+source_path = sys.argv[1]
+with osmium.io.Reader(source_path) as reader:
+    source_timestamp = reader.header().get('osmosis_replication_timestamp')
+H().apply_file(source_path, locations=True)
 feats = json.load(open(f'{REPO}/tools/data/districts.json', encoding='utf-8'))['features']
 slugs = {n: s for s, n, _ in json.load(open(f'{REPO}/tools/data/districts_list.json', encoding='utf-8'))}
 geoms = [shape(f['geometry']).buffer(0) for f in feats]; tree = STRtree(geoms)
@@ -40,7 +50,8 @@ for lon, lat, y in pts:
                 for k, (a, b, _) in enumerate(BINS):
                     if a <= y <= b: r['bins'][k] += 1; break
             break
-out = {'date': datetime.date.today().isoformat(), 'source': 'OpenStreetMap', 'bins': [b[2] for b in BINS], 'districts': res}
+source_date = source_timestamp[:10] if source_timestamp else datetime.date.today().isoformat()
+out = {'date': source_date, 'source': 'OpenStreetMap', 'bins': [b[2] for b in BINS], 'districts': res}
 json.dump(out, open(f'{REPO}/tools/data/house_age.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
 tot = sum(r['all'] for r in res.values()); dt = sum(r['dated'] for r in res.values())
 print(f'жилых домов {tot}, с годом {dt} ({dt / max(tot, 1):.0%})')

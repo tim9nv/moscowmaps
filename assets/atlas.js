@@ -364,7 +364,8 @@ async function drawDMap(f){
       st.textContent=".dmode{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;align-items:center}.dmode b{font:500 13px var(--label,sans-serif);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}.dmode button{min-height:36px;padding:0 13px;border:1px solid #3a4a80;border-radius:3px;background:transparent;color:var(--fg);font:500 14px/1 var(--label,sans-serif);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.dmode button[aria-pressed=true]{background:#FFD86B;border-color:#FFD86B;color:#0B1330}.dmode button:focus-visible{outline:2px solid #FFD86B;outline-offset:2px}#dml{border-top:0}#dml i{display:inline-block;width:14px;height:14px;vertical-align:-2px;margin-right:6px}#dml .nt{flex-basis:100%;color:var(--muted)}.dmg path.h{cursor:default}@media (max-width:560px){.dmode{padding:8px 10px}.dmode b{flex-basis:100%}}";
       document.head.appendChild(st)}
     const FL=[[5,"до 5 этажей","#9fd8a0"],[9,"6–9","#e8e08a"],[17,"10–17","#f2a65a"],[25,"18–25","#e8604c"],[999,"26 и выше","#e04fb0"]];
-    const AG=[[1945,"по 1945 включительно","#b08cff"],[1960,"1946–1960","#f2a65a"],[1980,"1961–1980","#e8e08a"],[2000,"1981–2000","#9fd8a0"],[2014,"2001–2014","#5cc8d6"],[9999,"с 2015","#ff7fb0"]];
+    // Те же границы периодов, что в tools/extract_house_age.py.
+    const AG=[[1956,"до 1957","#b08cff"],[1968,"1957–1968","#f2a65a"],[1980,"1969–1980","#e8e08a"],[1991,"1981–1991","#9fd8a0"],[2010,"1992–2010","#5cc8d6"],[9999,"с 2011","#ff7fb0"]];
     const NZ=[[0,"тихо","#5fbf7f"],[1,"шум доносится","#e8e08a"],[2,"шумно","#f2a65a"],[3,"окна на трассу или у станции","#e8604c"]];
     const UNK="#56618a", OTH="#333d66", pick=(T,v)=>v?T.find(t=>v<=t[0])[2]:UNK;
     const sv=document.getElementById("dm");

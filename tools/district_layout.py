@@ -35,14 +35,14 @@ def age_card(slug):
     share = round(b[k] / r['dated'] * 100)
     old = round(sum(b[:3]) / r['dated'] * 100)
     period = AGE['bins'][k]
-    v = 'по 1945 включительно' if period == 'до 1945' else period if period.startswith('с ') else f'{period} гг.'
+    v = period if period.startswith(('до ', 'с ')) else f'{period} гг.'
     return (f'<!--HOUSE-AGE--><div class="stat"><div class="l">Чаще всего дома</div><div class="v">{v}</div>'
             f'<div class="s">{share} % домов с известным годом · среди них построено до 1981 года — {old} %</div></div><!--HOUSE-AGE-END-->',
             f'<p class="small house-age-src">{coverage} Доли рассчитаны только по домам с известным годом. {source}</p>')
 
 
 def update_age(h, slug):
-    h = h.replace('assets/atlas.js?v=20261113f', 'assets/atlas.js?v=20261122-age')
+    h = re.sub(r'assets/atlas\.js\?v=(?:20261113f|20261122-age|20261122-labels)\b', 'assets/atlas.js?v=20261122-periods', h)
     h = re.sub(r'<!--HOUSE-AGE-->.*?<!--HOUSE-AGE-END-->', '', h, flags=re.S)
     h = re.sub(r'<p class="small house-age-src">.*?</p>', '', h, flags=re.S)
     card, note = age_card(slug)
