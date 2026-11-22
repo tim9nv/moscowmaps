@@ -14,14 +14,9 @@
       url.searchParams.set('utm_campaign', 'trips_without_car');
       url.hash = button.dataset.shareTrip;
       try {
-        if (navigator.share) {
-          await navigator.share({ title: button.dataset.shareTitle, url: url.href });
-          return;
-        }
         await navigator.clipboard.writeText(url.href);
         status.textContent = 'Ссылка скопирована';
-      } catch (error) {
-        if (error.name === 'AbortError') return;
+      } catch {
         field.hidden = false;
         field.value = url.href;
         field.focus();

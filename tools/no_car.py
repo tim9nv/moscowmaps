@@ -83,19 +83,19 @@ def collection_page(head, metrika):
     desc='Поездки на электричке: станции, подход к музеям и центрам городов, обратная дорога, источники и ссылки на расписание.'
     page=head(title,desc,'https://www.mskatlas.ru/zagorod/bez-mashiny/','../../')
     page=page.replace('</head>','<link rel="stylesheet" href="../no-car.css?v=20261121"><script defer src="../navigation.js?v=20261115-nav"></script>'
-                      '<script defer src="../share-trip.js?v=1"></script>'
+                      '<script defer src="../share-trip.js?v=2"></script>'
                       '<meta property="og:image" content="https://www.mskatlas.ru/assets/og/zagorod.jpg"></head>',1)
     items=''.join(f'<a href="#{E(p["slug"])}">{E(p["name"])}</a>' for p in TRIPS)
     articles=''.join(f'<article class="zg-sec nc-trip" id="{E(p["slug"])}"><h2><a href="../{E(p["slug"])}/">{E(p["name"])}</a></h2>'
                      f'<p class="nc-station">{E(p["station"])} · {"пешком от станции" if p["access"]=="walk" else "с автобусом"}</p>'
                      +travel_html(p)+f'<p><a href="../{E(p["slug"])}/#route">Что посмотреть и маршрут по месту →</a></p>'
-                     f'<button type="button" class="nc-share" data-share-trip="{E(p["slug"])}" data-share-title="{E(p["name"])}: поездка без машины" hidden>Поделиться поездкой</button></article>' for p in TRIPS)
+                     f'<button type="button" class="nc-share" data-share-trip="{E(p["slug"])}" hidden>Скопировать ссылку на поездку</button></article>' for p in TRIPS)
     return page+f'''<main class="wrap"><nav class="crumb" aria-label="Навигация"><a href="../">За город</a> / Без машины</nav>
 <header class="hero"><p class="eyebrow">Атлас Москвы · поездки на день</p><h1>{title}</h1>
 <p>Города и музеи, к которым можно доехать на электричке. У каждой поездки — станция, подход до места и обратный путь. Две поездки требуют автобуса после поезда.</p></header>
 <p class="zg-note">Дорога проверена по официальным источникам {CHECKED}, а не на месте. Расписания и условия посещения меняются. На день поездки выберите поезд туда и обратно заранее; проверяйте остановки, часы работы и билет в музей. На лесной тропе световой день особенно важен.</p>
 <p><a href="../?access=verified#all">Все поездки без машины на схеме и с фильтрами →</a></p>
-<button type="button" class="nc-share" data-share-trip="" data-share-title="{title}" hidden>Поделиться подборкой</button>
+<button type="button" class="nc-share" data-share-trip="" hidden>Скопировать ссылку на подборку</button>
 <span id="share-trip-status" role="status"></span>
 <input id="share-trip-link" type="url" aria-label="Ссылка на поездку" readonly hidden>
 <nav class="nc-jumps" aria-label="Выбрать поездку">{items}</nav>{articles}
