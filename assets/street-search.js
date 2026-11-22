@@ -1,5 +1,18 @@
 // Индекс загружается при обращении к поиску, запросы остаются в браузере.
 const TYPES = /^(?:улица|ул|проспект|просп|пркт|переулок|пер|проезд|прд|шоссе|ш|набережная|наб|бульвар|бул|бр|площадь|пл|аллея|тупик)$/;
+// Сверка адресов Олонецкой: городские документы, Ginfo и адресные точки OSM.
+// https://ginfo.ru/ulicy/oloneckaya_ulica/
+// https://www.mos.ru/upload/documents/files/1934/Prilojenie_4.pdf
+// https://www.mos.ru/upload/documents/files/1430/5_Prilojenie5.pdf
+// https://www.mos.ru/upload/documents/files/5045/5_Prilojenie5.pdf
+export const addresses = [{
+  name: 'Олонецкая улица',
+  districts: {
+    ostankinskiy: ['2', '2А', '4', '4А', '6', '14', '14вл1', '24'],
+    otradnoe: ['13', '13с1', '15', '15А', '15Б', '15с1', '17', '17А', '19', '21', '21А', '21Ас1',
+      '21Ас2', '21Б', '21В', '21с1', '23', '25', '25А', '25Ас1', '25Ас2', '27']
+  }
+}];
 export function normalize(value) {
   return String(value).toLowerCase().replace(/ё/g, 'е')
     .replace(/пр\s*[-–—]\s*(?:кт|т)/g, 'проспект').replace(/пр\s*[-–—]\s*д/g, 'проезд')
@@ -29,6 +42,26 @@ export function findStreets(rows, query, limit = 12) {
     if (rank < Infinity) hits.push({row, rank});
   }
   return hits.sort((a, b) => a.rank - b.rank || a.row[0].localeCompare(b.row[0], 'ru')).slice(0, limit).map(h => h.row);
+}
+
+export function splitAddress(query) {
+  const match = query.trim().toLowerCase().replace(/ё/g, 'е').replace(/^(?:г\.?\s*)?москва\s*,\s*/u, '').match(
+    /^(.+?)[\s,]+(?:(?:дом|д|владение|влд?)\.?\s*)?(\d+\s*[а-я]?(?:\s*\/\s*\d+[а-я]?)?(?:[\s,–—-]*(?:корпус|корп|к|строение|стр|с|владение|влд?)\.?\s*\d+[а-я]?)*\s*)$/u);
+  if (!match || normalize(match[1]).length < 2) return null;
+  const number = match[2].replace(/[\s,.–—-]+/gu, '').replace(/корпус|корп/gu, 'к')
+    .replace(/строение|стр/gu, 'с').replace(/владение|влд/gu, 'вл');
+  return {street: match[1], number};
+}
+
+export function findAddress(index, address) {
+  const entry = index.find(street => normalize(street.name) === normalize(address.street)
+    && (!streetType(address.street) || streetType(address.street) === streetType(street.name)));
+  if (!entry) return null;
+  for (const [slug, numbers] of Object.entries(entry.districts)) {
+    const number = numbers.find(value => value.toLowerCase() === address.number);
+    if (number) return {name: entry.name, slug, number};
+  }
+  return {name: entry.name};
 }
 
 export function mount({input, results, features, onFilter, urlForDistrict}) {
@@ -67,9 +100,17 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
     rendering = true;
     results.replaceChildren();
     if (!raw) { results.hidden = true; onFilter(null); rendering = false; return; }
-    const districtHits = districts.filter(d => normalize(d.n).includes(text) && text);
-    const streets = data ? findStreets(data.streets, raw) : [];
+    const address = splitAddress(raw);
+    const house = address && data ? findAddress(addresses, address) : null;
+    const districtHits = house ? [] : districts.filter(d => normalize(d.n).includes(text) && text);
+    const streets = data && !house ? findStreets(data.streets, raw) : [];
     const slugs = new Set(districtHits.map(d => d.slug));
+    if (house?.slug) {
+      const [, district, area] = data.districts.find(([slug]) => slug === house.slug);
+      slugs.add(house.slug);
+      const ul = group('Адрес');
+      item(ul, link(house.slug, district, `${house.name}, ${house.number} · ${area}`));
+    }
     for (const row of streets) for (const id of row[1]) slugs.add(data.districts[id][0]);
     onFilter(slugs);
     if (districtHits.length) {
@@ -93,7 +134,8 @@ export function mount({input, results, features, onFilter, urlForDistrict}) {
       const retry = document.createElement('button'); retry.type = 'button'; retry.textContent = 'Попробовать ещё раз';
       retry.onclick = () => { dismissed = false; update(); }; results.append(retry);
     } else if (!data && text.length >= 2) message('Загружаем улицы…', true);
-    else if (!districtHits.length && !streets.length) message(text.length < 2 ? 'Введите хотя бы две буквы названия.' : 'Ничего не найдено. Уточните название улицы или района.', true);
+    else if (house && !house.slug) message('Этот номер не найден среди проверенных адресов. Уточните номер или введите название улицы без дома.', true);
+    else if (!house?.slug && !districtHits.length && !streets.length) message(text.length < 2 ? 'Введите хотя бы две буквы названия.' : 'Ничего не найдено. Уточните название улицы или района.', true);
     if (data && streets.length) {
       message('По данным OpenStreetMap; список районов может быть неполным. Для конкретного дома уточните район по адресу.');
       const p = document.createElement('p'); p.className = 'search-source';
@@ -169,13 +211,13 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     const input = original.cloneNode(true);
     input.value = earlyQuery;
     input.dataset.streetSearch = 'ready';
-    input.placeholder = 'Марьино или улица Декабристов';
+    input.placeholder = 'Марьино или Олонецкая, 6';
     input.setAttribute('aria-controls', 'district-search-results');
     input.setAttribute('aria-describedby', 'district-search-help');
     original.replaceWith(input);
     document.querySelector('label[for="q"]').textContent = 'Найти район или улицу';
     const help = document.createElement('p'); help.className = 'search-help'; help.id = 'district-search-help';
-    help.textContent = 'Введите улицу и выберите район, чтобы открыть его страницу.';
+    help.textContent = 'Введите район или улицу. На Олонецкой можно уточнить номер дома.';
     const results = document.createElement('div'); results.id = 'district-search-results';
     results.className = 'district-search-results'; results.setAttribute('aria-label', 'Результаты поиска'); results.hidden = true;
     input.after(help, results);
