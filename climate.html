@@ -66,7 +66,13 @@ a{color:var(--accent)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);padding:10px 14px;border-top:1px solid var(--line);align-items:center}
 .lbl{font-family:var(--body);font-size:11px;fill:var(--fg);paint-order:stroke;stroke:var(--surface);stroke-width:3px;pointer-events:none}
 .lbl.big{font-size:12px;font-weight:600}
-.geo-controls{display:grid;gap:10px;justify-items:start}
+.geo-controls{display:grid;gap:10px;justify-items:start;container-type:inline-size}
+.wrap.climate-atlas>header>h1{font-size:clamp(34px,4.3vw,54px);line-height:1.04}
+.geo-controls>.geo-modes{box-sizing:border-box;display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px}
+.geo-modes button{min-height:44px;padding:7px 8px;border-radius:6px;line-height:1.2}
+.geo-modes button[aria-pressed="true"]{background:var(--gold,#ffd86b);color:#0b1330;font-weight:650}
+@container (min-width:540px){.geo-controls>.geo-modes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (hover:hover){.geo-modes button:not([aria-pressed="true"]):hover{background:var(--soft);color:var(--fg)}}
 .geo-scenario{background:var(--soft)}
 .geo-explanation{margin:0;color:var(--muted);max-width:70ch;font-size:14px;line-height:1.55}
 .geo-label{pointer-events:none}
@@ -216,7 +222,7 @@ path.dim{fill-opacity:.12!important;opacity:.5}
     <p class="lede">Высоты, речные долины и микроклимат районов Москвы.</p>
   </header>
   <div class="geo-controls">
-    <div class="seg" role="group" aria-label="Тема карты"><button data-family="relief" aria-pressed="true">Рельеф</button><button data-family="heat" aria-pressed="false">Температура</button><button data-family="rh" aria-pressed="false">Влажность и туманы</button><button data-family="wind" aria-pressed="false">Ветер</button></div>
+    <div class="seg geo-modes" role="group" aria-label="Тема карты"><button data-family="relief" aria-pressed="true">Рельеф</button><button data-family="heat" aria-pressed="false">Температура</button><button data-family="rh" aria-pressed="false">Влажность и туманы</button><button data-family="wind" aria-pressed="false">Ветер</button></div>
     <div class="seg geo-scenario" data-scenario="heat" role="group" aria-label="Период температуры" hidden><button data-m="heat" aria-pressed="false">В среднем за год</button><button data-m="night" aria-pressed="false">Ясная зимняя ночь</button></div>
     <div class="seg geo-scenario" data-scenario="rh" role="group" aria-label="Показатель влажности" hidden><button data-m="rh" aria-pressed="false">Влажность воздуха</button><button data-m="damp" aria-pressed="false">Условия для тумана</button></div>
     <p class="geo-explanation" id="geo-explanation" aria-live="polite"></p>

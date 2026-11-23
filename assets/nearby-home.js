@@ -1,8 +1,12 @@
-
 const svgMap = document.getElementById('house-map');
 const results = document.getElementById('nearby-results');
 const list = document.getElementById('nearby-list');
 const status = document.getElementById('nearby-status');
+const filters = document.getElementById('nearby-filters');
+const category = document.getElementById('nearby-category');
+const serviceSource = document.getElementById('nearby-service-source');
+const method = document.getElementById('nearby-method');
+const ecologyNote = document.getElementById('nearby-eco-note');
 const radiusInput = document.getElementById('nearby-radius');
 const legend = document.getElementById('house-legend');
 const groups = {
@@ -10,8 +14,15 @@ const groups = {
   park: {name: 'Парки и скверы', color: '#4dbe89'},
   ecology: {name: 'Объекты экокарты', color: '#f5ad65'}
 };
+const services = {
+  schools: {name: 'Школы', color: '#b59aff', label: 'Школа'},
+  kindergartens: {name: 'Детские сады', color: '#f5ad65', label: 'Детский сад'},
+  clinics: {name: 'Клиники и больницы', color: '#66d6e7', label: 'Клиника или больница'}
+};
 const stationLabels = {metro: 'Метро', mcc: 'МЦК', mcd: 'МЦД'};
 let request;
+let serviceRequest;
+let renderSequence = 0;
 let selected;
 let mapLayers;
 
@@ -30,6 +41,14 @@ function loadPlaces() {
     throw error;
   });
   return request;
+}
+
+function loadServices() {
+  serviceRequest ??= json('./nearby-services.json?v=20261123').catch(error => {
+    serviceRequest = undefined;
+    throw error;
+  });
+  return serviceRequest;
 }
 
 function closestBoundary(rings, [lat, lon]) {
@@ -95,6 +114,13 @@ function distanceLabel(meters) {
     : new Intl.NumberFormat('ru', {maximumFractionDigits: 1}).format(meters / 1000) + ' км';
 }
 
+function walkingRoute(home, destination) {
+  const url = new URL('https://yandex.ru/maps/');
+  url.searchParams.set('rtext', home.join(',') + '~' + destination.join(','));
+  url.searchParams.set('rtt', 'pd');
+  return url.href;
+}
+
 function popupContent(place, kind, home) {
   const content = document.createElement('div');
   const name = document.createElement('strong');
@@ -103,11 +129,13 @@ function popupContent(place, kind, home) {
   const description = document.createElement('p');
   description.textContent = place.label + ' · ' + distanceLabel(place.distance) + ' по прямой';
   content.append(description);
-  if (kind === 'station') {
-    const url = new URL('https://yandex.ru/maps/');
-    url.searchParams.set('rtext', home.join(',') + '~' + place.point.join(','));
-    url.searchParams.set('rtt', 'pd');
-    content.append(link('Пеший маршрут в Яндекс Картах', url.href));
+  if (place.address) {
+    const address = document.createElement('p');
+    address.textContent = place.address;
+    content.append(address);
+  }
+  if (kind === 'station' || services[kind]) {
+    content.append(link('Пеший маршрут в Яндекс Картах', walkingRoute(home, place.point)));
   } else if (place.url) {
     content.append(link('Карта и сведения о парке', place.url));
   } else if (place.record) {
@@ -132,7 +160,7 @@ function link(text, href) {
 }
 
 function renderGroup(kind, places, home) {
-  const group = groups[kind];
+  const group = groups[kind] || services[kind];
   const section = document.createElement('section');
   section.className = 'nearby-group';
   const heading = document.createElement('h3');
@@ -156,6 +184,11 @@ function renderGroup(kind, places, home) {
     button.className = 'nearby-item';
     const name = document.createElement('span');
     name.textContent = place.name;
+    if (place.address) {
+      const address = document.createElement('small');
+      address.textContent = place.address;
+      name.append(address);
+    }
     const distance = document.createElement('small');
     distance.textContent = distanceLabel(place.distance);
     button.append(name, distance);
@@ -164,43 +197,80 @@ function renderGroup(kind, places, home) {
       marker.openPopup();
     };
     item.append(button);
+    if (kind === 'station' || services[kind]) {
+      const action = link('Пеший маршрут', walkingRoute(home, place.point));
+      action.className = 'nearby-action';
+      action.setAttribute('aria-label', 'Пеший маршрут: ' + place.name);
+      item.append(action);
+    }
     items.append(item);
   }
   section.append(items);
   return section;
 }
 
+function setLegend(view) {
+  const entries = services[view] ? [services[view]] : Object.values(groups);
+  const items = entries.map(group => {
+    const item = document.createElement('span');
+    const swatch = document.createElement('i');
+    swatch.style.setProperty('--swatch', group.color);
+    swatch.setAttribute('aria-hidden', 'true');
+    item.append(swatch, group.name);
+    return item;
+  });
+  legend.replaceChildren(...items);
+}
+
 async function render() {
   const current = selected;
   if (!current) return;
+  const run = ++renderSequence;
   const {map, point} = current;
+  const view = category.value;
+  filters.hidden = false;
   results.hidden = false;
+  serviceSource.hidden = true;
+  ecologyNote.hidden = view !== 'overview';
+  method.textContent = view === 'overview'
+    ? 'Расстояния по прямой. Для парков показана ближайшая граница.'
+    : 'Расстояния по прямой. По ссылке можно построить пеший маршрут в Яндекс Картах.';
   status.textContent = 'Подбираем места рядом…';
   list.replaceChildren();
   mapLayers?.clearLayers();
   mapLayers ??= L.layerGroup().addTo(map);
   const meters = Number(radiusInput.value) * 1000;
+  setLegend(view);
   try {
-    const [index, parks] = await loadPlaces();
-    if (current !== selected || meters !== Number(radiusInput.value) * 1000) return;
-    const places = aroundHome(index, parks, point, map, meters);
+    let places;
+    if (services[view]) {
+      const data = await loadServices();
+      if (run !== renderSequence) return;
+      const candidates = data[view].map(([lon, lat, name, address]) => ({
+        name, address, label: services[view].label, point: [lat, lon]
+      }));
+      places = {[view]: nearestDistinct(candidates,
+        place => (place.address ? place.name + ':' + place.address : place.name + ':' + place.point.join(',')),
+        5, meters, point, map)};
+      serviceSource.textContent = 'Источник: OpenStreetMap, для Отрадного — сверенные городские списки. Набор для 125 районов сформирован ' +
+        data.dates.join(', ') + '. Список может быть неполным. В нём есть частные учреждения.';
+      serviceSource.hidden = false;
+    } else {
+      const [index, parks] = await loadPlaces();
+      if (run !== renderSequence) return;
+      places = aroundHome(index, parks, point, map, meters);
+    }
     list.replaceChildren(...Object.entries(places).map(([kind, items]) => renderGroup(kind, items, point)));
     const bounds = L.latLngBounds([point, ...Object.values(places).flat().map(place => place.point)]);
     map.invalidateSize({pan: false});
     map.fitBounds(bounds, {maxZoom: 16, padding: [40, 40], animate: false});
     status.textContent = '';
   } catch {
-    if (current === selected) status.textContent = 'Не удалось загрузить места рядом. Выберите радиус или повторите поиск.';
+    if (run === renderSequence) status.textContent = 'Не удалось загрузить места рядом. Переключите категорию или повторите поиск.';
   }
 }
 
-for (const group of Object.values(groups)) {
-  const item = document.createElement('span');
-  const swatch = document.createElement('i');
-  swatch.style.setProperty('--swatch', group.color);
-  item.append(swatch, group.name);
-  legend.append(item);
-}
+setLegend(category.value);
 
 svgMap.addEventListener('atlas-house-selected', event => {
   selected = event.detail;
@@ -208,7 +278,10 @@ svgMap.addEventListener('atlas-house-selected', event => {
 });
 svgMap.addEventListener('atlas-house-cleared', () => {
   selected = null;
+  renderSequence++;
+  filters.hidden = true;
   results.hidden = true;
   mapLayers?.clearLayers();
 });
 radiusInput.addEventListener('change', render);
+category.addEventListener('change', render);

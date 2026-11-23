@@ -22,6 +22,19 @@ index = {"stations": [[lon, lat, kind, name] for lon, lat, _, kind, name in stat
     json.dumps(index, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
 
+service_kinds = ("schools", "kindergartens", "clinics")
+services = {kind: [] for kind in service_kinds}
+dates = set()
+for path in sorted((ROOT / "assets/places").glob("*.json")):
+    district = json.loads(path.read_text(encoding="utf-8"))
+    dates.add(district["date"])
+    for kind in service_kinds:
+        services[kind].extend(district[kind])
+(ROOT / "assets/nearby-services.json").write_text(
+    json.dumps({"dates": sorted(dates), **services}, ensure_ascii=False, separators=(",", ":")) + "\n",
+    encoding="utf-8")
+
+
 sitemap = ROOT / "sitemap.xml"
 document = sitemap.read_text(encoding="utf-8")
 url = "https://www.mskatlas.ru/nearby-home.html"

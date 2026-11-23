@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Что вокруг моего дома? Поиск по адресу в Москве — Атлас Москвы</title>
-  <meta name="description" content="Введите улицу и номер дома. Посмотрите на карте ближайшие станции, парки и площадки из экокарты Москвы.">
+  <meta name="description" content="Введите улицу и номер дома. Посмотрите на карте ближайшие станции, парки, школы, детские сады, клиники и площадки экокарты Москвы.">
   <link rel="canonical" href="https://www.mskatlas.ru/nearby-home.html">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <link rel="stylesheet" href="assets/house-map.css?v=20261122-touch">
-  <link rel="stylesheet" href="assets/nearby-home.css?v=20261123">
+  <link rel="stylesheet" href="assets/nearby-home.css?v=20261123-services">
   <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script defer src="assets/ecology-object-records.js?v=20261123-nearby"></script>
-  <script type="module" src="assets/nearby-home.js?v=20261123"></script>
+  <script type="module" src="assets/nearby-home.js?v=20261123-services"></script>
   <script type="module" src="assets/house-map.js?v=20261123-address-variants"></script>
 </head>
 <body class="nearby-home">
@@ -27,7 +27,7 @@
   <main>
     <div class="house-intro">
       <h1>Что вокруг моего дома?</h1>
-      <p>Введите московский адрес, чтобы увидеть ближайшие станции, парки и объекты экокарты.</p>
+      <p>Введите московский адрес, чтобы увидеть ближайшие станции, парки, школы, детские сады и клиники.</p>
     </div>
     <div class="house-layout">
       <section class="house-panel" aria-label="Поиск и сведения о доме">
@@ -52,6 +52,19 @@
           <a id="house-district" hidden>Открыть район →</a>
           <a href="#nearby-results">Объекты рядом ↓</a>
         </article>
+        <div class="nearby-filters" id="nearby-filters" hidden>
+          <div>
+            <label for="nearby-category">Что показать</label>
+            <select id="nearby-category">
+              <option value="overview">Общий обзор</option><option value="schools">Школы</option>
+              <option value="kindergartens">Детские сады</option><option value="clinics">Клиники и больницы</option>
+            </select>
+          </div>
+          <div>
+            <label for="nearby-radius">Радиус поиска</label>
+            <select id="nearby-radius"><option value="1">1 км</option><option value="2" selected>2 км</option><option value="3">3 км</option></select>
+          </div>
+        </div>
         <noscript><p>Для поиска адреса включите JavaScript.</p></noscript>
       </section>
       <section class="house-map-section" aria-label="Карта дома и окрестностей">
@@ -63,14 +76,11 @@
       </section>
       <section id="nearby-results" aria-labelledby="nearby-heading" hidden>
         <h2 id="nearby-heading">Объекты рядом</h2>
-        <div class="nearby-range">
-          <label for="nearby-radius">Радиус поиска</label>
-          <select id="nearby-radius"><option value="1">1 км</option><option value="2" selected>2 км</option><option value="3">3 км</option></select>
-        </div>
-        <p class="house-note">Расстояния по прямой. Для парков показана ближайшая граница. Пеший маршрут до станции открывается в Яндекс Картах.</p>
+        <p class="house-note" id="nearby-method"></p>
         <p id="nearby-status" role="status"></p>
         <div id="nearby-list"></div>
-        <p class="house-note">Экокарта охватывает часть площадок. Расстояние до объекта само по себе не показывает уровень шума или загрязнения у дома.</p>
+        <p class="house-note" id="nearby-service-source" hidden></p>
+        <p class="house-note" id="nearby-eco-note">Экокарта охватывает часть площадок. Расстояние до объекта само по себе не показывает уровень шума или загрязнения у дома.</p>
         <p class="nearby-sources"><a href="ecology.html">Экокарта Атласа</a><a href="https://mosecom.mos.ru/air-quality/">Станции Мосэкомониторинга</a><a href="https://t.mos.ru/gruzoviki/cargoframe">Грузовой каркас Москвы</a></p>
       </section>
     </div>
