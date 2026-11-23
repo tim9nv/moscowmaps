@@ -112,7 +112,7 @@ def where(pre, here):
 
 # Порядок вкладок (владелец, 12.11.2026): районы и рейтинги — главное; климат рядом с экологией;
 # Новая Москва открывается отдельной картой из основного меню.
-NAV_ORDER = ['Районы', 'Рейтинги', 'Цены', 'Экология', 'Климат и рельеф', 'Транспорт', 'Школы и поликлиники', 'Парки и прогулки', 'Новая Москва']
+NAV_ORDER = ['Районы', 'Новая Москва', 'Рейтинги', 'Цены', 'Экология', 'Климат и рельеф', 'Транспорт', 'Школы и поликлиники', 'Парки и прогулки']
 
 
 def nav_fix(s, pre, here):
@@ -120,7 +120,7 @@ def nav_fix(s, pre, here):
     if not m:
         return s
     links = {re.sub('<[^>]+>', '', a): a for a in re.findall(r'<a[^>]*>.*?</a>', m.group(2), re.S)}
-    if not all(k in links for k in NAV_ORDER[:-1]):
+    if not all(k in links for k in NAV_ORDER if k != 'Новая Москва'):
         return s
     current = ' aria-current="page"' if here == 'new-moscow.html' else ''
     links['Новая Москва'] = f'<a href="{pre}new-moscow.html"{current}>Новая Москва</a>'
