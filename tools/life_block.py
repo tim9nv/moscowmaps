@@ -18,6 +18,22 @@ CSS = ('<style>.lifeb{box-sizing:border-box;max-width:100%;border:1px solid var(
        '.lifeb .v{font-variant-numeric:tabular-nums;text-align:right}.lifeb .bar{height:8px;background:#1a2752}.lifeb .bar i{display:block;height:100%;background:#FFD86B}'
        '.lifeb .bar.low i{background:#F59AB0}.lifeb .w{color:var(--muted);font-size:13px;text-align:right}.lifeb .n{font-size:13.5px;color:var(--muted);margin:10px 0 0;max-width:72ch}'
        '@media (max-width:560px){.lifeb li{grid-template-columns:minmax(0,1fr) 40px 44px;gap:3px 10px}.lifeb .bar{grid-column:1/-1;grid-row:2}}</style>')
+NEIGHBORHOOD = {
+    'kapotnya': (
+        'У Верхних Полей работает оптовый рынок «Садовод» с грузовым терминалом и отдельными стоянками крупного транспорта. '
+        'Отдельный комплекс «МЕГА Белая Дача» находится за МКАД в Котельниках. '
+        'Для жизни рядом важен конкретный маршрут: отзывы посетителей описывают очереди у парковок и разное время въезда. '
+        '<a href="https://sadovodtk.ru/shema-parkovki/">Схема парковок рынка</a> · '
+        '<a href="https://transport.mos.ru/mostrans/all_news/118946">Реконструкция развязки МКАД и Верхних Полей</a>.'
+    ),
+    'lyublino': (
+        'Торгово-ярмарочный комплекс «Москва» на Тихорецком бульваре совмещает розницу, оптовую торговлю и грузовую разгрузку. '
+        'Перевозчик указывает отдельные условия въезда грузовых машин. '
+        '<a href="https://optmoskva.ru/contacts">Адрес и подъезды</a> · '
+        '<a href="https://www.baikalsr.ru/services/types/mezhdugorodnie-gruzoperevozki/">Правила въезда грузового транспорта</a>.'
+    ),
+}
+
 def block(sl):
     d = D['d'].get(sl)
     if not d: return ''
@@ -25,10 +41,13 @@ def block(sl):
                    for k, n in NAMES if k in d['p'])
     note = (f'Без потолка вышло бы {fmt(d["raw"])}: балл ограничен, потому что {LIMN[d["lim"]]} здесь — слабое место '
             f'(итог не выше этого показателя плюс {D["cap_plus"]} балла). ') if d.get('lim') else ''
+    nearby = NEIGHBORHOOD.get(sl)
+    context = (f'<p class="n"><b>Крупные объекты рядом.</b> {nearby} '
+               'В балле нет отдельного показателя нагрузки от рынка.</p>') if nearby else ''
     return ('<!--LIFE-SCORE--><section class="lifeb">' + CSS + '<h2>Балл для жизни</h2>'
             f'<p class="tot"><b>{fmt(d["v"])}</b> из 10 · {d["rank"]}-е место из 125 районов</p><ul>{rows}</ul>'
             f'<p class="n">{note}Каждый показатель — от 0 до 10, справа его вес в общем балле. Цена жилья не учитывается. Тишина, высотность и «парки рядом» посчитаны по домам из OpenStreetMap (тишина — не замер шума, а расстояние до магистралей и станций; смотрите кнопки на карте района). «На автомобиле» — сколько квартир приходится на крупные дороги вокруг, <a href="../../roads.html">карта «На автомобиле»</a>. '
-            '<a href="../../reyting/">Рейтинг районов: что важно вам →</a></p></section><!--LIFE-SCORE-END-->')
+            '<a href="../../reyting/">Рейтинг районов: что важно вам →</a></p>' + context + '</section><!--LIFE-SCORE-END-->')
 def insert_block(page, slug):
     score = block(slug)
     if not score:

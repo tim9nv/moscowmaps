@@ -321,6 +321,13 @@ async function drawDMap(f){
       pts.forEach(([el,x,y])=>el.attr("transform",`translate(${t.applyX(x)},${t.applyY(y)})`))});
   svg.call(zoom).style("touch-action","none");
   const zb=document.getElementById("zb");
+  function placeZoomButtons(){
+    const mapSection=zb.offsetParent;
+    if(!mapSection)return;
+    const viewportTop=svg.node().getBoundingClientRect().top;
+    const sectionTop=mapSection.getBoundingClientRect().top+mapSection.clientTop;
+    zb.style.top=(viewportTop-sectionTop+10)+"px";
+  }
   zb.querySelector("[data-z='in']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1.6);
   zb.querySelector("[data-z='out']").onclick=()=>svg.transition().duration(250).call(zoom.scaleBy,1/1.6);
   zb.querySelector("[data-z='reset']").onclick=()=>svg.transition().duration(250).call(zoom.transform,d3.zoomIdentity);
@@ -422,6 +429,8 @@ async function drawDMap(f){
     });
     bar.append("b").text("На карте");
     const btn={}; [["floors","Этажность домов"],["age","Возраст домов"],["noise","Шум"],["relief","Рельеф"]].forEach(([k,t])=>{btn[k]=bar.append("button").attr("type","button").attr("aria-pressed","false").text(t).on("click",()=>set(k))});
+    new ResizeObserver(placeZoomButtons).observe(bar.node());
+    placeZoomButtons();
     const relief=geo.select("g.relief");
     function draw(){
       const [ox,oy]=data.o, ring=q=>{let x=q[0],y=q[1],o="M"+proj([ox+x/1e5,oy+y/1e5]).map(v=>v.toFixed(1));for(let k=2;k<q.length;k+=2){x+=q[k];y+=q[k+1];o+="L"+proj([ox+x/1e5,oy+y/1e5]).map(v=>v.toFixed(1))}return o+"Z"};
