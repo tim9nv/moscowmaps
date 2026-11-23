@@ -1,0 +1,23 @@
+
+.nearby-home .house-card { position: relative; inset: auto; margin: 12px 0 0; max-width: none; max-height: none; box-shadow: none; z-index: auto; }
+.nearby-home .house-layout { row-gap: 16px; }
+.nearby-home .house-map-section { min-width: 0; }
+#nearby-results { min-width: 0; scroll-margin-top: 16px; }
+#nearby-results h2 { margin: 0 0 8px; font-size: 22px; }
+.nearby-range { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.nearby-range select { min-height: 44px; padding: 6px 12px; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
+.nearby-group h3 { margin: 14px 0 5px; font-size: 16px; }
+.nearby-group ul { list-style: none; padding: 0; margin: 0; }
+.nearby-group li { border-top: 1px solid var(--line); padding-block: 4px; }
+.nearby-item { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 0; text-align: left; color: var(--text); background: transparent; border: 0; }
+.nearby-item span { min-width: 0; overflow-wrap: anywhere; }
+.nearby-item small { flex: none; color: var(--muted); }
+.nearby-sources { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 14px; }
+.nearby-home .leaflet-popup-content { max-width: calc(100vw - 120px); overflow-wrap: anywhere; }
+.nearby-home .leaflet-popup-content a { color: #244b7b; }
+#nearby-status:empty { display: none; }
+@media (min-width: 761px) {
+  .nearby-home .house-map-section { grid-column: 2; grid-row: 1 / span 2; position: sticky; top: 12px; align-self: start; }
+  #nearby-results { grid-column: 1; }
+  .nearby-home .house-layout { grid-template-rows: auto 1fr; }
+}

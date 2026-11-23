@@ -3,6 +3,7 @@ import {normalize, splitAddress, streetType} from './street-search.js?v=20261122
 const ui = Object.fromEntries(['search', 'address', 'status', 'matches', 'card', 'title', 'year',
   'detail', 'source', 'district', 'map', 'reset', 'legend', 'close'].map(name =>
   [name, document.getElementById('house-' + name)]));
+const neighborhoodMode = ui.map.hasAttribute('data-neighborhood');
 const periods = [[1956, 'до 1957', '#b08cff'], [1968, '1957–1968', '#f2a65a'],
   [1980, '1969–1980', '#e8e08a'], [1991, '1981–1991', '#9fd8a0'],
   [2010, '1992–2010', '#5cc8d6'], [Infinity, 'с 2011', '#ff7fb0']];
@@ -87,6 +88,7 @@ function clearSelection() {
   selected = null;
   highlight.clearLayers();
   ui.card.hidden = true;
+  if (neighborhoodMode) ui.map.dispatchEvent(new Event('atlas-house-cleared'));
 }
 
 function clearChoices() {
@@ -118,6 +120,9 @@ function showCard(feature, title, districtId, point) {
     ? houseShape(feature, {pane: 'house-selection', color: '#fff', weight: 3, fillColor: '#ffd86b', fillOpacity: .88, interactive: false})
     : L.circleMarker(point, {pane: 'house-selection', radius: 10, color: '#fff', weight: 3, fillColor: '#ffd86b', fillOpacity: 1, interactive: false});
   highlight.addLayer(shape);
+  if (neighborhoodMode) {
+    ui.map.dispatchEvent(new CustomEvent('atlas-house-selected', {detail: {map, point}}));
+  }
   if (citation < 0) {
     review ??= json(new URL('../tools/data/house_year_review.json?v=20261122-house-tap', import.meta.url)).catch(() => null);
     review.then(records => {
@@ -142,8 +147,10 @@ async function openResult(result) {
     try {
       feature = (await getTile(cell)).find(row => row[0] === featureId);
     } catch {
-      if (request === sequence) ui.status.textContent = 'Не удалось загрузить контур. Повторите поиск.';
-      return;
+      if (!neighborhoodMode) {
+        if (request === sequence) ui.status.textContent = 'Не удалось загрузить контур. Повторите поиск.';
+        return;
+      }
     }
   }
   if (request !== sequence) return;
@@ -298,7 +305,7 @@ function init(index) {
   ui.card.addEventListener('keydown', event => { if (event.key === 'Escape') clearSelection(); });
   const reset = () => map.fitBounds(boundary.getBounds(), {padding: [14, 14], animate: false});
   reset();
-  map.on('moveend', drawVisible);
+  if (!neighborhoodMode) map.on('moveend', drawVisible);
   ui.reset.disabled = false;
   ui.reset.onclick = () => {
     sequence++;
@@ -315,7 +322,7 @@ function init(index) {
     clearChoices();
     ui.status.textContent = '';
   });
-  legend();
+  if (!neighborhoodMode) legend();
 }
 
 ui.search.addEventListener('submit', event => event.preventDefault());

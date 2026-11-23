@@ -17,14 +17,14 @@ NIGHT = ('/*NIGHT-THEME*/:root[data-theme="dark"]{--bg:#070D22;--surface:#0F1A3C
          'input,select,textarea{color-scheme:dark}'
          '.map .atlas-zoom{left:auto;right:12px}'   # кнопки масштаба справа: слева вверху вставка «ЗелАО» с подписью
          '.topbar .go-out{flex:none;align-self:center;display:inline-flex;align-items:center;gap:7px;margin-left:6px;padding:8px 14px;border:1.5px solid #FFD86B;border-radius:999px;color:#FFD86B;font:600 14px/1 "Golos Text",system-ui,sans-serif;text-decoration:none;white-space:nowrap;transition:background .15s ease,color .15s ease,transform .12s ease}.topbar .go-out svg{flex:none}@media (hover:hover){.topbar .go-out:hover{background:#FFD86B;color:#0B1330}}.topbar .go-out:active{transform:scale(.97)}.topbar .go-out[aria-current]{background:#FFD86B;color:#0B1330}@media (max-width:600px){.topbar .go-out{padding:7px 10px;font-size:13px;gap:5px;align-self:flex-start;margin-left:0}}/*NIGHT-THEME-END*/')
-WIDE = ('/*WIDE-LAYOUT*/@media (min-width:1000px){'
+WIDE = ('/*WIDE-LAYOUT*/.wrap>header>h1{white-space:normal;overflow-wrap:anywhere;min-width:0}@media (min-width:1000px){'
         '.topbar .in{max-width:1240px}'
         '.wrap{max-width:1240px;display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);grid-template-rows:repeat(11,auto) 1fr;column-gap:44px;row-gap:0;align-items:start}'
         '.wrap>*{grid-column:1/-1;order:5;margin-top:0;margin-bottom:24px}'
         '.wrap>header{display:contents}'
         '.wrap>header>*,.wrap>.L,.wrap>.filt,.wrap>.seg,.wrap>.geo-controls,.wrap>#card,.wrap>.card,.wrap>.atlas-zoom-hint{grid-column:1;order:1}'
         '.wrap>header>h1{order:0}.wrap>.walks{order:5}'
-        '.wrap>header>h1{text-align:left;white-space:normal;font-size:clamp(44px,4.6vw,64px);letter-spacing:-.04em;line-height:1;margin:6px 0 18px}'
+        '.wrap>header>h1{text-align:left;white-space:normal;overflow-wrap:anywhere;min-width:0;font-size:clamp(44px,4.6vw,64px);letter-spacing:-.04em;line-height:1;margin:6px 0 18px}'
         '.wrap>header>.lede{margin:0 0 20px;font-size:17px}'
         '.wrap>.map{grid-column:2;grid-row:1/span 12;order:1;position:sticky;top:76px}'
         '.wrap>.map>svg{max-height:calc(100vh - 150px)}'
