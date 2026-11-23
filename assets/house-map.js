@@ -160,8 +160,8 @@ async function openResult(result) {
   showCard(feature, ui.address.value, districtId, [lat, lon]);
 }
 
-function choices(results) {
-  ui.status.textContent = 'Найдено несколько совпадений. Выберите адрес.';
+function choices(results, message = 'Найдено несколько совпадений. Выберите адрес.') {
+  ui.status.textContent = message;
   const positions = [];
   for (const [index, result] of results.entries()) {
     const position = result.hit.slice(0, 2);
@@ -206,18 +206,32 @@ async function search(event) {
     const key = sortedWords(address.street);
     const type = streetType(address.street);
     const found = new Map();
+    const variants = new Map();
+    const collect = (target, name, number, hits) => {
+      for (const hit of hits) {
+        const id = hit[4] || hit.slice(0, 2).join(',');
+        if (!target.has(id)) target.set(id, {name, number, hit});
+      }
+    };
     for (const [name, alias, numbers] of rows) {
       const kind = streetType(alias) || streetType(name);
       if (sortedWords(alias) !== key || (type && kind && type !== kind)) continue;
-      for (const hit of numbers[address.number] || []) {
-        const id = hit[4] || hit.slice(0, 2).join(',');
-        if (!found.has(id)) found.set(id, {name, number: address.number, hit});
+      collect(found, name, address.number, numbers[address.number] || []);
+      if (/^\d+$/.test(address.number)) {
+        for (const [number, hits] of Object.entries(numbers)) {
+          if (number.startsWith(address.number) && /^[а-я]/.test(number.slice(address.number.length))) {
+            collect(variants, name, number, hits);
+          }
+        }
       }
     }
     const results = [...found.values()];
     if (results.length === 1) openResult(results[0]);
     else if (results.length) choices(results);
-    else ui.status.textContent = 'Адрес не найден. Проверьте улицу, номер, корпус или строение.';
+    else if (variants.size) {
+      const ordered = [...variants.values()].sort((a, b) => a.number.localeCompare(b.number, 'ru', {numeric: true}));
+      choices(ordered, 'Точного совпадения нет. Выберите корпус, строение или номер с буквой.');
+    } else ui.status.textContent = 'Адрес не найден. Проверьте улицу, номер, корпус или строение.';
   } catch {
     if (request === sequence) ui.status.textContent = 'Не удалось загрузить адреса. Повторите поиск.';
   }
