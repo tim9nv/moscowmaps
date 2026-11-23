@@ -79,4 +79,10 @@ function atlasMapControls(svg, features, projection, parks = []) {
   new ResizeObserver(layoutLabels).observe(node);
   document.fonts.ready.then(layoutLabels);
   layoutLabels();
+  return function fitBounds([[left, top], [right, bottom]]) {
+    const scale = Math.max(1, Math.min(8, width / (right - left + 24), height / (bottom - top + 24)));
+    const view = d3.zoomIdentity.translate(width / 2, height / 2).scale(scale)
+      .translate(-(left + right) / 2, -(top + bottom) / 2);
+    svg.call(zoom.transform, zoom.constrain()(view, [[0, 0], [width, height]], zoom.translateExtent()));
+  };
 }
