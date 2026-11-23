@@ -54,9 +54,13 @@ def band(v, b=(3, 4.5, 6, 7.5, 99)):
     for k, x in enumerate(b):
         if v < x: return k + 1
     return 5
+with open(f'{REPO}/housing.html', encoding='utf-8') as housing_page:
+    housing_config = housing_page.read().split('const CFG = ', 1)[1]
+HOUSING_BINS = json.JSONDecoder().raw_decode(housing_config)[0]['bins']
 def hcol(v):
-    for lim, c in [(370000,"#f3e7c9"),(410000,"#e6c58c"),(460000,"#d49a5d"),(530000,"#b5693f"),(1e12,"#7c3a2a")]:
-        if v < lim: return c
+    for _, upper, _, color in HOUSING_BINS:
+        if v < upper: return color
+    return HOUSING_BINS[-1][3]
 LV = ["Очень тихо", "Тихо", "Средне", "Оживлённо", "Очень оживлённо"]
 TYPES = {"npz":"НПЗ","msz":"Мусоросжигательный завод","abz":"Асфальтобетонный завод","tec":"ТЭЦ","ochist":"Очистные сооружения","rad":"Радиационно опасный объект","waste":"Свалка, мусоросортировка","air":"Аэропорт","prom":"Промзона"}
 
@@ -186,7 +190,7 @@ def page(f):
     # housing & transport
     if p.get('hp') or p.get('tr'):
         st = []
-        if p.get('hp'): st.append(f'<div class="stat"><div class="l">Двушка 54 м²</div><div class="v">≈ {fmt(p["hp"]*54/1e6)} млн ₽</div><div class="s">по средней цене метра на вторичке</div></div>')
+        if p.get('hp'): st.append(f'<div class="stat"><div class="l">Двушка 54 м²</div><div class="v">≈ {fmt(p["hp"]*54/1e6)} млн ₽</div><div class="s">по медианной цене метра на вторичке</div></div>')
         if p.get('tr'):
             st.append(f'<div class="stat"><div class="l">До станции</div><div class="v">{p["tr"]["walk"]} мин</div><div class="s">пешком от типичной точки района · {p["tr"]["cov"]} % территории в 1 км от станции</div></div>')
             st.append(f'<div class="stat"><div class="l">До центра</div><div class="v">{p["tr"]["tmed"]} мин</div><div class="s">типичная поездка до станций у Кремля</div></div>')
@@ -195,7 +199,7 @@ def page(f):
             ss = p['tr']['st']
             txt = ('Станции в районе: ' + '; '.join(E(x[0]) + ' (' + (', '.join(x[2]) if x[1] != 'mcc' else 'МЦК') + ')' for x in ss) + '.') if ss else 'Внутри района нет станций метро, МЦК и МЦД.'
             txt = f'<p class="small" style="margin-top:10px">{txt}</p>'
-        if p.get('hp'): txt += f'<p class="small">Цена — медиана цены метра в объявлениях о продаже квартир на вторичке на Циане (ноябрь 2026, {num(p.get("hcnt"))} {pl(p.get("hcnt") or 0,"объявление","объявления","объявлений")} в районе).</p>'
+        if p.get('hp'): txt += f'<p class="small">7 ноября 2026 года в выдаче Циана по району — {num(p.get("hcnt"))} {pl(p.get("hcnt") or 0,"объявление","объявления","объявлений")} о продаже квартир на вторичном рынке. Для расчёта медианной цены предложения за м² взяли до 84 свежих объявлений.</p>'
         sec.append(f'<section><h2>Жильё и транспорт</h2><div class="stats">{"".join(st)}</div>{txt}</section>')
     # ecology
     fac = [f'<div><span>База: EcoStandard и замеры воздуха<span class="note">EcoStandard {fmt(p["a"])} · замеры {p["b"]}</span></span><b>{fmt(0.6*p["a"]+0.4*p["b"])}</b></div>']
